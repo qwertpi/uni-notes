@@ -1,0 +1,257 @@
+\documentclass[20pt,a4paper,landscape]{extarticle}
+\usepackage[margin=1.25in]{geometry}
+\usepackage{placeins}
+\usepackage{latexsym}
+\usepackage{marvosym}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[UKenglish]{babel}
+\usepackage[UKenglish]{isodate}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{titletoc}
+\usepackage{listings}
+\usepackage{dsfont}
+\usepackage{changepage}
+\usepackage{physics}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, mindmap, trees, shapes.geometric, positioning, matrix}
+\lstset{
+    basicstyle=\ttfamily,
+    mathescape
+}
+\PassOptionsToPackage{hyphens}{url}
+\usepackage{xurl}
+\input{glyphtounicode}
+\pdfgentounicode=1
+\usepackage[all]{nowidow}
+\usepackage{hyperref}
+\hypersetup{
+        colorlinks,
+        citecolor=black,
+        filecolor=black,
+        linkcolor=black,
+        urlcolor=black
+}
+\usepackage[protrusion=true,expansion=true]{microtype}
+\newcommand{\ind}{\perp\!\!\!\!\perp}
+\renewcommand{\th}[1]{#1^\textrm{th}}
+\let\max\relax
+\DeclareMathOperator*{\max}{max\:}
+\let\min\relax
+\DeclareMathOperator*{\min}{min\:}
+\DeclareMathOperator*{\argmax}{arg\,max\:}
+\DeclareMathOperator*{\argmin}{arg\,min\:}
+\begin{document}
+\tableofcontents
+\clearpage
+\section{Mathematical preliminaries}
+\subsection{Calculus}
+\begin{itemize}
+    \item A function $f(x)$ is a convex function iff for every pair of points on $f(x)$ the line joining them is not below the curve $f(x)$ at any point between them
+    \item $\grad f(x)$ $=$ vector of partial derivatives $=$ $(\pdv{f(x)}{x_1}, ..., \pdv{f(x)}{x_n})$ $=$ grad $f(x)$
+    \item Single-variable chain rule: Let $f(x) = g(h(t))$, then $\dv{t}(f(x)) =$\\
+    $\dv{g}{h}\dv{h}{t} = g^\prime(h(t)) h^\prime(t)$.\\
+    Thus, $f(x) = f(h(t)) \Rightarrow \dv{t}(f(x)) = \dv{f}{h}\dv{h}{t} = f^\prime(h(t)) h^\prime(t)$
+    \item Multi-variable chain rule: Let $f(x) = f(h(t)) = f(v_1(t), ..., v_n(t))$ be a multi-variable function with input dimension n and scalar output, then\\
+    $\dv{t}(f(x)) = \pdv{f}{v_1}\dv{v_1}{t} + ... + \pdv{f}{v_n}\dv{v_n}{t} = \grad f(h(t)) \cdot h^\prime(t)$
+    \item Gradient descent: $x_{t+1} = x_{t} - \alpha \grad f(x)$ until $x$ stops changing (or equivalently $\grad f(x)$ converges to 0) finds an $x$ for which $f(x)$ is at a local minima
+    \begin{itemize}
+        \item $f(x)$ is convex $\Rightarrow$ has a single local minimum $\Rightarrow$ local minimum is a global minimum $\Rightarrow$ gradient descent finds global minimum
+    \end{itemize}
+    \item Lagrange multiplier method for converting a constrained optimization problem into a unconstrained optimization problem:
+    \begin{enumerate}
+        \item Make all constraints equality constraints (e.g. introduce slack\\variables)
+        \item Rewrite all constraints to be equal to 0
+        \item For each constraint i introduce a new variable the Lagrange multiplier $\alpha_i$
+        \item Let $g_i(x) = 0$ be the $\th{i}$ constraint. Subtract $\alpha_i g_i(x)$ from the objective function (we could equivalently add this and the solution would just have $\alpha_i$ with opposite sign)
+        \item max/min the resulting objective function $f(x, \alpha)$ by solving\\
+        $\grad f(x, \alpha) = \va{0}$ --- can solve analytically (if possible), or use gradient descent to approximate a solution (if not)
+        \begin{itemize}
+            \item All solutions to the original problem will be given by this but this may also give extraneous (that is non-optimal) solutions so \underline{it is necessary to evaluate each candidate solution with the}\\
+            \underline{original objective function}
+        \end{itemize}
+    \end{enumerate}
+\end{itemize}
+\clearpage
+\subsection{Linear algebra}
+\begin{itemize}
+    \item A minor of a matrix is the determinant of a sub-matrix
+    \item A minor of a matrix $A$ is a principal minor iff all (note there are possibly none) of the deletions were of rows and columns with the same index
+    \item The leading principal minor of order $k$ is the one obtained by keeping the first $k$ rows and columns
+    \item A symmetric matrix is positive definite iff all its leading principal minors are strictly positive
+    \item A symmetric matrix is positive semi-definite iff all its principal minors are non-negative
+\clearpage
+    \item A vector norm is a function from a vector space to the non-negative reals that behaves like the Pythagorean distance function:
+    \begin{itemize}
+        \item $L_0(x_1, ..., x_n)$ $=$ \#(components that are non-zero
+        \item $L_1(x_1, ..., x_n)$ $=$ $|x_1| + ... + |x_n|$
+        \item $L_2(x_1, ..., x_n)$ $=$ $\sqrt{|x_1|^2 + ... + |x_n|^2}$
+        \item $L_m(x_1, ..., x_n)$ $=$ $(|x_1|^m + ... + |x_n|^m)^\frac{1}{m}$ $=$ $\norm{x}_m$
+        \item $L_\infty(x_1, ..., x_n)$ $=$ $\max\{|x_1|, ..., |x_n|\}$
+    \end{itemize}
+\end{itemize}
+\subsection{Statistics}
+\begin{itemize}
+    \item Covariance is a measure of the strength (and direction) of linear relationship between two variables
+    \item $\textrm{cov}(x, y) = \textrm{E}[(x - \textrm{E}[x])(y - \textrm{E}[y])] (= \textrm{E}[xy] - \textrm{E}[x]\textrm{E}[y])$
+    \item Deduce that $\textrm{var}(x) = \textrm{cov}(x, x)$
+    \item The Pearson correlation coefficient $\rho$ from A-Level is the normalised (to range from $-1$ to $+1$) covariance ($\rho_{x, y} = \frac{\textrm{cov}(x, y)}{\sigma_x\sigma_y}$)
+\end{itemize}
+\clearpage
+\section{Model evaluation}
+\subsection{Evaluation procedure}
+\begin{itemize}
+    \item Validation data can be used for hyperparameter tuning but testing data should not be used in any way during training
+    \item The test data prevents us overfitting/p-hacking the hyperparameters
+    \item $k$-fold cross validation splits the data into $k$ disjoint folds of approximately equal size and trains $k$ models (each with a different fold as the test data) to get $k$ measurements of a metric (measured over the current test fold each time) so the mean and standard deviation can be calculated
+\end{itemize}
+\subsection{Metrics}
+\subsubsection{Primitives}
+\begin{itemize}
+    \item (Binary) accuracy =\\
+    $\frac{\textrm{\#(true positives)} + \textrm{\#(true negatives)}}{\textrm{\#(tests) }(= \textrm{\#(true positives)} + \textrm{\#(true negatives)} + \textrm{\#(false positives)} + \textrm{\#(false negatives)})}$
+    \item Problems with binary accuracy:
+    \begin{itemize}
+        \item Is the data set really balanced?
+        \item Are false positives and false negatives really equally bad?
+        \item Is a classifier giving +0.1 instead of a negative number really as bad as giving +1000?
+    \end{itemize}
+    \clearpage
+    \item Recall = sensitivity = true positive rate =\\
+    $\frac{\textrm{\#(true positives)}}{\textrm{\#(positive examples) }(=\textrm{\#(true positives)} + \textrm{\#(false negatives)})}$ =\\
+    Pr(Positive test result|Positive example)
+    \item Specificity = true negative rate =\\
+    $\frac{\textrm{\#(true negatives)}}{\textrm{\#(negative examples) }(=\textrm{\#(true negatives)} + \textrm{\#(false positives)})}$ =\\
+    Pr(Negative test result|Negative example)
+    \item Precision = positive predictive value =\\
+    $\frac{\textrm{\#(true positives)}}{\textrm{\#(test positives) }(=\textrm{\#(true positives)} + \textrm{\#(false positives)})}$ =\\
+    Pr(Positive example|Positive test result)
+    \item Negative predictive value = $\frac{\textrm{\#(true negatives)}}{\textrm{\#(test negatives) }(=\textrm{\#(true negatives)} + \textrm{\#(false negatives)})}$ = Pr(Negative example|Negative test result)
+\end{itemize}
+\subsubsection{Composites}
+\begin{itemize}
+    \item Balanced accuracy = arithmetic mean of sensitivity and specificity = accuracy corrected for class imbalance
+    \item F-score = harmonic mean of precision and recall =\\
+    $\frac{2}{\frac{1}{\textrm{precision}} + \frac{1}{\textrm{recall}}}$ = $2\left(\frac{\textrm{precision} \times \textrm{recall}}{\textrm{precision} + \textrm{recall}}\right)$
+    \item Positive likelihood ratio = $\frac{\textrm{\underline{true} positive rate}}{\textrm{\underline{false} positive rate}}$
+    \item Negative likelihood ratio = $\frac{\textrm{\underline{false} negative rate}}{\textrm{\underline{true} negative rate}}$
+\end{itemize}
+\clearpage
+\subsection{Curves}
+\subsubsection{ROC}
+\begin{itemize}
+\item We have a threshold of 0 by default for our class boundary (when working with SVMs, or 0.5 when working with probabilistic models), but we will analyse how the false/true positive/negative rates vary as we vary the threshold
+\item At $-\infty$ rates are 0\%/100\%
+\item At $+\infty$ rates are 100\%/0\%
+\item Note that the rates are monotonically non-decreasing/non-increasing as threshold increases
+\item ROC (receiver-operating characteristic) curve =\\
+$\pi_{FPR, TPR}\{\textrm{(FPR, TPR, threshold) for all thresholds}\}$ with FPR on the $x$-axis and TPR on the $y$-axis
+\item The ROC curve describes the available trade-offs between false negatives (note that FNR = 100 $-$ TPR and FPR = 100 $-$ TNR) and false positives
+\item The optimal threshold is typically deemed to be the one that maximises Youden’s J statistic (Sensitivity + Specificity $-$ 1 = TPR $-$ FPR) as this corresponds to maximizing the geometric mean $\left(\sqrt{\textrm{sensitivity} \times \textrm{specificity}}\right)$
+\item Area under ROC curve $\left(\textrm{AUC}_{(\textrm{ROC})}\right)$ is a model evaluation metric that removes the effect of the model threshold and accounts for \underline{binary} class imbalance! --- it can be seen that ROC curves are themselves invariant under changes in \underline{binary} class prevalence
+\item >2 class extension to ROC: Plot a curve for each class as the positive and all others as the negative then take the weighted average relative to the prevalence of each classes --- this no longer fully removes the effect of class imbalance!
+\end{itemize}
+\subsubsection{ROC interpretation}
+\begin{itemize}
+\item A random classifier will have ROC curve of $y=x$ (AUC = 0.5), a better than random classifier will bow to the left (AUC > 0.5)
+\item A classifier that is always below the $y=x$ line can be made better than random by flipping its predictions --- it can make more sense to think of |area $-$ 0.5| as the amount of discriminating power a classifier has than to think of plain area as an accuracy proxy
+\item Equal error rate = value of $y$ (or equiv $x$) at which $y=x$ on a given ROC curve
+\end{itemize}
+\clearpage
+\subsubsection{PR}
+\begin{itemize}
+\item Precision-recall curve is recall (TPR) on X-axis and precision (P(True positive|Positive prediction)) on Y-axis --- as with ROC the points are generated by varying the threshold
+\item Unlike ROC is not monotonic and does not account for imbalanced class prevalence even in the binary case!
+\item Model A dominates Model B in ROC $\Leftrightarrow$ Model A dominates Model B in PR
+\end{itemize}
+\clearpage
+\subsection{How \underline{\underline{not}} to report machine learning results}
+\begin{itemize}
+    \item Use an inappropriate performance metric for the context (e.g. accuracy when there is class imbalance)
+    \item Tune hyperparameters until you get test results you like (this is closer to over-fitting on the test data (not that this is any better) than pure p-hacking, although there could still be an element of later)
+    \item Forget to reset the model between folds causing all the validation data to have been used as training data by the end
+    \item Split related data (e.g. multiple samples from the same patient) across the dataset splits e.g. folds
+    \item Don’t compare performance to other models (e.g. simpler less in-vogue methods)
+    \item Compare to other models, but only based on published results on a different (but hey its the same problem so what could possibly go wrong...) dataset to what you are using
+    \item Train a collection of models on your dataset, but don’t spend as long on hyperparameter tuning the baselines as you do your favourite model
+    \item Don’t bother with sensitivity analysis (``just use this magic number to seed the random number generator, then everything will work'')
+    \item Don’t bother understanding how or why your model works
+    \item Run hypothesis tests without verifying that the data obeys the necessary conditions (e.g. normally distributed (fortunately the central limit theorem will probably save you here), independent experiments (this will not be strictly true if we use the same test set for every run, but talking genuinely now this is acceptable to ignore) etc)
+\end{itemize}
+\clearpage
+\section{Dimensionality reduction}
+\subsection{Principal component analysis (PCA)}
+\subsubsection{PCA}
+\begin{itemize}
+    \item PCA linearly transforms a zero-centred dataset so that the greatest variance is along the first axis (first principal component), the greatest remaining variance is along the second axis (second principal component), ... up to the $\th{n}$ axis $\th{n}$ principal component). By truncating this, dimensionality reduction is achieved with minimal impact
+    \item A matrix $X$ of data vectors can be projected onto the chosen principal components by creating the matrix $W$ with column set the chosen eigenvectors then evaluating $W^TX$
+    \item Variance of data after being projected onto a single component $w$ = $w^TCw$ where $C$ is the covariance matrix (matrix of pairwise covariances) ---\\
+    $C = \frac{1}{\textrm{\#(data points)}}\left(X^TX\right)$ where $X$ is the dataset
+    \item A scree plot is a plot of proportion of variance explained by chosen principal components against number of principal components chosen
+\end{itemize}
+\subsubsection{Finding principal components}
+\begin{itemize}
+    \item Finding the first principal component can be written as a constrained optimization problem:\\
+    $\max_w w^TCw$ (variance after projection) s.t. $\norm{w}_2^2 = 1$ (normalization so there is a unique solution)
+    \item Lemma: As $C$ is symmetric, $\grad_w(w^TCw) = 2Cw$\\
+    Proof: Let $D=\grad_w(w^TCw)$ and chose an arbitrary entry $D_k$, we will show that $D_k = (2Cw)_k$ and thus be able to deduce that the lemma holds. By the definition of $\grad$, $D_k = \pdv{w_k}(w^TCw)$.\\
+    By the definition of matrix multiplication, $w^TCw = \sum_{i \in [n]}\sum_{j \in [n]}w_iC_{ij}w_j$. Thus, $D_k = \sum_{i \in [n]: i \neq k}\sum_{j \in [n]: j \neq k}\pdv{w_k}(w_iC_{ij}w_j) + \sum_{j \in [n]}\pdv{w_k}(w_kC_{kj}w_j) +$\\
+    $\sum_{i \in [n]}\pdv{w_k}(w_iC_{ik}w_k) = 0 + \sum_{j \in [n]}C_{kj}w_j + \sum_{i \in [n]}w_iC_{ik} = (Cw)_k + (C^Tw)_k$. Finally, as C is symmetric, $C=C^T$, so $D_k = (Cw)_k + (Cw)_k = (2Cw)_k$ as required.
+    \item The Lagrangian multiplier method tells us that every optimal solution obeys $\grad \left(w^TCw - \alpha \left(\norm{w}_2^2 - 1\right)\right) = \va{0}$ i.e. $\begin{pmatrix} 2Cw - 2 \alpha w + 0 \\ 0 - \norm{w}_2^2 + 1 \end{pmatrix} = \va{0}$ i.e. $\begin{Bmatrix} Cw = \alpha w \\ \norm{w}_2^2 = 1 \end{Bmatrix}$ i.e. $w$ is an eigenvector of $C$ with eigenvalue $\alpha$ --- we don’t need to use numerical methods to solve this particular optimization problem as good algorithms are known for finding eigenvectors!
+    \item In fact finding all the eigenvectors tells us all the principal components and the associated eigenvalues tell us the explained variance ($w^TCw =$ [eigen] $w^T\alpha w =$ [$\alpha $ is a scalar] $\alpha \norm{w}_2^2$ $=$ [normalization constraint on $w$] $\alpha$) so ordering the eigenvectors in descending order of eigenvalue gives us the principal components in decreasing order of importance
+    \item The first vector actually determines the direction of all the others as they must all be perpendicular to each other, but we go ahead and calculate the entire eigen-decomposition as then we have the corresponding eigenvalues to know which ones (the ones with the lowest variances) to drop for dimensionality reduction
+\end{itemize}
+\subsection{Linear Discriminant Analysis (LDA)}
+\begin{itemize}
+    \item LDA works similarly to PCA but, unlike PCA which is unsupervised, LDA is supervised
+    \item LDA finds a projection that (by maximising the ratio of these two quantities) maximises the distance between the means of the two classes but also minimises the variance within each class
+    \item To find LDA: Compute the eigen-decomposition of $W^{-1}(T - W)$ (or equivalently $W^{-1}T - I$) where $T$ is the covariance matrix of all the data and $W$ is the (weighted by number of samples) average of the covariance matrices within each group —-- deduce that $T - W$ = covariance between groups
+\end{itemize}
+\clearpage
+\section{Classification}
+\subsection{Foundations}
+\subsection{Perceptron}
+\subsection{SVM}
+\subsubsection{SVM}
+\subsubsection{The kernel trick}
+\clearpage
+\section{Regression}
+\subsection{Linear regression}
+\subsection{Regularisation}
+\subsection{Generalising regression}
+\clearpage
+\section{Topics in machine learning}
+\subsection{Clustering}
+\subsection{Novelty detection}
+\subsection{Ranking}
+\subsection{Recommender systems}
+\clearpage
+\section{Neural networks}
+\subsection{Foundations}
+\subsection{Backwards-propagation (backprop)}
+\subsection{Optimizers}
+\subsection{Deep learning}
+\clearpage
+\section{Convolutional Neural Networks (CNNs)}
+\subsection{Motivation}
+\subsection{Tricks of the trade}
+\subsection{ResNet}
+\clearpage
+\section{Large Language Models (LLMs)}
+\subsection{The transformer architecture}
+\subsection{(Self-)Attention}
+\subsection{MLP blocks}
+\clearpage
+\section{Graph Neural Networks (GNNs)}
+\subsection{GNNs generalise CNNs}
+\subsection{Message passing}
+\subsubsection{GCN}
+\subsubsection{GAT}
+\clearpage
+\begin{flushleft}
+\end{flushleft}
+\end{document}

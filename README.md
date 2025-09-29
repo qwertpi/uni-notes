@@ -112,6 +112,17 @@ Images copied from module materials have been removed for copyright reasons.
 - [External resource (Academic publication): Justified Representation in Approval-Based Committee Voting by Haris Aziz, Markus Brill, Vincent Conitzer, Edith Elkind, Rupert Freeman, and Toby Walsh](https://arxiv.org/abs/1407.8269)  
 ### Informally studied
 #### CS275: Probability and Statistics (2024/25 in-person lectures)
-Coming soon
+- [CS275 Notes (WIP)](Misc/CS275.pdf)  
 #### CS429: Data Mining ([2020/21 online lectures](https://www.youtube.com/playlist?list=PL9IcorxiyRbASB9DXjoWnBJO9RSKyzM2N), and personal reflections on more recent developments)
-Coming soon
+- [CS429 Notes (WIP)](Misc/CS429.pdf)  
+- [External resource (Video): How we teach computers to understand pictures by Fei-Fei Li](https://www.youtube.com/watch?v=40riCqvRoMs)  
+- [External resource (Academic publication): ImageNet classification with deep convolutional neural networks by Alex Krizhevsky, Ilya Sutskever, and Geoffrey Hinton](https://dl.acm.org/doi/10.1145/3065386)  
+- [External resource (Academic publication): Deep Residual Learning for Image Recognition by Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun](https://arxiv.org/abs/1512.03385)  
+- [External resource (Academic publication): Attention Is All You Need by Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin](https://arxiv.org/abs/1706.03762)  
+- [External resource (Video): THIS is why large language models can understand the world by Algorithmic Simplicity](https://www.youtube.com/watch?v=UKcWu1l_UNw)  
+- [External resource (Academic publication): Transformers are Graph Neural Networks by Chaitanya K. Joshi](https://thegradient.pub/transformers-are-graph-neural-networks/)  
+- [External resource (Academic publication): An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale by Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov, Dirk Weissenborn, Xiaohua Zhai, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer, Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, and Neil Houlsby](https://arxiv.org/abs/2010.11929)  
+- [External resource (Academic publication): Reconciling modern machine-learning practice and the classical bias–variance trade-off by Mikhail Belkin, Daniel Hsu, Siyuan Ma, and Soumik Mandal](https://www.pnas.org/doi/10.1073/pnas.1903070116)  
+- [External resource (Academic publication): The Lottery Ticket Hypothesis: Finding Sparse, Trainable Neural Networks by Jonathan Frankle, and Michael Carbin](https://arxiv.org/abs/1803.03635)  
+- [External resource (Academic publication): Hidden Stratification Causes Clinically Meaningful Failures in Machine Learning for Medical Imaging by Luke Oakden-Rayner, Jared Dunnmon, Gustavo Carneiro, and Christopher Ré](https://arxiv.org/abs/1909.12475)  
+- [External resource (Academic publication): Gradient Starvation: A Learning Proclivity in Neural Networks by Mohammad Pezeshki, Sékou-Oumar Kaba, Yoshua Bengio, Aaron Courville, Doina Precup, and Guillaume Lajoie](https://arxiv.org/abs/2011.09468)  

@@ -1,0 +1,256 @@
+%--------------------
+% Packages
+% -------------------
+\documentclass[20pt,a4paper,landscape]{extarticle}
+\usepackage[margin=1.25in]{geometry}
+\usepackage{placeins}
+\usepackage{latexsym}
+\usepackage{marvosym}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[UKenglish]{babel}
+\usepackage[UKenglish]{isodate}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{titletoc}
+\PassOptionsToPackage{hyphens}{url}
+\usepackage{xurl}
+\input{glyphtounicode}
+\pdfgentounicode=1
+\usepackage[all]{nowidow}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+\usepackage[protrusion=true,expansion=true]{microtype}
+\newcommand{\ind}{\perp\!\!\!\!\perp}
+\begin{document}
+\tableofcontents
+\clearpage
+\section{Background}
+\subsection{Probability vs Statistics}
+\begin{itemize}
+\item Probabilistic reasoning works forwards from a given mathematical model to the single possible prediction about given events under that model
+\item Statistical reasoning works backwards from given data about events to one of many possible mathematical models that could explain that data
+\end{itemize}
+\subsection{Double Integrals}
+\begin{itemize}
+\item Naive approach: Blindly compute inner then outer e.g.\\
+$\int_{y=0}^{y=\infty} \int_{x=0}^{x=y} e^{-y}dxdy = \int_{y=0}^{y=\infty} [xe^{-y}]_{x=0}^{x=y} dy = \int_{y=0}^{y=\infty} ye^{-y} - 0e^{-y} = ... = 1$
+\item \textit{Fubini's Theorem: Suppose $f(x, y)$ is continuous throughout $R = \{(x, y) \in \mathbb{R}^2: a \leq x \leq b \textrm{ and } c \leq y \leq d\}$. Then, $\iint\limits_R f(x, y) dR =$
+\\$ \int_c^d \int_a^b f(x, y) dx dy = \int_a^b \int_c^d f(x, y) dy dx$}
+\item Can be easier to reverse the order as per Fubini e.g.\\
+$\int_{y=0}^{y=\infty} \int_{x=0}^{x=y} e^{-y}dxdy = \int_{x=0}^{x=\infty} \int_{y=x}^{y=\infty} e^{-y}dydx = \int_{x=0}^{x=\infty} [-e^{-y}]^{y=\infty}_{y=x} dx =$\\
+$\int_{x=0}^{x=\infty} e^{-x} dx = [-e^{-x}]^{x=\infty}_{x=0} = 1$
+\end{itemize}
+\clearpage
+\section{Elementary (Discrete) Probability}
+\subsection{Foundations}
+\begin{itemize}
+\item{\textbf{All probabilities are defined based on a given experiment}}
+\item{\textbf{The sample space $\Omega$ = the set of possible outcomes of the experiment}}
+\item{\textbf{The sample space $\Omega$ is discrete iff $\Omega$ is a countable set (}recall this means it \textbf{\underline{may be infinite})}}
+\item{\textbf{The sample space $\Omega$ is continuous} iff it is not discrete \textbf{iff $\Omega$ is an uncountably infinite set}}
+\item{\textbf{An event E is $\subseteq \Omega$} i.e. zero or more outcomes}
+\item{\textbf{An event is elementary iff it is singleton} i.e. a single outcome}
+\item{Deduce that the set of events is closed under the standard set operations}
+\item{\textbf{Events $E_1$ and $E_2$ are mutually exclusive iff $E_1 \cap E_2 = \emptyset$}}
+\item{Recall that a family of sets (e.g events) $E_1, ..., E_n$ partition a set $F$ iff $\bigcup_{i \in [n]} E_i = F$ and $\forall i \in [n]. \forall j \in [n]\setminus\{i\}. E_i \cap E_j = \emptyset$}
+\item{\textbf{The 3 axioms of probability:
+\begin{enumerate}
+    \item Non-negativity: Let $E$ be an event. Then, $\textrm{P}(E) \geq 0$
+    \item Additivity: Let $E_i$ and $E_j$ be mutually exclusive events. Then, $\textrm{P}(E_i \cup E_j) = \textrm{P}(E_i) + \textrm{P}(E_j)$
+    \item Normalization: $\textrm{P}(\Omega) = 1$ or equivalently $\textrm{P}(\emptyset) = 0$
+\end{enumerate}
+}}
+\item Note that additivity means that (by induction) the probability of any event can be broken down into a sum of probabilities of elementary events that partition it
+\item{Proposition: $\textrm{P}(E \cap F) = \textrm{P}(E) + \textrm{P}(F) - \textrm{P}(E \cup F)$\\
+Proof:\\
+By additivity, $\textrm{P}(A) = \sum_{\omega \in A} \textrm{P}(\omega)$ for each $A$. Recall that the members of each $A$ (the $\omega$s) are elementary events.\\
+Pick arbitrary $\omega \in E \cup F$. Deduce that $\omega \in E \lor \omega \in F$.\\
+Case $\omega \in E$ but $\omega \notin F$: Then, $\textrm{P}(\omega)$ occurs in $\textrm{P}(E)$ and $\textrm{P}(E \cup F)$ but not in $\textrm{P}(F)$ and so simplifies down to $\textrm{P}(\omega) - \textrm{P}(\omega) = 0$ in $\textrm{P}(E) + \textrm{P}(F) - \textrm{P}(E \cup F)$\\
+Case $\omega \in F$ but $\omega \notin E$: Then, $\textrm{P}(\omega)$ occurs in $\textrm{P}(F)$ and $\textrm{P}(E \cup F)$ but not in $\textrm{P}(E)$ and so simplifies down to $\textrm{P}(\omega) - \textrm{P}(\omega) = 0$ in $\textrm{P}(E) + \textrm{P}(F) - \textrm{P}(E \cup F)$\\
+Case $\omega \in E$ and $\omega \in F$: Then, $\textrm{P}(\omega)$ occurs in $\textrm{P}(F)$ and $\textrm{P}(E \cup F)$ but not in $\textrm{P}(E)$ and so simplifies down to $\textrm{P}(\omega) + \textrm{P}(\omega) - \textrm{P}(\omega) = \textrm{P}(\omega)$ in $\textrm{P}(E) + \textrm{P}(F) - \textrm{P}(E \cup F)$. Moreover, $\omega \in E \cap F$.\\
+Deduce that we have covered each term of $\textrm{P}(E) + \textrm{P}(F) - \textrm{P}(E \cup F)$ exactly once. Thus, we have shown that $\textrm{P}(E) + \textrm{P}(F) - \textrm{P}(E \cup F) = \sum_{\omega \in E \cap F} \textrm{P}(\omega)$ and we know that this equals $\textrm{P}(E \cap F)$ as required.\\
+Corollary \textbf{(Union Bound): $\textrm{P}(E \cup F) = \textrm{P}(E) + \textrm{P}(F) - \textrm{P}(E \cap F) \leq \textrm{P}(E) + \textrm{P}(F)$ [as $\textrm{P}(E \cap F) \geq 0$ by non-negativity axiom]} - TO DO: generalise to E_1, ..., E_n (noting inclusion-exclusion)
+}
+\end{itemize}
+\subsection{Conditional Probabilities}
+\begin{itemize}
+\item{\textbf{Probability that E occurred given that F occurred = $\textrm{P}(E|F) = \frac{\textrm{P}(E \cap F)}{\textrm{P}(F)}$}\\
+Corollary: $\textrm{P}(E \cap F) = \textrm{P}(F)\textrm{P}(E|F) = \textrm{P}(E)\textrm{P}(F|E)$
+}
+\item{\textbf{Chain Rule: Let $\textrm{P}(\bigcap_{i=1}^nE_i) > 0$. Then, $\textrm{P}(\bigcap_{i=1}^nE_i) =$\\
+$\prod_{i=1}^n \textrm{P}(E_i | \cap_{j=1}^{i-1} E_j)$}.\\
+For example, $\textrm{P}(E_1)\textrm{P}(E_2|E_1)\textrm{P}(E_3|E_1 \cap E_2)\textrm{P}(E_4|E_1 \cap E_2 \cap E_3) =$\\
+$\textrm{P}(E_1 \cap E_2)\textrm{P}(E_3|E_1 \cap E_2)\textrm{P}(E_4|E_1 \cap E_2 \cap E_3) =$
+\\$\textrm{P}(E_1 \cap E_2 \cap E_3)\textrm{P}(E_4|E_1 \cap E_2 \cap E_3) = \textrm{P}(E_1 \cap E_2 \cap E_3 \cap E_4)$ as claimed.}
+\item{\textbf{Theorem (Law of total probability): Let $E$ be an event and $F_1, ..., F_n$ be a partition of $\Omega$. Then, $\textrm{P}(E) = \sum_{i \in [n]} \textrm{P}(E \cap F_i) = \sum_{i \in [n]} \textrm{P}(E|F_i)\textrm{P}(F_i)$}. For example, $\textrm{P}(A) = \textrm{P}(A|B) + \textrm{P}(A|\neg B)$.\\
+Proof: Recall that $E \subseteq \Omega$ and thus deduce that $E = E \cap \Omega$. Hence, $E = E \cap (F_1 \cup ... \cup F_n) = E \cap F_1 \cup ... \cup E \cap F_n$.
+Recall that $F_1, ..., F_n$ are pairwise disjoint and thus deduce that $E \cap F_1, ..., E \cap F_n$ are pairwise disjoint. Hence, by additivity, $\textrm{P}(A) = \textrm{P}(A \cap B_1) + ... + \textrm{P}(A \cap B_n)$ as required.}
+\item{\textbf{Proposition: Let $E$ and $F$ be events and $G_1, ..., G_n$ be a partition of $\Omega$. Then, $\textrm{P}(E|F) = \sum_{i \in [n]} \textrm{P}(E |F_i \cap G_i)\textrm{P}(F_i | G_i).$\\}
+Proof: $\textrm{P}(E|F) = \frac{\textrm{P}(E \cap F)}{\textrm{P}(F)}$. Applying law of total probability: $\textrm{P}(E \cap F) = \sum_{i \in [n]} \textrm{P}(E \cap F \cap G_i) = \sum_{i \in [n]} \textrm{P}(E | F \cap G_i)\textrm{P}(F \cap G_i) = \sum_{i \in [n]} \textrm{P}(E | F \cap G_i)\textrm{P}(G_i | F)\textrm{P}(F)$. Thus, $\textrm{P}(E|F) = \frac{\textrm{P}(E \cap F)}{\textrm{P}(F)} = \sum_{i \in [n]} \frac{\textrm{P}(E | F \cap G_i)\textrm{P}(G_i | F)\textrm{P}(F)}{\textrm{P}(F)} = \sum_{i \in [n]} \textrm{P}(E | F \cap G_i)\textrm{P}(G_i | F)$ as required.\\
+Corollary: If $\forall i \in [n]. F \ind G_i$, then $\textrm{P}(E|F) = \sum_{i \in [n]} \textrm{P}(E |F_i \cap G_i)\textrm{P}(G_i)$; a closer symmetry with the law of total probability.}
+\item{\textbf{Theorem (Bayes' Theorem): $\textrm{P}(F|E) = \frac{\textrm{P}(E|F)\textrm{P}(F)}{\textrm{P}(E)} =$\\
+$\frac{\textrm{P}(E|F)\textrm{P}(F)}{\textrm{P}(E|F)\textrm{P}(F)+\textrm{P}(E|\neg F)\textrm{P}(\neg F)}$}\\
+Proof: Recall that $\textrm{P}(E \cap F) = \textrm{P}(E|F)\textrm{P}(F) = \textrm{P}(F|E)\textrm{P}(E)$. Thus, $\textrm{P}(F|E) = \textrm{P}(F|E) = \frac{\textrm{P}(E|F)\textrm{P}(F)}{\textrm{P}(E)}$.\\
+By the definition of $\neg$, $F \cap \neg F = \emptyset$ and $F \cup \neg F = \Omega$. Hence, we can apply the law of total probability: $\textrm{P}(E) = \textrm{P}(E|F)\textrm{P}(F)+\textrm{P}(E|\neg F)\textrm{P}(\neg F)$ completing the proof.
+}
+\subsection{Independence}
+\item{\textbf{Events $A_1$, ..., $A_n$ are independent iff $\forall S \in 2^{\{A_1, ..., A_n\}}. \textrm{P}(S) = \prod_{X \in S} \textrm{P}(X)$.} For example, $A_1, A_2, A_3, A_4$ are independent iff\\
+$\textrm{P}(A_1 \cap A_2) = \textrm{P}(A_1)\textrm{P}(A_2)$ and $\textrm{P}(A_1 \cap A_3) = \textrm{P}(A_1)\textrm{P}(A_3)$ and $\textrm{P}(A_1 \cap A_4) = \textrm{P}(A_1)\textrm{P}(A_4)$ and $\textrm{P}(A_2 \cap A_3) = \textrm{P}(A_2)\textrm{P}(A_3)$ and $\textrm{P}(A_2 \cap A_4) = \textrm{P}(A_2)\textrm{P}(A_4)$ and $\textrm{P}(A_3 \cap A_4) = \textrm{P}(A_3)\textrm{P}(A_4)$ and $\textrm{P}(A_1 \cap A_2 \cap A_3) = \textrm{P}(A_1)\textrm{P}(A_2)\textrm{P}(A_3)$ and $\textrm{P}(A_1 \cap A_2 \cap A_4) = \textrm{P}(A_1)\textrm{P}(A_2)\textrm{P}(A_4)$ and $\textrm{P}(A_2 \cap A_3 \cap A_4) = \textrm{P}(A_2)\textrm{P}(A_3)\textrm{P}(A_4)$ and $\textrm{P}(A_1 \cap A_2 \cap A_3 \cap A_4) = \textrm{P}(A_1)\textrm{P}(A_2)\textrm{P}(A_3)\textrm{P}(A_4)$\\
+\textbf{Corollary: Events $E$ and $F$ are independent ($E \ind F$) iff $\textrm{P}(E \cap F) = \textrm{P}(E)\textrm{P}(F)$}}
+\item{Proposition: Assuming that $\textrm{P}(E) > 0$ and $\textrm{P}(F) > 0$ respectively, $E \ind F$ iff $\textrm{P}(E|F)=\textrm{P}(E)$ iff $\textrm{P}(F|E)=\textrm{P}(F)$\\
+Proof: Trivial from Bayes' theorem}
+\item{Proposition: If $E_1$ and $E_2$ are mutually exclusive events, then $E_1$ and $E_2$ are independent only if at least one of $E_1$ and $E_2$ has probability 0\\
+Proof: $E_1$ and $E_2$ are mutually exclusive $\Rightarrow\textrm{P}(E_1 \cap E_2) = 0$.\\
+$E_1$ and $E_2$ are independent $\Rightarrow\textrm{P}(E_1)\textrm{P}(E_2) =\textrm{P}(E_1 \cap E_2) = 0 \Rightarrow\\
+$($\textrm{P}(E_1) = 0 \; \lor \; \textrm{P}(E_2) = 0$).}
+\item{Events $A_1$, ..., $A_n$ are pairwise independent iff $\forall i \in [n]. \forall j \in [n]\setminus\{i\}. \textrm{P}(A_i \cap A_j) = \textrm{P}(A_i)\textrm{P}(A_j)$}
+
+\item{Proposition: There exists a family of events that are pairwise independent but not fully independent. Proof: Exercise}
+\item{Events $E$ and $F$ are conditionally independent given an event G iff $\textrm{P}(E \cap F | G) = \textrm{P}(E|G)\textrm{P}(F|G)$}
+\item{Proposition: There exists a family of events that are conditionally independent given some additional event but not fully independent. Proof: Exercise}
+\item{Proposition: There exists a family of events that are fully independent but for which there exists an event they are not conditionally independent given. Proof: Exercise}
+\end{itemize}
+\clearpage
+\section{Discrete Random Variables}
+\subsection{Random Variables}
+\begin{itemize}
+\item{In CS130 we only considered events: an abstraction over elementary outcomes (members of sets (or singleton sets)). In this module we focus on random variables: an abstraction over events (sets).}
+\item{A random variable $X$ is a function $\Omega \mapsto \mathbb{R}$. Note that, unlike $\textrm{P}: 2^\Omega \mapsto \mathbb{R}$ which assigns a number to each set (event (collection of outcomes of experiments)), \textbf{a random variable assigns a number to each \underline{member} of the set $\Omega$ (an outcome of an experiment} (an \underline{elementary event})\textbf{)}}.
+\item{As $X^{-1}$ assigns to each number a set of outcomes, \textbf{considering a random variable being equal to a certain value exactly corresponds to considering a certain event} ($(X = i) = \{\omega : X(\omega) = i\} = \{\omega : \omega \in X^{-1}(i)\}$)}
+\item{Proposition: $\{(X=i): i \in \mathbb{R}\}$ is a partition of $\Omega$.\\
+Proof: Pick arbitrary $i \in \mathbb{R}$.\\
+$\cup_{i \in \mathbb{R}} (X = i) = \Omega $ as $\mathbb{R} \supseteq \textrm{codomain}(X)$ and so this union must be the entire domain of $X$. (Many of the sets being unioned will be $\emptyset$ but this is fine).\\
+Pick arbitrary $j \in \mathbb{R}$ such that $i \neq j$. Then, $(X = i) \cap (X = j) = \emptyset$ as any element in this intersection would be an elementary outcome associated with more than one number by $X$ and so would contradict $X$ being a function.\\
+}
+\end{itemize}
+\subsection{Discrete Random Variables}
+\begin{itemize}
+\item{\textbf{A discrete random variable has countable range (e.g. $\mathbb{N}$) whereas a continuous random variable has uncountable range (e.g. $\mathbb{R}$)}. For the rest of this chapter all random variables are discrete}
+\item{\textbf{$\textrm{p}_X(i) =$ probability mass function (pmf) of $X = \textrm{P}(X = i)$}}
+\item{\textbf{$\textrm{p}_{X|A}(i) =$ probability mass function of $X$ given $A$ $= \frac{\textrm{P}(\{X = i\} \cap A)}{\textrm{P}(A)}$}. $X|A$ can be viewed as an event in its own right, with this pmf.}
+
+\item{\textbf{$\textrm{F}_X(i) =$ cumulative distribution function of $X = \textrm{P}(X \leq i) =$}$\textrm{ P}(\cup_{j \leq i} X = j)$ by definition \textbf{$= \sum_{j \leq i}\textrm{P}(X=j)$ by additivity} (as the $X = j$ are a partition of $X \leq i$)}
+\item{\textbf{$\neg \textrm{F}_X(i) =$ tail function of $X = \textrm{P}(X > i) = 1 - \textrm{F}_X(i)$}. Note this is not $\textrm{P}(X \geq i)$}
+\item{Proposition: Let $X$ be a random variable. Then, $\sum_{i \in \mathbb{R}} \textrm{P}(X = i) = 1$\\
+Proof:\\
+i) Pick arbitrary $i \in \mathbb{R}$. Pick arbitrary $j \in \mathbb{R}$ such that $i \neq j$. Then, $(X = i) \cap (X = j) = \emptyset$ as any element in this intersection would be an elementary outcome associated with more than one number by $X$ and so would contradict $X$ being a function.\\
+ii) $\cup_{i \in \mathbb{R}} (X = i) = \Omega $ as $\mathbb{R} \supseteq \textrm{range}(X)$ and so this union must be the entire domain of $X$. (Many of the sets being unioned will be $\emptyset$ but this is fine).\\
+Combining i) and ii) $\{(X=i): i \in \mathbb{R}\}$ is a partition of $\Omega$. Thus, as each $X=i$ is an event, we can apply the law of total probability to obtain $\sum_{i \in \mathbb{R}} \textrm{P}(X = i) = \textrm{P}(\Omega)$. Finally, by the normalization axiom, $\textrm{P}(\Omega) = 1$.
+}
+\end{itemize}
+\subsection{Discrete Distributions}
+\begin{itemize}
+\item{\textbf{If $X \sim \textrm{Bernoulli}(p)$, then $\textrm{range}(X) = \{0, 1\}$ and $\textrm{p}_X(1) = p$ and $\textrm{p}_X(0) = 1 - p$.} Interpretation: Single trial of a binary experiment; 1 iff success; 0 iff failure; $p$ = probability of success}
+\item{\textbf{If $X \sim \textrm{Binomial}(n, p)$, then $\textrm{range}(X) = \{\underline{0}, ..., n\}$ and $\textrm{p}_X(i) = {n \choose i} (p)^{i}(1-p)^{n-i}$.} Interpretation: Number of successes out of $n$ independent Bernoulli trials each with probability of success $p$}
+\item{\textbf{If $X \sim \textrm{Geometric}(p)$, then $\textrm{range}(X) = \mathbb{N}_{> 0}$ and $\textrm{p}_X(i) = (1-p)^{i-1}p$ and $\neg \textrm{F}_X(i) = (1-p)^i$.} Interpretation: Number of independent Bernoulli trials (each with probability of success $p$) until the first success (hence the 1 indexing as at least one trial must be required)}
+\item{\textbf{If $X \sim \textrm{Poisson}(\lambda)$, then $\textrm{range}(X) = \mathbb{N}$ and $\textrm{p}_X(i) = e^{-\lambda}\frac{\lambda^i}{i!}$.} Interpretation: Number of events per unit time where the average number of events per unit time is $\lambda$}
+\end{itemize}
+\subsection{Multiple Variables}
+\begin{itemize}
+\item{\textbf{Joint probability mass function of random variables $X$ and $Y$ = $\textrm{p}_{X, Y}(x,y) = \textrm{P}(X=x \cap Y=y$)}}
+\item{Proposition: $\textrm{p}_X(x) = \sum_y \textrm{p}_{X, Y}(x,y)$\\
+Proof: Recall that $\{Y = y\}$ is a partition of $\Omega$.\\
+$\textrm{p}_X(x) = P(X = x) = P(X = x \cap \cup_y Y = y) = P(\cup_y (X = x \cap Y = y)) = \sum_y P(X = x \cap Y = y)$ as the sets being unioned are mutually disjoint $= \sum_y \textrm{p}_{X, Y}(x, y)$ by definition
+}
+\item{\textbf{$X \ind Y$ iff $\forall x, y. p_{X, Y}(x, y) = p_{X}(x)p_{Y}(y)$}}
+\end{itemize}
+\subsection{Moments}
+\begin{itemize}
+\item{\textbf{$k^\textrm{th}$ moment of $X = E[X^k] = \sum_x (x^k\textrm{P}(X=x))$}}
+\item{\textbf{Expectation of $X = E[X] = 1^\textrm{st}$ moment of $X$}}
+\item{If $X \sim \textrm{Bernoulli}(p)$, then $E[X] = 1p + 0(1-p) = p$}
+\item{Proposition: If $X \sim \textrm{Poisson}(\lambda)$, then $E[X] = \lambda$\\
+Proof: Recall that the Maclaurin series for $e^x$ is $\sum_{i=0}^\infty \frac{x^i}{i!}$.\\
+$E[X] = \sum_{i=0}^\infty ie^{-\lambda}\frac{\lambda^i}{i!} = 0 + e^{-\lambda}\sum_{i=1}^\infty \frac{\lambda^i}{(i - 1)!} = e^{-\lambda}\lambda\sum_{i=1}^\infty \frac{\lambda^{i - 1}}{(i - 1)!} = e^{-\lambda}\lambda\sum_{i=0}^\infty \frac{\lambda^{i}}{i!} = e^{-\lambda}\lambda e^{\lambda} = \lambda$.
+}
+\item{By the definition of expectation, $E[g(X)] = \sum_x (g(x)\textrm{P}(X=x))$ and so in general $E[g(X)] \neq g(E[X])$}
+\item{\textbf{Theorem: \underline{If $X \ind $Y,} then $E[g(X)f(Y)] = E[g(X)]E[f(Y)]$}. Note that here $g(X)f(Y)$ denotes a random variable of the arithmetic product of $g(X)$ and $f(Y)$ not the Cartesian product of their distributions whereas it will be the Cartesian product in $P_{g(X)f(Y)}$.\\
+Proof:\\
+Lemma: $X \ind Y \Rightarrow g(X) \ind f(Y) \Rightarrow \forall x, y. P_{g(X)f(Y)}(x, y) = P_{g(X)}(x)P_{f(Y)}(y)$\\
+Proof: Exercise\\
+$E[g(X)f(Y)] = \sum_{x \in g(X)}\sum_{y \in f(Y)}(g(X)f(Y)\textrm{P}_{g(X)f(Y)}(x,y)) =$\\
+$\sum_{x \in g(X)}\sum_{y \in f(Y)}(g(X)f(Y)\textrm{P}_{g(X)}(x)P_{f(Y)}(y)) =\\$
+$\sum_{x \in g(X)}(g(x)\textrm{P}_{g(X)}(x)E[f(Y)]) = E[g(X)]E[f(Y)])$.\\
+Corollary: $E[XY] = E[X]E[Y]$
+}
+\item{\textbf{Theorem (Linearity of expectation): $E[g(X)+f(Y)] = E[g(X)]+E[f(Y)]$} irrespective of whether $X \ind $Y.\\
+Proof: $E[g(X)+f(Y)] = \sum_{x \in g(X)}\sum_{y \in f(Y)}((g(X)+f(Y))\textrm{P}_{g(X)f(Y)}(x,y)) = \sum_{x \in g(X)}\sum_{y \in f(Y)}(g(X)\textrm{P}_{g(X)f(Y)}(x,y)) +$\\
+$\sum_{y \in f(Y)}\sum_{x \in g(X)}(f(Y)\textrm{P}_{g(X)f(Y)}(x,y)) =$\\
+$\sum_{x \in X}(g(X)\textrm{P}_{X}(x)) + \sum_{y \in Y}(f(Y)\textrm{P}_{Y}(y)) = E[g(X)]+E[f(Y)]$\\
+Corollary: $E[X+Y] = E[X]+E[Y]$
+}
+\item{\textbf{Proposition: If $X \sim \textrm{Binomial}(n, p)$, then $E[X] = np$}\\
+Proof: Consider a family of i.i.d. random variables $Y_i \sim \textrm{Bernoulli}(p) \; \forall i \in [n]$. Deduce that then $X = \sum_{i \in [n]} Y_i$. By linearity of expectation, $E[X] = \sum_{i \in [n]} E[Y_i] = np$.
+}
+\item{\textbf{Theorem: Let $F_i$s partition $\Omega$. Then, $E[X] = \sum_{i \in [n]}E[X | F_i]\textrm{P}(F_i)$}\\
+Proof: $E[X] = \sum_{x \in X}x\textrm{P}_X(x) = \sum_{x \in X}x(\sum_{i \in [n]}\textrm{P}_{X | F_i}(x)\textrm{P}(F_i)) =$\\
+$\sum_{i \in [n]}\sum_{x \in X}x\textrm{P}_{X | F_i}(x)\textrm{P}(F_i) = \sum_{i \in [n]}\textrm{P}(F_i)\sum_{x \in X}x\textrm{P}_{X | F_i}(x) =$\\
+$\sum_{i \in [n]}\textrm{P}(F_i)E[X | F_i]$\\
+Corollary: $E[X] = E[X | A]\textrm{P}(A) + E[X | \neg A]\textrm{P}(\neg A)$
+}
+\item{\textbf{Proposition: If $X \sim \textrm{Geometric}(p)$, then $E[X] = \frac{1}{p}$}\\
+Proof: Consider $A$ = first trial is a failure.\\
+Then, $E[X] = E[X|A]P(A) + E[X|\neg A]P(\neg A)$. If $\neg A$ has occurred, it has taken exactly one trial to get a success; thus $E[X|\neg A] = 1$. As trials are independent the expected number of remaining trials after a failure is $E[X]$; thus, $E[X|A] = E[X] + 1$ as we have already had 1 trial.\\
+Thus, $E[X] = (E[X]+1)(1-p)+(1)(p) = (1-p)E[X]+1-p+p = E[X] -pE[X] + 1$. Thus, $pE[X] = 1$ as required.\\
+Alternative proof: $E[X] = \sum_{i=1}^\infty i(1-p)^{i-1}p = p\sum_{i=1}^\infty i(1-p)^{i-1} = p\sum_{i=1}^\infty \frac{\textrm{d}}{\textrm{d}{p}}((1-p)^i) = p\frac{\textrm{d}}{\textrm{d}{p}}(\sum_{i=1}^\infty (1-p)^i) = p\frac{\textrm{d}}{\textrm{d}{p}}(\frac{1}{1-(1-p)}) = p\frac{\textrm{d}}{\textrm{d}{p}}(\frac{1}{p}) = p\frac{1}{p^2} = \frac{1}{p}$.
+}
+\item{Proposition: If $X \sim \textrm{Geometric}(p)$, then $E[X^2] = \frac{2-p}{p^2}$\\
+Proof: Consider $A$ = first trial is a failure.\\
+Then, $E[X^2] = E[X^2|A]P(A) +E[X^2|\neg A]P(\neg A) =$\\
+$E[(X+1)^2](1-p) + 1^2p = (1-p)[E[X^2]+2E[X]+1] + p =$\\
+$(1-p)[E[X^2]+\frac{2+p}{p}] + p$\\
+$pE[X^2] = \frac{2+p}{p} - \frac{p(2+p)}{p} + \frac{p(p)}{p} = \frac{2+p-2p-p^2+p^2}{p} = \frac{2-p}{p}$ as required
+}
+\item{\textbf{$Var(X)$ = variance of $X$ $= E[(X-E[X])^2]$}}
+\item{\textbf{Proposition: $Var(X) = E[X^2] - E[X]^2$}\\
+Proof: $Var(X) = E[(X-E[X])^2] = E[X^2-2XE[X]+E[X]^2] =$\\
+$E[X^2+(-2E[X])X+(E[X]^2)] = E[X^2]-2E[X]E[X]+E[X]^2 =$\\
+$E[X^2]-2E[X]^2+E[X]^2 = E[X^2]-E[X]^2$
+}
+\item{\textbf{Proposition: If $X \sim \textrm{Geometric}(p)$, then $Var(X) = \frac{1-p}{p^2}$}\\
+Proof: $Var(X) = E[X^2] - E[X]^2 = \frac{2-p}{p^2} - \left(\frac{1}{p}\right)^2 = \frac{1-p}{p^2}$
+}
+\item{\textbf{Theorem: \underline{If $X \ind Y$,} then $Var(X+Y) = Var(X)+Var(Y)$}\\
+Proof: $Var(X+Y) = (E[(X+Y)^2]) - (E[X+Y]^2) = $\\
+$(E[X^2] + 2E[XY] + E[Y^2]) - (E[X]^2 + 2E[X]E[Y] + E[Y]^2)$.\\
+As $X \ind Y$, E[XY] = E[X]E[Y].\\
+Thus, $Var(X+Y) = E[X^2] - E[X]^2 + E[Y^2] - E[Y]^2 = Var(X)+Var(Y)$ as required\\
+Corollary: If $k$ is a constant, then $Var(X+k) = Var(X)$
+}
+\item{\textbf{Proposition: If $k$ is a constant, then $Var(kX) = k^2Var(X)$}\\
+$Var(kX) = E[k^2X^2] - E[kX]^2 = k^2E[X^2] - k^2E[X]^2 = k^2Var(X)$
+}
+\item{\textbf{Proposition: If $X \sim \textrm{Binomial}(n, p)$, then $Var(X) = np(1-p)$}\\
+Proof: $X = \sum_{i \in [n]} X_i$ where $X_i \sim \textrm{Bernoulli}(p)$.\\
+$Var(X_i) = E[(X_i)^2] - E[X_i]^2 = p - p^2 = p(1-p).$\\
+As $X_i$s are independent, $Var(X) = \sum_{i \in [n]}Var(X_i) = np(1-p)$
+}
+\end{itemize}
+\subsection{Tails}
+\clearpage
+\section{Continuous Random Variables}
+\subsection{Single Variables}
+\begin{itemize}
+\item{\textbf{$\textrm{p}_X(i) =$ probability density function (pdf) of $X \neq \textrm{P}(X = i)$)}}
+\item{\textbf{If $X \sim \textrm{Exp}(\lambda)$, then $\textrm{range}(X) = \mathbb{N}$ and $\textrm{p}_X(i) = \lambda e^{-\lambda i}$.} Interpretation: Waiting interval between events (distributed $\textrm{Poisson}(\lambda)$) per unit time}
+\end{itemize}
+\clearpage
+\subsection{Multiple Variables}
+\subsection{Poisson Processes}
+\clearpage
+\section{(Discrete) Markov Chains}
+\clearpage
+\section{Estimators}
+\subsection{Evaluation}
+\subsection{Maximum Likelihood Estimation (MLE)}
+\end{document}
