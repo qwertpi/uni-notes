@@ -49,6 +49,7 @@ Images copied from module materials have been removed for copyright reasons.
 - [External resource (Webpage): Everything you need to know about pointers in C by Peter Hosey](https://boredzo.org/pointers/)  
 #### CS255: Artificial Intelligence
 - [CS255 Notes](Y2/CS255.pdf)  
+- [External resource (Academic publication): Experiments on the Mechanization of Game-Learning by Donald Michie](https://people.csail.mit.edu/brooks/idocs/matchbox.pdf)  
 #### CS258: Database Systems
 - [CS258 Notes](Y2/CS258.pdf)  
 - [External resource (Website): SQL Reference by w3resource](https://www.w3resource.com/sql/tutorials.php)  
