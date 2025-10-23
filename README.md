@@ -39,7 +39,7 @@ Images copied from module materials have been removed for copyright reasons.
 - [CS140 Quiz](https://app.studius.ai/decks/c93c2a144d16e44f9b4fa6ab76ffcf5e?invite=UKtFiMdOcZQst3yCpqAznIb5aag1)  
 #### CS141: Functional Programming
 - [CS141 Notes](Y1/CS141.pdf)  
-- [External resource (Video): Haskell is useless by Simon Peyton Jones (tongue in cheek but motivates need for controlled effects)](https://www.youtube.com/watch?v=iSmkqocn0oQ)  
+- [External resource (Video): Haskell is useless by Simon Peyton Jones \[need for controlled effects\]](https://www.youtube.com/watch?v=iSmkqocn0oQ)  
 #### IB104: Mathematical Programming 1
 - [IB104 Notes](Y1/IB104.pdf)  
 - [External resource (Video): Simplex Algorithm: What's actually going on by TLMaths](https://www.youtube.com/watch?v=pWeEz3O-ZRg)  
@@ -68,6 +68,7 @@ Images copied from module materials have been removed for copyright reasons.
 - [CS261 Notes](Y2/CS261.pdf)  
 - [UML Quiz](https://app.studius.ai/decks/d1a5bafe5cbaf9f6c373d61bf21b131f?invite=UKtFiMdOcZQst3yCpqAznIb5aag1)  
 - [External resource (Website): The Catalog of Design Patterns by Alexander Shvets](https://refactoring.guru/design-patterns/catalog)  
+- [External resource (Blogpost): Universal Credit is a model for how to do government right by James O'Malley \[agile > waterfall\]](https://takes.jamesomalley.co.uk/p/universal-credit-is-a-model-for-govt)  
 #### CS262: Logic and Verification
 - [CS262 Notes](Y2/CS262.pdf)  
 - [External resource (Book/Blog): Learn Prolog Now! by Patrick Blackburn, Johan Bos, and Kristina Striegnitz](https://www.let.rug.nl/bos/lpn//lpnpage.php?pageid=online)  
@@ -100,6 +101,7 @@ Images copied from module materials have been removed for copyright reasons.
 - [CS352 Quiz](https://app.studius.ai/decks/9a957e3ffa81ccf0f5f084fa33b2cba5?invite=UKtFiMdOcZQst3yCpqAznIb5aag1)  
 - [External resource (Blogpost): What is Scrumban? by Corey Ladas](https://agilealliance.org/scrumban/)  
 - [External resource (Video): Scrum to Scrumban in 6 Steps by Gary Straughan](https://www.youtube.com/watch?v=fgT4AaKcBUA)  
+- [External resource (Blogpost): Why fixing government tech is a nightmare (but not impossible) by James O'Malley \[importance of buy-in from stakeholders\]](https://takes.jamesomalley.co.uk/p/why-fixing-government-tech-is-a-nightmare)  
 - [External resource (Book): Effective Project Management: Traditional, Agile, Extreme, Hybrid by Robert K. Wysocki](https://pugwash.lib.warwick.ac.uk/record=b3756274)  
 - [External resource (Book): Toyota Production System: Beyond Large-Scale Production by Taiichi Ohno](https://pugwash.lib.warwick.ac.uk/record=b1211894)  
 - [External resource (Book): Don't Park Your Brain Outside: A Practical Guide To Improving Shareholder Value with SMART Management by Francis T. Hartman](https://archive.org/details/dontparkyourbrai00fran)  
