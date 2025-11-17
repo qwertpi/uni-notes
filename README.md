@@ -1,11 +1,7 @@
-# warwick-notes
+# uni-notes
 
-Yet another set of Warwick Computer Sciences notes!  
+Yet another set of Warwick/Edinburgh Computer Sciences notes!  
 My revision materials for the modules I took.  
-
-## Tip jar
-You are all probably fellow broke students but just in case anybody is feeling particularly kind:  
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E61FWEAC)
 
 ## Disclaimers
 
@@ -113,6 +109,15 @@ Images copied from module materials have been removed for copyright reasons.
 #### CS359: Computational Social Choice
 - [CS359 Notes](Y3/CS359.pdf)  
 - [External resource (Academic publication): Justified Representation in Approval-Based Committee Voting by Haris Aziz, Markus Brill, Vincent Conitzer, Edith Elkind, Rupert Freeman, and Toby Walsh](https://arxiv.org/abs/1407.8269)  
+### MSc (2025/26)
+#### CNS: Computational Neuroscience
+Coming soon
+#### DS: Distributed Systems
+Coming soon
+#### IQC: Introduction to Quantum Computing
+Coming soon
+#### PBI: Programming for Biomedical Informatics
+Coming soon
 ### Informally studied
 #### CS275: Probability and Statistics (2024/25 in-person lectures)
 - [CS275 Notes (WIP)](Misc/CS275.pdf)  
