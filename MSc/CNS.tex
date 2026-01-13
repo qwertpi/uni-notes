@@ -1,0 +1,386 @@
+\documentclass[20pt,a4paper,landscape]{extarticle}
+\usepackage[margin=1.25in]{geometry}
+\usepackage{placeins}
+\usepackage{latexsym}
+\usepackage{marvosym}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[UKenglish]{babel}
+\usepackage[UKenglish]{isodate}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{titletoc}
+\usepackage{listings}
+\usepackage{dsfont}
+\usepackage{changepage}
+\usepackage{tikz}
+\usepackage{derivative}
+\usetikzlibrary{arrows.meta, mindmap, trees, shapes.geometric, positioning, matrix}
+\lstset{
+    basicstyle=\ttfamily,
+    mathescape
+}
+\PassOptionsToPackage{hyphens}{url}
+\usepackage{xurl}
+\input{glyphtounicode}
+\pdfgentounicode=1
+\usepackage[all]{nowidow}
+\usepackage{hyperref}
+\hypersetup{
+        colorlinks,
+        citecolor=black,
+        filecolor=black,
+        linkcolor=black,
+        urlcolor=black
+}
+\usepackage[protrusion=true,expansion=true]{microtype}
+\newcommand{\ind}{\perp\!\!\!\!\perp}
+\newcommand{\Obj}{\textrm{Obj}}
+\renewcommand{\th}[1]{#1^\textrm{th}}
+\let\max\relax
+\DeclareMathOperator*{\max}{max\:}
+\let\min\relax
+\DeclareMathOperator*{\min}{min\:}
+\DeclareMathOperator*{\argmax}{arg\,max\:}
+\DeclareMathOperator*{\argmin}{arg\,min\:}
+\begin{document}
+\tableofcontents
+\clearpage
+\begin{flushleft}
+\section{Mathematical Foundations}
+\subsection{Common Maclaurin series}
+\begin{itemize}
+\item $e^x = 1 + x + ...$
+\item $\ln(1+x) = 0 + x + ...$
+\item $(1+x)^a = 1 + ax + ...$
+\end{itemize}
+\subsection{Differential equations}
+\begin{itemize}
+\item \textbf{Proposition (first order homogeneous ode): \boldmath$\odv{x}{t} = ax \Rightarrow x(t) = x_0e^{at}$ where \boldmath$x_0 = x(0)$}\\
+Proof: $\odv{x}{t} = ax \Rightarrow \frac{1}{x}\odif{x} = a\odif{t} \Rightarrow \ln |x| = at + C \Rightarrow x = e^Ce^{at}$.\\
+Finally, $x(0) = e^Ce^0 = e^C$
+\item \textbf{Proposition (Euler's method for first order ODE): Let \boldmath$\odv{x}{t} = f(t, x)$. Then, \boldmath$x(t + h) \approx x(t) + f(t, x(t))h$}. This provides an iterative process starting from $x(0)$ (or any known point)\\
+Intuition: Taking a step of size $h$ along the tangent line is an approximation to staying on the curve\\
+Proof: Consider the Taylor series for $x$ around $t$: $x(u) = x(t) + f(t, x(t))(u - t) + ... \approx x(t) + f(t, x(t))(u - t)$.\\
+Thus, $x(t + h) \approx x(t) + f(t, x(t))(h)$
+\item \textbf{Proposition (first order non-homogeneous ode) (worth memorising): Let \boldmath$\odv{x}{t} = ax +f(t)$. Then, \boldmath$x(t) = x_0e^{at} + e^{at}\int_0^t e^{-a\tau}f(\tau)\odif{\tau}$}. However, if this integral does not have a nice solution then we are back to Euler's method\\
+Proof: First introduce the integrating factor, $\odv{x}{t} = ax +f(t) \Rightarrow$\\
+$\exp(-at)\odv{x}{t}-\exp(-at)ax = \exp(-at)f(t)$.\\
+Then note that $\odv{}{t}\left(\exp(-at)x\right) = -ax\exp(-at)+\exp(-at)\odv{x}{t}$. Thus (simultaneously doing a change of variable for later clarity), $\odv{}{\tau}\left(\exp(-a\tau)x\right) = \exp(-a\tau)f(\tau) \Rightarrow$
+$\int_0^t \odv{}{\tau}\left(\exp(-a\tau)x\right) \odif{\tau} = \int_0^t \exp(-a\tau)f(\tau) \odif{\tau} \Rightarrow$\\
+$\left[\exp(-a\tau)x\right]_{0}^t = \int_0^t \exp(-a\tau)f(\tau) \odif{\tau} \Rightarrow$\\$
+\exp(-at)x = x_0 + \int_0^t \exp(-a\tau)f(\tau) \odif{\tau} \Rightarrow$\\
+$x = \exp(at)x_0 + \exp(at)\int_0^t \exp(-a\tau)f(\tau) \odif{\tau}$ as required\\
+\item Proposition (first order non-homogeneous ode with matrix coefficients): Let $x, u(t)$ be vectors and $W$ be a matrix. Then, $\odv{x}{t} = Wx + u(t) \Rightarrow x(t) = x_0e^{Wt} + e^{Wt}\int_0^t e^{-W\tau}u(\tau)\odif{\tau}$ where $e^{Wt} = \sum_{i=0}^\infty \frac{W^it^i}{i!}$\\
+Proof sketch: By McLaurin series, $e^x = \sum_{i=0}^\infty \frac{x^k}{k!}$
+\end{itemize}
+\clearpage
+\subsection{Statistics}
+\begin{itemize}
+\item {\boldmath$\langle X \rangle = E[X]$}
+\item The Poisson distribution describes the number of events $N$ per time window $T$ from a process that generates events independently at random with a constant rate $r$. $\Pr(N = k) = \frac{(rT)^k\exp(-rT)}{k!}$
+\item For a Poisson distribution, {\boldmath$rT = \langle N \rangle = \textbf{Var}(N)$}. Moreover, as $rT$ increases, the shape of Poisson approaches that of Gaussian (with $\mu = \sigma^2 = rT$)
+\item \textbf{Fano factor (F) $=$ $\frac{\left\langle \left[X - \langle X \rangle\right]^2 \right\rangle}{\langle X \rangle}$ \boldmath$=$ \boldmath$\frac{\textrm{Var}}{\mu}$. \boldmath$F=1$ is necessary but not sufficient for follows the Poisson distribution}
+\clearpage
+\item For a Poisson process with $T$ divided into sufficiently small bins of uniform size $\Delta t \ll \frac{1}{r}$, the number of events in any bin follows a Bernoulli distribution (i.e. $0/1$-valued with $\Pr(1) = p$) with $p=r\Delta t\exp(-r \Delta t) \approx r \Delta t$
+\item \textbf{An inhomogeneous Poisson process extends a Poisson process with a time-varying rate \boldmath$r(t)$}, but still has the events at each point in time independent of each other. Everything works the same as before at each point in time
+
+\end{itemize}
+\clearpage
+\section{Biophysics}
+\subsection{Ionic current flow}
+\begin{itemize}
+\item \textbf{Reversal potential = the voltage at which the chemical driving force} (flow from high concentration to low concentration) \textbf{and electrical driving force} (opposite charges repel) are in equilibrium
+\item \textbf{At the reversal potential, there is no \underline{net} current flow} ---
+ within each ionic species there is likely a net current flow, it is merely the case the current flows of all the ions cancel out overall
+\item \textbf{Nernst equation: Let \boldmath$E$ = reversal potential, \boldmath$R$ = universal gas constant, \boldmath$F$ = Faraday's constant, \boldmath$T$ = temperature of system, \boldmath$z$ = charge per ion. Then, \boldmath$E = \frac{RT}{zF} \ln(\frac{\textrm{\#[ion outside the cell]}}{\textrm{\#[ion inside the cell]}})$}.\\
+That is that for a system at a fixed temperature (and naturally with a fixed charge per ion), $E \propto \ln(\textrm{ratio of \# ions outside the cell to \# ions inside the cell})$
+\item \textbf{Resting potential = reversal potential for a system where multiple species of ion are present}
+\item \textbf{Goldman-Hodgkin-Katz equation: Let \boldmath$E_m$ = resting potential, \boldmath$P_i$ = permeability of membrane to ion $i$, \boldmath$R$ = universal gas constant, \boldmath$F$ = Faraday's constant, \boldmath$T$ = temperature of system. Then, \boldmath$E_m = \frac{RT}{F} \ln(\frac{\sum_i P_i\textrm{\#[ion outside the cell]}}{\sum_i P_i(sgn(z_i))\textrm{\#[ion inside the cell]}})$} --- note that the sums are inside the fraction, summing the individual fractions would give a different result. In particular, this way we still have that $E \propto \ln(\textrm{ratio of \# ions outside the cell to \# ions inside the cell})$ for positively charged ions (and $E \propto -\ln(\textrm{ratio of \# ions outside the cell to \# ions inside the cell}) =$\\$ \ln(\textrm{ratio of \# ions inside the cell to \# ions outside the cell})$ for negatively charged ions)
+\item \textbf{\boldmath$g = \frac{1}{R}$, thus (as \boldmath$V=IR$) \boldmath$I=gV$. \boldmath$g$ is called the conductance} --- $V$ is the potential \underline{difference} driving the current i.e. $V_{p} -  E_m$ where $E_m$ is the resting potential and $V_p$ is the membrane potential
+\item Proposition: A system with multiple ions is equivalent to a system with a single pseudo ion with membrane conductance $g_m = \sum_i g_i$ and resting potential $E_m = \frac{\sum_i g_iE_i}{g_m}$\\
+\textbf{Proof: Let \boldmath$I_m$ be the net current flow through the membrane, and \boldmath$V_m$ be the membrane potential. Then, \boldmath$I_m(V_m) =$\\$ \sum_i I_i(V_m) = \sum_i g_i(V_m - E_i) = \sum_i g_iV_m - \sum_i g_iE_i$.\\
+$E_m$: At \boldmath$V_m=E_m$, \boldmath$I_m(E_m) = 0$ and so \boldmath$E_m = \frac{\sum_i g_iE_i}{\sum_i g_i}$.\\
+\boldmath$g_m$: \boldmath$I_m = \sum_i g_iV_m - \sum_i g_iE_i = \sum_i g_iV_m - \left(\sum_i g_i\right)E_m = \left(\sum_i g_i\right)\left(V_m - E_m\right) = g_m\left(V_m - E_m\right)$
+}
+\item \textbf{Limitation of this model: \boldmath$V=IR$ is only a linear approximation, real-life systems are non-ohmic!}
+\end{itemize}
+\subsection{Passive membrane potential dynamics}
+\begin{itemize}
+\item The membrane potential controls the membrane currents, but also the membrane currents affect the membrane potential
+\item The cell can be modelled as a capacitor as there are charges (ions) either side of an insulator (cell membrane) that flow between the sides (membrane currents) until an equilibrium is reached
+\item As $Q=CV$ and $I = \odv{Q}{t}$, {\boldmath$I = C\odv{V}{t}$} (under the assumption that $C$ does not vary with time)
+\item Membrane potential dynamics equation: Let $C_m$ be the capacitance of the cell membrane, $V$ be the membrane potential, and $I_{ext}$ be current corresponding to inputs from other neurons (or experimentally induced currents). Then, $C_m\odv{V}{t} = -I_m = -g_m(V - E_m) + I_{ext}$
+\item {\boldmath$V_\infty$ \boldmath$=$ \textbf{steady state solution} \boldmath$=$ \textbf{value of }\boldmath$V$\textbf{ (and }\boldmath$t$\textbf{) for which }\boldmath$\odv{V}{t} = 0$}
+\item Proposition: The membrane potential dynamics ODE has an analytical solution, namely $V(t) = E_m + \exp\left(-\frac{t}{\tau_m}\right)\left(V(0) - E_m \right) + \frac{1}{g_m\tau_m}\int_0^t \exp\left(\frac{t'-t}{\tau_m}\right)I_{ext}(t')\odif{t'}$ where $\tau_m = \frac{C_m}{g_m}$\\
+Proof: Exercise (use formula for first order non-homogeneous ode)
+\item Proposition: The steady state solution to the membrane potential dynamics ODE (for constant $I_{ext}$) is $V_\infty = E_m + \frac{I_{ext}}{g_m}$\\
+Proof: $0 = -g_m(V_\infty - E_m) + I_{ext} \Rightarrow V_\infty = E_m + \frac{I_{ext}}{g_m}$
+\item \textbf{This passive membrane model is a reasonable model for the small fluctuations in membrane potential caused by small input currents, but does not capture the fast dynamics seen in action potentials}
+\end{itemize}
+\subsection{Active membrane potential dynamics}
+\subsubsection{Action Potentials}
+\begin{itemize}
+\item \textbf{In an action potential, the opening and closing of ion channels alters the membrane permeability and so the conductance and so the resting potential. However, membrane conductances were modelled as constant in the passive membrane model}
+\clearpage
+\item \textbf{Action potential: Ion channels are voltage gated. Sodium channels and potassium channels are both closed at the resting potential. If the membrane potential is increased enough, then the sodium channels will open creating positive feedback allowing $Na^+$ ions to chemically diffuse into the cell and so the membrane potential to further increase. Once sufficient positive feedback has occurred, the potassium channels will open allowing $K^+$ ions to chemically diffuse out of the cell (negative feedback) and the sodium channels will re-close (stopping the positive feedback)}. The membrane potential will then fall back to the resting potential with a slight overshoot \textit{(due to complicated aspects to do with potassium channels)} into being more negative than the membrane potential before decaying back up to the membrane potential
+\clearpage
+\item Although the percentage change in membrane potential (e.g. from a resting potential of $-70mV$ to a spike of $+40mV$) is large, the membrane potential is small and so only a few ions need to move to cause this change. Thus, neurons do not typically run out of ions (also sodium-potassium pumps provide active transport etc)
+\end{itemize}
+\subsubsection{Hodgkin-Huxley Model}
+\begin{itemize}
+\item \textbf{Hodgkin-Huxley Model: \boldmath$C_m\odv{V(t)}{t} = -g_{leak}\left[V(t) - E_{leak}\right] -g_{Na}(V, t)\left[V(t) - E_{Na}\right] -g_{K}(V, t)\left[V(t) - E_{K}\right] + I_{ext}$}, where there are specific values given to $g_{Na}(V, t), g_{K}(V, t)$ (which give rise to 2 and 1 further (coupled) ODEs respectively) but all that is detailed below
+\item The leak term represents the combined effect of all ion channels with fixed conductances (mostly chloride), but the other ion channels can no longer easily be rolled up into a single $g_m$ in this way as their conductances are no longer constant but rather a function of the current system state
+\item We can use a Markov chain to model the opening and closing of ion channels at each voltage in order to obtain expressions for $g_{Na}(V, t)$ and $g_{K}(V, t)$. Let $A, A^\ast$ be the fractions of ion channels for some species of ion that are closed or open respectively (deduce that $A + A^\ast \equiv 1$). Let $\alpha, \beta$ be the probabilities (at the current value of $V$) of a closed ion channel opening or an opened ion channel closing respectively.\\
+Then, \textbf{conductance for this ion species = conductance for this ion species when all channels are open (a constant) \boldmath$\times A^\ast$}. Moreover, {\boldmath$\odv{A^\ast}{t}$} $=$ closed ion channels that open $-$ open ion channels that close $=$ {\boldmath$\alpha\left(1 - A^\ast \right) -\beta A^\ast$}.
+\item Proposition: The ion channel Markov model has solution $A^\ast(t) = \frac{\alpha}{\alpha + \beta} + \exp((\alpha + \beta)(-t))\left(A^\ast_0 - \frac{\alpha}{\alpha + \beta}\right)$\\
+Proof: Exercise (use formula for first order non-homogeneous ode)
+\clearpage
+\item In reality the probabilities vary with voltage (which varies with time), and each individual ion channel has multiple gates all of which must be open for the channel to be open. If we replace $\alpha$, $\beta$ with $\alpha(V), \beta(V)$ (and so forfeit our analytical solution), then we can view our Markov model as a model of the proportion of open gates. As our proportions are really probabilities, \textbf{we can multiply the gate figures from the Markov model (as these are independent events) to obtain a new figure for the proportion of open channels}
+\item \textbf{For potassium there are 4 identical gates} (which close at low potential and open at high potential). \textbf{Whereas for sodium, there are 3 identical gates} (which close as low potential and open at high potential) \textbf{and one gate which works the opposite way} (opens at low potential and closes at high potential); this is what allows sodium channels to open when the potential increases but close again once the potential gets too high, as the channel is only open for the intermediate potentials at which both types of gate are open.
+\end{itemize}
+\subsubsection{Leaky Integrate and Fire Model}
+\begin{itemize}
+\item The Hodgkin-Huxley model has no known analytical solution and applying numerical methods can be computationally expensive. Can we create a simpler model that will be less accurate to the underlying biophysics in its implementation but give similar outputs?
+\item \textbf{The leaky integrate and fire model equips the passive membrane dynamics with a threshold reset rule} (if $V(t) \geq V_{threshold}$, then set $V(t) = V_{reset}$ instead) in order to approximate action potentials. We can record the times $t^{(1)}, ...$ at which we use the reset rule, and then calculate the inter-spike interval (time between adjacent spikes) $T$ (or equivalently the firing rate $f=\frac{1}{T}$). Leaky integrate and fire gives spikes of the wrong shape (as they decay instantly), but despite this gives a good approximation of the firing rate.
+\item Lemma: For constant $I_{ext}$, the membrane potential equation (i.e. LIF without the threshold) has analytical solution $V(t) = E_m + \exp\left(\frac{-t}{\tau_m}\right)\left(V(0) - E_m\right) + \frac{I_{ext}}{g_m}\left(1 - \exp\left(\frac{-t}{\tau_m}\right)\right)$\\
+Proof: Exercise (evaluate integral of (constant) $I_{ext}$ in analytical solution of membrane potential equation)
+\item Proposition: Let $I_{ext}$ be constant. $f = 0$ if (and only if) $I_{ext} \leq g_m(V_{threshold} - E_m)$ \\
+Proof sketch:\\
+By the lemma, $V(t) = E_m + \frac{I_{ext}}{g_m} + \exp\left(\frac{-t}{\tau_m}\right)\left(V(0) - E_m - \frac{I_{ext}}{g_m}\right)$. Recall that $\forall t \geq 0;\:0 < \exp\left(\frac{-t}{\tau_m}\right) \leq 1$ and is a decreasing function. Assume we are in the situation where the membrane potential is increasing over time (ie $V(0) - E_m - \frac{I_{ext}}{g_m} < 0$ i.e. $\frac{I_{ext}}{g_m} > V_0 - E_m$).\\
+Then, $\forall t (\geq 0);\:V(t) < E_m + \frac{I_{ext}}{g_m}$.\\
+Thus, $f = 0 \Leftrightarrow \forall t (\geq 0); V(t) < V_{threshold} \Leftrightarrow I_{ext} \leq g_m(V_{threshold} - E_m)$
+\item Proposition: Let $I_{ext}$ be constant. If $I_{ext} > g_m(V_{threshold} - E_m)$ (i.e. $f \neq 0$), then $T = \tau_m \ln\left(1 + \frac{V_{threshold} - V_{reset}}{\frac{I_{ext}}{g_m} - \left(V_{threshold} - E_{m}\right)}\right)$ (recall that $\tau_m = \frac{C_m}{g_m}$)\\
+Proof: Consider any $x$ for which $V(x) = V_{reset}$. Then, T is the value for which $V(x + T) = V_{threshold}$. Using the lemma, $\frac{V(x + T) - \left(E_m + \frac{I_{ext}}{g_m}\right)}{V(x) - \left(E_m + \frac{I_{ext}}{g_m}\right)} = \frac{\exp\left(\frac{-(x+T)}{\tau_m}\right)}{\exp\left(\frac{-x}{\tau_m}\right)}\left(1\right) = \exp\left(\frac{-T}{\tau_m}\right)$. Thus, $T = -\tau_m \ln\left(\frac{V(x + T) - \left(E_m + \frac{I_{ext}}{g_m}\right)}{V(x) - \left(E_m + \frac{I_{ext}}{g_m}\right)}\right) = \tau_m \ln\left(\frac{V_{reset} - \left(E_m + \frac{I_{ext}}{g_m}\right)}{V_{threshold} - \left(E_m + \frac{I_{ext}}{g_m}\right)}\right) = \tau_m \ln\left(1 + \frac{V_{threshold} - V_{reset}}{\frac{I_{ext}}{g_m} - \left(V_{threshold} - E_{m}\right)}\right)$
+\item Proposition: For large $I_{ext}$, $f \propto I_{ext}$\\
+Proof: $T \rightarrow \tau_m \ln\left(1 + \frac{1}{\frac{I_{ext}}{g_m}}\right) \rightarrow \tau_m\frac{1}{\frac{I_{ext}}{g_m}} = \frac{g_m \tau_m}{I_{ext}}$. $f = T^{-1} \rightarrow \frac{I_{ext}}{g_m \tau_m} \propto I_{ext}$
+\end{itemize}
+\subsection{Synapses}
+\begin{itemize}
+\item Synapse = a junction between the axon and dendrite respectively of two neurons
+\item Neurons do not physically connect with each other to exchange signals electrically. Instead, \textbf{signals are propagated chemically through the release of neurotransmitters which diffuse across the synaptic cleft} (synaptic gap) \textbf{and bind to receptors on the cell membrane of the post-synaptic neuron causing it's ion channels to open or close} (excitatory or inhibitory neurotransmitter respectively)
+\item \underline{Ligand-gated (neurotransmitter-gated) ion channels are different to}\\\underline{voltage-gated ion channels}
+\clearpage
+\item \textbf{Dale's principle: Each neuron's axon either releases only excitatory or only inhibitory neurotransmitters into all the synapses it is the pre-synaptic neuron to} --- turned out not to always be true, but it often is true and it is convenient to pretend it always is
+\item Recall the membrane current equation $I_m = g_m(V_m - E_m)$ and how we incorporated the time-varying conductances of voltage-gated ion channels. For the membrane current through ligand-gated ion channels (synaptic current) we have $I_{syn}(t) = g_{syn}(t)(V(t) - E_{syn})$
+\item The simplest model for the synaptic conductance is to use the Dirac delta function to have conductance only at a single instant in time, but this is not very realistic
+\item The exponential model of synaptic conductance has it attain its maximum instantaneously (like Dirac) but then decay exponentially. Let $H(t)$ be the Heaviside step function $H(t) = \mathds{1}[t \geq 0]$. $g_{syn}(t) = \overline{g}_{syn}\exp\left(\frac{-(t - t^{(i)})}{\tau_{syn}}\right)H(t - t^{(i)})$ where $t^{(i)}$ is the time of the most recent presynaptic spike
+\item The exponential model can be made to fit a wider range of neurotransmitters by introducing extra parameters by breaking the falloff term into a weighted sum of two terms (``fast'' component and ``slow'' component) and multiplying in a (single) exponential onset time as well.\\
+$g_{syn}(t) = \overline{g}_{syn}H(t - t^{(i)})\left(1-\exp\left(\frac{-(t - t^{(i)})}{\tau_{rise}}\right)\right)$\\$\left(a\exp\left(\frac{-(t - t^{(i)})}{\tau_{fast}}\right) + \left(1-a\right)\exp\left(\frac{-(t - t^{(i)})}{\tau_{slow}}\right)\right)$
+\end{itemize}
+\clearpage
+\section{Spike patterns}
+\subsection{Spike statistics}
+\begin{itemize}
+\item Over short time windows, neurons are reasonably well described by a Poisson distribution ($F=1$). However, over large time windows, spike counts become overdispersed ($F > 1$)
+\item Proposition: If spike times follow a Poisson process, then inter-spike intervals follow an exponential distribution\\
+Proof:\\
+$\Pr(t_{isi} > t)$ = probability that there are zero spikes in the interval [0, t] = $\frac{(rt)^0\exp(-rt)}{0!} = \exp(-rt)$. Thus, $\Pr(t_{isi} \leq t) = 1 - \exp(-rt)$ which matches the CDF of the exponential distribution with $\lambda=r$
+\item The distribution of long inter-spike intervals fit an exponential distribution well. However, (due to the refractory period of neurons (while their membrane potential has dipped below the resting potential after an action potential they are harder to re-fire)) sufficiently short inter-spike intervals are less likely than longer ones which is not what the exponential distribution predicts --- that the time between events fits an exponential distribution reasonably well is actually stronger evidence of the number of events following a Poisson process than the $F=1$
+\end{itemize}
+\subsection{The role of noise}
+\begin{itemize}
+\item Hodgkin-Huxley, and leaky integrate and fire are both good models of the reactions of \underline{individual} biological neurons to constant current injection and both predict regular spiking. Whereas, \underline{populations} of biological neurons generate Poisson spike patterns, so we would like to know how this biophysically arises
+\clearpage
+\item Mean-driven regime = would spike even without noise = regular spiking with minor jitter from noise --- e.g. neurons with constant current injection
+\item Fluctuation-driven regime = only attains threshold potential due to noise = approximately Poisson distributed spiking --- e.g. neurons in the brain
+\begin{figure}[hp]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{meta/CNS/Noisy_Spike_Regimes.png}{}
+\end{center}
+\end{figure}
+\end{itemize}
+\clearpage
+\section{The visual system}
+\subsection{Retina}
+\subsubsection{Photoreceptors}
+\begin{itemize}
+\item Light is detected by photoreceptors (rods and cones). Preliminary processing of the signal from the photoreceptors is performed by bipolar cells followed by retinal ganglion cells, before this ``encoded'' signal is sent down the optic nerve. However, the retina is arranged such that the photoreceptors are at the back of the eye with the bipolar cells then the ganglion cells on top of them! \textit{The gap in the photoreceptors to allow the optic nerve to reach the ganglion cells (the optic disk) is responsible for the natural blind-spot}
+\item Information flow along the optic nerve is uni-directional: \textbf{the retina sends signals to the brain but do not receive feedback from the brain --- this is unusual for a biological neural network}
+\item Rods have high sensitivity, switch off in high light, slowly switch on in dark light, and have no colour specificity. \underline{C}ones have low sensitivity, rapidly switch on in high light, switch off in dark light, and are \underline{c}olor specific (blue, green, red) --- to ``see'' this for yourself, sit in a darkened room and note that it takes a while for your vision to adjust to see anything (rods are slow to activate) and that when it does your vision is essentially greyscale (rods have no colour specificity)
+\end{itemize}
+\subsubsection{Receptive fields}
+\begin{itemize}
+\item \textbf{Retinal ganglion cells come in two types: on-centre off-surround, and off-centre on-surround}. Neuron output for on-centre, off-surround = sum of photoreceptor outputs in centre of receptive field of ganglion cell $-$ sum of photoreceptor outputs in receptive field but outside centre of receptive field. Mutatis mutandis off-centre on-surround
+\item An (on-centre off-surround) receptive field $R(x,y)$ can be modelled as a difference of Gaussians $R(x,y)$ $=$ centre Gaussian - surround Gaussian $=$ $\frac{1}{2\pi \sigma_c^2}\exp(-\frac{(x - c_x)^2 + (y - c_y)^2}{2\sigma_c^2}) - \frac{1}{2\pi \sigma_s^2}\exp(-\frac{(x - c_x)^2 + (y - c_y)^2}{2\sigma_s^2})$ where $c_x, c_y$ are the coordinates of the very centre of the receptive field and $\sigma_c, \sigma_s$ are the centre ``width'' and surround ``width'' respectively
+\item Response (firing rate) $r$ of a neuron with receptive field $R(x,y)$: $r = \iint I(x,y)R(x,y)\,dx\,dy$ (or more accurately some activation function of the result of this integral)
+\item \textbf{Centre-surround receptive fields act as edge detecting (bandpass filters in the language of signal processing of frequencies) convolutional filters} --- extracting the key information from the image in this way before sending it down the optic nerve is important as the optic nerve is heavily limited in the ``bitrate'' it can accurately transmit at without the signal being drowned out by noise
+\end{itemize}
+\subsection{Thalamus}
+\begin{itemize}
+\item \textbf{The thalamus is the part of the brain that receives input from sensory neurons to relay (\underline{but processes prior to relaying}) to specialised cortical areas for further processing}
+\item The visual part of the thalamus is the lateral geniculate nucleus (LGN)
+\item Like the retina, the LGN has centre-surround difference of Gaussian receptive fields
+\item \textbf{Unlike the retina, the LGN receives feedback (from the cortex)}. In fact, there are more recurrent connections from the cortex to the thalamus than connections from the thalamus to the cortex!
+\item \textit{Streams of visual information are segregated: Different types of retinal ganglion cell (e.g. color sensitive vs color insensitive) connect to different parts of the LGN which in turn connect to different layers of the visual cortex}
+\end{itemize}
+\subsection{Primary visual cortex}
+\begin{itemize}
+\item Many neurons in V1 (primary visual cortex) exhibit orientation tuning --- \textbf{detecting the orientation of edges in V1 after detecting the edges themselves in retina and thalamus is directly comparable to the behaviour of the weights we see learnt by CNNs}
+\item \textbf{Simple V1 cells are selective to both orientation and phase (i.e. location). Whereas, complex cells are invariant to phase (only selective to orientation)}
+\item A simple cell can be modelled as having receptive field of a Gabor filter (product of Gaussian and sinusoidal): $R_{simple}(x,y) = \exp\left(-\left(\frac{(x - c_x)^2}{2\sigma_x^2} + \frac{(y - c_y)^2}{2\sigma_y^2}\right)\right)\cos\left(W\left[x \cos(\theta) + y\sin(\theta)\right] - \phi\right)$ where $W$ is the frequency of the sinusoidal, $\theta$ is the preferred orientation, and $\phi$ is the phase shift
+\item Let $r_{complex}, r_{simple}$ be the firing rates of complex and simple cells respectively (and so $r_{simple}(\phi)$ be the convolution of a Gabor filter (with phase shift $\phi$) over the image).\\
+Then, $r_{complex} = \left[r_{simple}(\phi)\right]^2 + \left[(r_{simple}(\phi - \frac{\pi}{2})\right]^2)^2$ (i.e. square of response to Gabor filter with $\cos$ + square of response to Gabor filter with $\sin$) is a good model \textit{--- I don't know how squaring is meant to occur biologically}
+\item In some animals (e.g. most mammals) V1 exhibits a topographic map: neurons with the same orientation preference are clustered together. Whereas, in other animals (e.g. most rodents) neurons are distributed apparently randomly with respect to their orientation selectivity. It is theorised that having a topographic map is only possible if V1 is large enough compared to the retina
+\end{itemize}
+\clearpage
+\section{Coding of information}
+\subsection{Information theory}
+\begin{itemize}
+\item \textbf{\boldmath$h(p(x))$ \boldmath$=$ Surprise of \underline{an outcome} \boldmath$x$ which had probability \boldmath$p(x)$ \boldmath$=$ \boldmath$-\log(p(x))$} --- the base of the logarithm does not matter as long as it is consistent but $\log_2$ is popular for obvious reasons
+\item Proposition: The less likely an outcome is, the more surprising it is\\
+Proof: $\log$ is an increasing function, thus $-\log$ is a decreasing function
+\item Proposition: \textbf{If \boldmath$x$ and \boldmath$y$ are independent observations, then \boldmath$h(p(x,y)) = h(p(x)) + h(p(y))$}\\
+Proof: As $x$ and $y$ are independent, $p(x,y) = p(x)p(y)$. Thus, $h(p(x,y)) = -\log(p(x)p(y)) = -(\log(p(x)) + \log(p(y)))$
+\item \textbf{Entropy of \underline{a distribution} \boldmath$p(X)$ \boldmath$=$ \boldmath$H(p(x))$ \boldmath$=$ expectation of surprise \boldmath$=$ \boldmath$-\sum_x p(x)\log(p(x))$}
+\item \textbf{Mutual information of \underline{two random variables} \boldmath$X, Y$ \boldmath$=$ \boldmath$I(X; y) =$\\
+\boldmath$H(p(Y)) - \langle H(Y|X=x) \rangle_x$} = the amount of variation in Y that \underline{is} coupled to variation in X
+\item Proposition: {\boldmath$I(X;Y) = \sum_{x, y} p(x,y)\log\left(\frac{p(x,y)}{p(x)p(y)}\right)$} --- this is called the KL-divergence between p(x,y) and p(x)p(y)\\
+Proof:\\
+$I(X;Y) = \sum_y -p(y)\log(y) - \langle \sum_y -p(y|x)\log\left(p(y|x)\right) \rangle_x = \sum_{x, y} p(x)p(y|x)\log\left(p(y|x)\right) - \sum_y p(y)\log(y) = \sum_{x, y} p(x, y)\log\left(p(y|x)\right) - \sum_{x, y} p(x, y)\log(p(y)) = \sum_{x, y}\log\left(\frac{p(y|x)}{p(y)}\right) = \sum_{x, y}\log\left(\frac{p(x,y)}{p(x)}\frac{1}{p(y)}\right)$\\
+Corollary: Mutual information is symmetric: $I(y; x) = I(x; y)$
+\item Proposition (data processing inequality): If X influences Y (and Y does not influence X), and Y influences Z (and Z does not influence Y), then $I(X;Z) \leq I(X; Y)$\\
+\textit{Proof: It can be shown that (chain rule for mutual information) $I(X; Z) + I(X; Y | Z) = I(X; Y; Z) = I(X; Y) + I(X; Z | Y)$ for any $X, Y, Z$. In the data processing context $X$ and $Z$ are independent given $Y$, so $I(X; Z | Y) = 0$. Thus, $I(X; Z) + I(X; Y | Z) = I(X; Y)$. Thus, as $I(X; Y | Z) \geq 0$, $I(X; Z) \leq I(X; Y)$ as required}
+\end{itemize}
+\subsection{Efficient coding in the visual system}
+\subsubsection{Retina: Whitening}
+\begin{itemize}
+\item A whitening filter decorrelates a correlated signal into white noise
+\item The retina ought to trade off whitening (encoding information more efficiently) and noise removal (not losing too much information to noise). For the distribution of natural images, whitening is a high pass filter and noise removal is a low pass filter. Indeed, the difference of Gaussian receptive field is a bandpass filter
+\end{itemize}
+\clearpage
+\subsubsection{V1 and beyond: Generative models}
+\begin{itemize}
+\item The retinal ganglion cells removed second-order statistics, but higher-order correlations may remain
+\item We can represent an image as a matrix of pixels that has been flattened into a vector. Each neuron's receptive field then corresponds to a basis vector and its activation to the coefficient in front of that basis vector, where the image is the sum of these weighted basis vectors. An efficient code corresponds to a basis in which the activations are independent of each other
+\item The features learnt by PCA do \underline{not} resemble Gabor filters
+\item A generative model $G$ (corresponds to a set of basis vectors) models data $u$ (an image) as being generated by a set of latent causes $h$ (corresponds to neural activations). If we can store $p(u|h, G)$, then we only need to represent stimuli as their causes $h$ as we will be able to recover the stimulus (result of the causes) $u$
+\end{itemize}
+\subsubsection{V1: Sparse coding models}
+\begin{itemize}
+\item Learning: G = Given a set of stimuli $U$ (but not causes $h$), G is learnt by $G = \underset{G}{\argmax}\left(\langle p(u|G) \rangle_{u \in U}\right)$
+\item \textbf{Inference: A given stimulus \boldmath$u$ is encoded by a given model \boldmath$p(u|h, G)$ through maximum likelihood estimation (\boldmath$h = \underset{h}{\argmax} p(h|u, G)$)}. By Bayes' rule $p(h|u,G) = \frac{p(u|h, G)p(h)}{p(u|G)}$ (and by marginalisation $p(u|G) = \sum_{h'} p(u|h', G)p(h')$)
+\item Generative models describes a family of approaches, it is necessary to chose some particular distribution for $G$. As firing rates are approximately exponentially distributed, sparse-coding (using a sparse distribution (such as the exponential distribution)) is a sensible choice
+\item \textbf{Sparse-coding generative model: Sparse latent causes: \boldmath$p(h_i) = \exp(-|h_i|)$. Independent latent causes: \boldmath$p(h) = \prod_i p(h_i)$. Linear-Gaussian likelihood: \boldmath$p(u|h, B) = \frac{1}{\sqrt{2\pi \sigma^2}}\exp\left(- \frac{1}{2\sigma^2}|u - Bh|^2\right)$} where $B$ is a matrix and $u$, $h$ are vectors
+\item \textbf{For sparse coding, inference is (somewhat) biologically plausible as it can be implemented by hill climbing}: $h^{(t+1)} = h^{(t)} + \epsilon \Delta_h \log(p(h^{(t)} | u, B))$. Moreover, $\log(p(h^{(t)} | u, B)) = -\frac{1}{2\sigma^2}|u - Bh|^2 + \log(-\frac{1}{2\sigma^2})$ and so $\Delta_h \log(p(h^{(t)} | u, B)) = \frac{1}{\sigma^2} B^T\left(u - Bh\right)$. \textbf{This can be interpreted as \boldmath$h$ being the convergent neural activation of V1 in the network where LGN (with neural activation \boldmath$u$) is connected to V1 with weights \boldmath$B^T$ and there are recurrent weights between V1 neurons with weights \boldmath$-B^TB$}
+\item The features learnt by sparse-coding \underline{do} resemble Gabor filters iff images are whitened first (which is what the LGN does in the brain!) (otherwise it degenerates to PCA)
+\end{itemize}
+\subsubsection{V1 and beyond: Predictive coding}
+\begin{itemize}
+\item A hierarchical generative model would allow us to explain why the brain has multiple layers of visual processing (V1, V2, ...)
+\item Intuitively we would expect that (as in a CNN) predictions pass forwards through layers (e.g. V1, V2, ...) from input to output and error signals passes backwards through layers from output to input. However, \textbf{predictive coding posits that predictions flow backwards and errors flow forwards} e.g. if layer 2 tells layer 1 to expect a long bar but level 1 finds a short bar then layer 1 will send an error signal to layer 2
+\clearpage
+\item \textbf{Predictive coding hierarchical generative model} (note not probabilistic)\textbf{: \boldmath$r^{(0)}$ \boldmath$=$ input, \boldmath$r^{(i)} = f\left(U^{(i)}r^{(\underline{i+1})}\right) + n^{(i)}$ where \boldmath$f$ is an activation function, \boldmath$U^{(i)}$ is a matrix (linear map) and \boldmath$n^{(i)}$ is the error term (to be fed forward), learn \boldmath$U^{(i)}$s (or infer $r^{(n)}$) so as to minimize \boldmath$n^{(i)}$s} (e.g. gradient decent)
+\end{itemize}
+\subsection{Population coding}
+\subsubsection{Population decoders}
+\begin{itemize}
+\item Decoding problem: Give a population of neurons with (noisy) responses and a known model for the encoder of inputs into neural responses, predict the input from the responses
+\item Decision theory says that maximum likelihood estimation using Bayes' rule is the optimal decoder, but $\argmax$ is not very biologically plausible
+\item We will demonstrate population decoders through the example of decoding the orientation of a stimulus from the responses of a population of orientation-tuned neurons with known preferred orientations
+\item Winner takes all decoder = preferred orientation of the neuron with the highest firing rate --- easily thrown off by noise, especially in small populations
+\item Population vector decoder $=$ $\arctan\left(\frac{\sum_i r_i \sin(s_i)}{\sum_i r_i \cos(s_i)}\right)$ = weighted average of orientation preferences weighted by their firing rate, making use of polar coordinates as we are working with orientations
+\item \textbf{The population vector models firing rates as a \boldmath$\cos$} (with peak centred at the orientation of the stimulus)\textbf{, but in reality they} (typically) \textbf{are a Gaussian} (albeit with the same peak location) \textbf{so fall off faster}
+\item Proposition: If the population is made up of neurons with Gaussian tuning curves (with uniform width) and independent Poisson spike counts, then the population vector decoder and the $\argmax$ decoder coincide (and so the population vector is an optimal decoder)\\
+Proof sketch:\\
+Let $N$ be the population size. Let $f_i$ be the probability density function of the Gaussian for neuron $i$. Let $n$ be the population spike count. Let $s$ be a stimulus.\\
+$f_i(s) = A_i\exp\left(\frac{-\left(s-s_i\right)^2}{2\sigma^2}\right)$ where $s_i$ is the preferred stimulus of neuron $i$\\
+$p(n|s) = \prod_{i \in [N]} \frac{\left(f_i(s)\right)^{n_i}\exp\left(-f_i(s)\right)}{n_i!}$\\
+max likelihood $\Leftrightarrow$ max log likelihood\\
+$\log\left(p(n|s)\right) = \sum_{i \in [N]} n_i\log\left(f_i(s)\right) -f_i(s) - \log(n_i!)$\\
+Approximate $\sum_i f_i(s)$ as a constant $k$\\
+$\log(p(n|s)) = \sum_{i \in [N]} n_i\log\left(f_i(s)\right) - \log(n_i!) + k = \sum_{i \in [N]} n_i\log(A_i) - n_i\frac{\left(s-s_i\right)^2}{2\sigma^2} - \log(n_i!) + k$\\
+At the max (log) likelihood, $\odv{}{s} = 0$\\
+$\odv{}{s} = \sum_{i \in [N]} \frac{-n_i}{2\sigma^2}\odv{}{s}\left(\left(s-s_i\right)^2\right) = \sum_{i \in [N]} \frac{-n_i}{2\sigma^2}\left(2\left(s-s_i\right)\right) = -\frac{1}{\sigma^2}\sum_{i \in [N]} sn_i - s_in_i$. Thus, $\odv{}{s} = 0 \Rightarrow s = \frac{\sum_{i \in [N] n_i}}{\sum_{i \in [N] n_is_i}}$ $=$ the population vector
+\end{itemize}
+\subsubsection{Fisher information}
+\begin{itemize}
+\item \textbf{Fisher information \underline{of a given stimulus \boldmath$s$} \boldmath$=$ \boldmath$I_F(s)$ = expectation of curvature} (square of first derivate) \textbf{of likelihood function} $=$ $\left\langle \left[\odv{}{s}\left(\log(p(r|s))\right)\right]^2 \right\rangle = -\left\langle \odv[2]{}{s}\left(\log(p(r|s))\right) \right\rangle$
+\item \textbf{Cramer-Rao lower bound (memorise): \underline{If \boldmath$\hat{s}$ is an unbiased estimator for \boldmath$s$} (\boldmath$\langle\hat{s}\rangle - s = 0$), then \boldmath$Var(\hat{s}) \geq \frac{1}{I_F(s)}$}
+\item Proposition: \textbf{For a population of neurons with Gaussian tuning curves, the Fisher information is inversely proportional to the tuning curve width}\\
+Proof: Exercise
+\item Although for 1D stimuli narrower tuning curves are better, for 2D stimuli Fisher information is independent of tuning curve width, and for 3D+ broader tuning curves are better
+\end{itemize}
+\subsubsection{Noise correlations}
+\begin{itemize}
+\item Repeats of the same stimulus ought to give the same response. However, in reality there is noise. The noisy responses of a pair of neurons may be: independent, or positively correlated, or negatively correlated
+\item The component of noise that is parallel to the boundary line improves coding by increasing the separation between the neurons' response patterns
+\item The component of noise that is orthogonal to the boundary line worsens coding by increasing the overlap between the neurons' response patterns
+\item \textbf{A noise correlation is called an information limiting correlation iff its correlation matrix is directly proportional to \boldmath$f'(s)\left(f'\right)^T(s)$. These noises have the effect of translating the tuning curve, which decoders have no choice but to view as a change in stimulus}
+\end{itemize}
+\clearpage
+\section{Networks of neurons}
+\subsection{E-I networks}
+\begin{itemize}
+\item \textbf{A firing rate model only models the average firing rate (over all neurons or over time) instead of individual spike times, this simplifies the model}
+\item \textbf{A firing rate model assumes a constant input current}
+\item Firing rate model: $\tau_m \odv{V_i}{t}=-\left(V_i - E_m\right) + \sum_j w_{ij}\phi(V_j)+u_i(t)$ where $u_i(t)=\frac{I_{ext,i}(t)}{g_{m,i}}$ is the external input to the neuron and $\phi$ is the transfer function. This can be rewritten (proof of equivalence is very much out of scope) in a form more like an artificial neural network: $\tau_m \odv{r_i}{t}=-r_i + \phi\left(\sum_j w_{ij}r_j+u_i(t)\right)$
+\item A synfire chain is a feed-forward \underline{spiking} network consisting of multiple layers. \textit{Whereas a deep neural network in machine learning is a feed-forward \underline{continuous} network consisting of multiple layers}
+\item Recurrent networks are more biologically faithful than feed-forward (e.g. synfire) networks. For example, in the visual system, initial processing is feed-forward but higher-level more evolved perception uses recurrent and top-down processing
+\item Recurrent networks create dynamical systems with emergent behaviour. Attractors are a likely explanation for memory, oscillations are a likely explanation for communication between neurons, chaotic dynamics are a likely explanation for ability to discern fine grained differences in stimuli
+\item In the brain there are excitatory and inhibitory neurons (Dales' principle), inhibition allows the brain to stabilize the dynamical systems behaviour of recurrent networks
+\end{itemize}
+\subsection{The ring network}
+\begin{itemize}
+\item In V1, excitatory neurons with similar orientation preferences have stronger connections than those with dissimilar orientation preferences
+\item In V1, inhibitory neurons probably connect fairly indiscriminately (however there is some debate about this)
+\item Orientation tuning could be explained as a weighted sum of difference of Gaussians receptive fields (i.e. V1 neurons are a feed-forward network with inputs from LGN)
+\item Orientation tuning could also be explained as V1 neurons recurrently selectively amplify the preferred orientation from an LGN-derived input that is only weakly tuned to orientation
+\end{itemize}
+\subsection{Network stability}
+\begin{itemize}
+\item We can view network dynamics as: the firing rates $r$ of the neurons form a vector describing a point in N-dimensional space, and the evolution $r(t)$ produces trajectories in this N-dimensional space
+\item At a fixed point, $\odv{r}{t} = 0$. Thus, our typical firing rate model ($\tau_m \odv{r_i}{t}=-r_i + \phi\left(\sum_j w_{ij}r_j+u_i(t)\right)$) has fixed point $r = \phi(Wr + I_{ext})$
+\item If the threshold-linear transfer function $\phi(x) = \beta[x - \theta]_+ =$\\
+$\beta\max(x - \theta, 0)$ is used, then our firing rate model becomes (when above the threshold) a linear dynamical system $\odv{r}{t} = \frac{1}{\tau_m}\left[-r + \beta\left(Wr + I_{ext}(t) - \theta\right)\right] = Ar + u(t)$ for suitable definitions of $A$ and $u(t)$. Thus, the fixed point is $r^\ast = -A^{-1}u^\ast$
+\clearpage
+\item Proposition: A linear dynamical evolves according to $r(t) = r^\ast + \sum_i c_iv_i\exp(\lambda_i t)$ where $r^\ast$ is the fixed point, $v_i, \lambda_i$ are the eigenvectors and associated eigenvalues, and the $c_i$s are determined by $r(0)$
+Proof: Out of scope\\
+Corollary: A linear dynamical system is stable (attracted towards its fixed point) iff every eigenvector has negative real part. A linear dynamical system is unstable (repelled away from its fixed point) iff it has an eigenvalue with positive real part
+\item Proposition: If $det(A) > 0$ and $trace(A) < 0$, then both eigenvalues are negative and so the network is stable\\
+Proof sketch: $Det(A) = \lambda_1\lambda_2$ so its sign tells us whether the signs of the eigenvalues agree. $Trace(A) = \lambda_1 + \lambda_2$ so is only negative if at least one eigenvalue is
+\end{itemize}
+\clearpage
+\section{Plasticity}
+\subsection{Single neuron plasticity}
+\begin{itemize}
+\item It is necessary to now have a little more detail for how action potentials cross synapses. \textbf{The spike causes voltage-gated calcium channels to open in the presynaptic side, in-flow of calcium triggers a pathway leading to the release of vesicles of (excitatory) neurotransmitters from presynaptic membrane}, neurotransmitter diffuses across synaptic cleft and binds to receptors on postsynaptic membrane triggering opening of ligand-gated sodium channels on postsynaptic side
+\item \textbf{Spike rate adaptation is achieved through calcium-gated potassium channels}. Opening potassium channels (which is known to decrease the potential) when calcium flows in has the effect of making it harder to spike based on how many times a neuron has spiked previously
+\end{itemize}
+\subsection{Short-term synaptic plasticity}
+\begin{itemize}
+\item \textbf{Short term plasticity allows the brain to respond to relative changes in sensory inputs instead of their absolute magnitudes}
+\item Facilitation (connection strengthening): Accumulation of calcium on presynaptic side increases probability of (neurotransmitter) vesicle release, synaptic currents increase with repeated firing
+\item Depression (connection weakening): Supply of vesicles on presynaptic side becomes depleted, synaptic currents decrease with repeated firing
+\item \textit{It's not a bug, it's a feature!}
+\item If we model vesicle releases as identical and independent with constant probability within each spike which varies between spikes based on time and spike history, then the number of vesicles released in a given spike follows a Binomial distribution. Moreover, for large enough $n$, Binomial becomes approximately either Gaussian ($p$ not small) or Poisson ($p$ small)
+\end{itemize}
+\subsection{Long-term synaptic plasticity}
+\begin{itemize}
+\item The binding of glutamate to \textbf{NMDA} receptors on the post-synaptic neuron triggers the \textbf{slow opening of associated calcium channels, but (in line with Hebb's fire together) only if the post-synaptic neuron is currently spiking} (as the net negative charge inside a neuron at rest attracts $Mg^{(2)+}$ ions which jam up the calcium channel as they are too large to pass through)
+\item The number of AMPA receptors on the cell membrane is regulated by the concentration of calcium in the cell. The binding of glutamate to an AMPA receptor triggers the fast opening of associated sodium channels
+\clearpage
+\item \textbf{Potentiation (connection strengthening):} If glutamate binds to NMDA receptors \underline{and} neurons on both sides of synapse fire together, then calcium channels open. \textbf{Accumulation of calcium in post-synaptic cell triggers a pathway leading to the more AMPA receptors on the post-synaptic cell membrane. Binding of glutamate to AMPA receptors causes sodium channels to open causing larger synaptic currents}
+\item \textbf{Depression (connection weakening): If neurons on endpoints of synapse do not fire in sync, then calcium cannot flow through NMDA-gated channels. Decrease in calcium concentration in post-synaptic cell triggers a pathway leading to removal of AMPA receptors from the post-synaptic cell membrane. Fewer AMPA-gated sodium channels mean smaller synaptic currents}
+\end{itemize}
+\clearpage
+\subsection{Learning}
+\begin{itemize}
+\item \textbf{Hebbian learning: Co-activation of a group of cells (cell assembly) causes connections between them to strengthen. Subsequent activation of a subset of those cells will thus reactivate the whole group, allowing memories to be retrieved in this associative fashion}
+\item Hebbian learning for a single linear neuron: $y=w \cdot x$ where $y$ is a scalar and $w, x$ are vectors, $\Delta w = \epsilon yx = \epsilon (w \cdot x)x$ --- this is not biologically realistic as here neurons can change sign but biologically (Dale's law) neurons cannot change between being inhibitory and excitatory
+\item Proposition: If we present M patterns once each and using Hebb's rule update the weights only at the end (as the average update), then $\Delta w = \frac{\epsilon}{M}Qw$ where $Q_{ij} = \sum_\mu x_i^{(\mu)}x_j^{(\mu)}$\\
+Proof: For each i, $\Delta w_i = \frac{1}{M}\sum_\mu \epsilon yx_i^{(\mu)} = \frac{\epsilon}{M}\sum_\mu\sum_j w_jx_j^{(\mu)}x_i^{(\mu)} = \frac{\epsilon}{M}\sum_j w_j \sum_\mu x_j^{(\mu)}x_i^{(\mu)} = \frac{\epsilon}{M}\sum_j w_j Q_{ij} = \frac{\epsilon}{M} w \cdot (Q_i)^T$. Thus, $\Delta w = \frac{\epsilon}{M} Qw$ as required\\
+Corollary: Hebbian learning corresponds to the linear dynamical system $\tau \odv{w}{t} = Qw$. Thus, \textbf{as \boldmath$Q$ is a sum of outer products and so must have positive eigenvalues, Hebbian learning has unstable dynamics ($w$ grows exponentially over time)}
+\item \textbf{The covariance rule extends Hebb's rule to use as Q the covariance matrix instead of the correlation matrix, this allows for long-term depression as well as the long-term potentiation of Hebb's}
+\clearpage
+\item \textbf{For both Hebb's rule and the covariance rule, the direction of the weights converges to the eigenvector of \boldmath$Q$ with the largest eigenvalue (which for the covariance rule is always the largest principal component of the data, and for Hebb's rule is the largest principal component of the data if the data has mean of zero) however the magnitude of the weights diverges to infinity}
+\item Oja's rule extends Hebb's rule with a normalisation penalty term to stabilize the weights: $\Delta w_i = \epsilon(x_iy - w_iy^2)$
+\item Oja's rule has steady state equation $Qw = (wQw)w$ where $Q$ is the same as in Hebb's rule. Thus, the steady state $w$ is (the largest eigenvalue) eigenvector of $Q$ (as $wQw$ is a scalar (the eigenvalue)), and so Oja's rule picks out the first principal component the same as the other learning rules (but without the divergence of the other learning rules)
+\item Inhibitory interactions between neurons in a population can be added so that Oja's rule will lead to each neuron's vector of weights being a different principal component
+\item If non-linear neurons are used, then we could do different unsupervised learning tasks to PCA
+\end{itemize}
+\end{flushleft}
+\end{document}

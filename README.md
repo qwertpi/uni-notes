@@ -111,7 +111,8 @@ Images copied from module materials have been removed for copyright reasons.
 - [External resource (Academic publication): Justified Representation in Approval-Based Committee Voting by Haris Aziz, Markus Brill, Vincent Conitzer, Edith Elkind, Rupert Freeman, and Toby Walsh](https://arxiv.org/abs/1407.8269)  
 ### MSc (2025/26)
 #### CNS: Computational Neuroscience
-Coming soon
+- [CNS Notes](MSc/CNS.pdf)  
+- [External resource (YouTube Channel): Neuroscientifically Challenged by Marc Dingman](https://www.youtube.com/@neurochallenged/videos)  
 #### DS: Distributed Systems
 Coming soon
 #### IQC: Introduction to Quantum Computing
