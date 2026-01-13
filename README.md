@@ -1,6 +1,6 @@
 # uni-notes
 
-Yet another set of Warwick/Edinburgh Computer Sciences notes!  
+Yet another set of Warwick/Edinburgh Computer Science notes!  
 My revision materials for the modules I took.  
 
 ## Disclaimers
@@ -119,7 +119,7 @@ Images copied from module materials have been removed for copyright reasons.
 - [External resource (Song): Does Anybody Really Know What Time It Is? by Chicago](https://www.youtube.com/watch?v=jgF_ycCmF18)  
 - [External resource (Documentation): How the Actor Model Meets the Needs of Modern, Distributed Systems by Akka](https://doc.akka.io/libraries/akka-core/current/typed/guide/actors-intro.html)  
 - [External resource (Documentation): gRPC status codes by gRPC](https://github.com/grpc/grpc/blob/master/doc/statuscodes.md)  
-- [External resource (Video):  Concurrency in Go by Jake Wright](https://www.youtube.com/watch?v=LvgVSSpwND8)  
+- [External resource (Video): Concurrency in Go by Jake Wright](https://www.youtube.com/watch?v=LvgVSSpwND8)  
 - [External resource (Video): Go Concurrency Patterns by Rob Pike](https://www.youtube.com/watch?v=f6kdp27TYZs)  
 #### IQC: Introduction to Quantum Computing
 Coming soon
