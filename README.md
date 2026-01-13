@@ -128,7 +128,9 @@ Images copied from module materials have been removed for copyright reasons.
 - [External resource (Academic publication): Polynomial-Time Algorithms for Prime Factorization and Discrete Logarithms on a Quantum Compute by Peter W. Shor](https://doi.org/10.1137/S0036144598347011)  
 - [External resource (Academic publication): Quantum error correction: an introductory guide by Joschka Roffe](https://doi.org/10.1080/00107514.2019.1667078)  
 #### PBI: Programming for Biomedical Informatics
-Coming soon
+- [PBI Notes](MSc/PBI.pdf)  
+- [External resource (Video): A gentle introduction to RNA-seq by Josh Starmer](https://www.youtube.com/watch?v=tlf6wYJrwKY)  
+- [External resource (Video): DESeq2, part 1, Library Normalization by Josh Starmer](https://www.youtube.com/watch?v=UFB993xufUU)  
 ### Informally studied
 #### CS275: Probability and Statistics (2024/25 in-person lectures)
 - [CS275 Notes (WIP)](Misc/CS275.pdf)  
