@@ -114,7 +114,13 @@ Images copied from module materials have been removed for copyright reasons.
 - [CNS Notes](MSc/CNS.pdf)  
 - [External resource (YouTube Channel): Neuroscientifically Challenged by Marc Dingman](https://www.youtube.com/@neurochallenged/videos)  
 #### DS: Distributed Systems
-Coming soon
+- [DS Notes](MSc/DS.pdf)  
+- [External resource (Academic publication): The Google File System by Sanjay Ghemawat, Howard Gobioff, and Shun-Tak Leung](https://static.googleusercontent.com/media/research.google.com/en//archive/gfs-sosp2003.pdf)  
+- [External resource (Song): Does Anybody Really Know What Time It Is? by Chicago](https://www.youtube.com/watch?v=jgF_ycCmF18)  
+- [External resource (Documentation): How the Actor Model Meets the Needs of Modern, Distributed Systems by Akka](https://doc.akka.io/libraries/akka-core/current/typed/guide/actors-intro.html)  
+- [External resource (Documentation): gRPC status codes by gRPC](https://github.com/grpc/grpc/blob/master/doc/statuscodes.md)  
+- [External resource (Video):  Concurrency in Go by Jake Wright](https://www.youtube.com/watch?v=LvgVSSpwND8)  
+- [External resource (Video): Go Concurrency Patterns by Rob Pike](https://www.youtube.com/watch?v=f6kdp27TYZs)  
 #### IQC: Introduction to Quantum Computing
 Coming soon
 #### PBI: Programming for Biomedical Informatics
