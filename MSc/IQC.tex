@@ -1,0 +1,668 @@
+\documentclass[20pt,a4paper,landscape]{extarticle}
+\usepackage[margin=1.25in]{geometry}
+\usepackage{placeins}
+\usepackage{latexsym}
+\usepackage{marvosym}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[UKenglish]{babel}
+\usepackage[UKenglish]{isodate}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{titletoc}
+\usepackage{listings}
+\usepackage{dsfont}
+\usepackage{changepage}
+\usepackage{tikz}
+\usepackage{braket}
+\usepackage{derivative}
+\usetikzlibrary{arrows.meta, mindmap, trees, shapes.geometric, positioning, matrix}
+\lstset{
+    basicstyle=\ttfamily,
+    mathescape
+}
+\PassOptionsToPackage{hyphens}{url}
+\usepackage{xurl}
+\input{glyphtounicode}
+\pdfgentounicode=1
+\usepackage[all]{nowidow}
+\usepackage{hyperref}
+\hypersetup{
+        colorlinks,
+        citecolor=black,
+        filecolor=black,
+        linkcolor=black,
+        urlcolor=black
+}
+\usepackage[protrusion=true,expansion=true]{microtype}
+\newcommand{\ind}{\perp\!\!\!\!\perp}
+\newcommand{\Obj}{\textrm{Obj}}
+\renewcommand{\th}[1]{#1^\textrm{th}}
+\let\max\relax
+\DeclareMathOperator*{\max}{max\:}
+\let\min\relax
+\DeclareMathOperator*{\min}{min\:}
+\DeclareMathOperator*{\argmax}{arg\,max\:}
+\DeclareMathOperator*{\argmin}{arg\,min\:}
+\begin{document}
+\tableofcontents
+\clearpage
+\begin{flushleft}
+\section{Postulates}
+\subsection{Quantum states}
+\subsubsection{kets}
+\begin{itemize}
+\item For $i \in \left[d=2^N\right]$, $\ket{i} =$ the column vector which is 0 everywhere except for the $\th{i}$ entry where it is 1 --- we will actually use the binary representation of $i$ as we will be using it to describe the observed states of a collection of N qbits (each of which collapses into either a 0 or a 1 when measured)
+\item For $\psi \in \mathbb{C}^d$, $\ket{\psi} = \sum_{i \in [d]} \psi_i\ket{i}$ i.e. \textbf{the column vector \boldmath$\psi$ --- \underline{k}et for \underline{c}olumn}
+\item \textbf{Postulate 1: A quantum state \boldmath$\ket{\psi}$ is a vector of complex probabilities: \boldmath$\ket{\psi} \in \mathbb{C}^d$ and \boldmath$\sum_{i \in [d]} |\psi_i|^2 = 1$} (or equivalently, $|\psi| = 1$)
+\item Observer effect: \textbf{We cannot directly observe \boldmath$\ket{\psi}$, as when measured it collapses into a classical state \boldmath$\ket{i}$ for some \boldmath$i \in [d]$. In particular, each classical state \boldmath$i \in [d]$ has probability \boldmath$|\psi_i|^2$ of being observed when the quantum state \boldmath$\ket{\psi}$ is measured}
+\end{itemize}
+\subsubsection{bras}
+\begin{itemize}
+\item For $\psi \in \mathbb{C}^d$, $\bra{i} = \left(\ket{i}^T\right)^\ast$ = \textbf{the row vector of the conjugate of \boldmath$\psi$ --- b\underline{ra} for \underline{r}ow with an \underline{a}sterisk (conjugated)}
+\item \textbf{Proposition: \boldmath$\braket{i|M|j} = M_{ij}$}. Note that this denotes $\left(\bra{i}M\right)\ket{j}$ (or equivalently $\bra{i}\left(M\ket{j}\right)$ as matrix multiplication is associative)\\
+Proof: Exercise
+\end{itemize}
+\clearpage
+\subsubsection{bra-kets}
+\begin{itemize}
+\item For $u, v \in \mathbb{R}^d$, inner-product of $u$ and $v$ = $u \cdot v = \sum_{i \in [d]}u_iv_i =$\\$ \left(u^Tv\right) \in \mathbb{R}$
+\item Moreover, $|u| = \sqrt{u \cdot u} \in \mathbb{R}_{\geq 0}$
+\item \textbf{For \boldmath$\psi, \phi \in \mathbb{C}^d$, inner-product of \boldmath$\psi$ and \boldmath$\phi$ = $\braket{\psi|\phi} =$\\$ \sum_{i \in [d]}\left(u_i\right)^\ast v_i = \left(\bra{\psi}\ket{\phi}\right) \in \mathbb{C}$} --- note that this is right-associative
+\item Moreover, $|\psi| = \sqrt{\braket{\psi|\psi}} \in \mathbb{R}_{\geq 0}$ --- note that this inner-product of a vector with itself is still always real
+\item Note that: $u \cdot v = v \cdot u$, whereas $\braket{\psi|\phi} = \braket{\phi|\psi}^\ast$
+\item \textit{Proposition: If $\psi, \phi \in \mathbb{R}^d$ then $\braket{\psi|\phi} = \psi \cdot \phi$}\\\textit{Proof: Obvious}
+\item We can take the outer-product (ket-bra) $\ket{\psi}\bra{\phi}$ to get a matrix from 2 vectors instead of a scalar (the inner product (braket) $\braket{\psi|\phi}$)
+\end{itemize}
+\clearpage
+\subsection{Quantum operators}
+\subsubsection{Quantum operators}
+\begin{itemize}
+\item A quantum operator \underline{linearly} transforms the state vector of its input to produce the state vector of its output. Thus, a quantum operator corresponds to a matrix (and so a geometric transformation to the basis of the state vector). That is that, \textbf{every quantum operator is entirely defined by how it affects the basis of its state vectors} (for example $\ket{0}$ and $\ket{1}$ for an operator that acts on a single qbit)
+\item Recall that a matrix M over the reals is orthogonal iff $M^TM$ (or equivalently $MM^T$) $=I$. \textbf{A matrix \boldmath$U$ is unitary iff \boldmath$U^\dagger U$ (or equivalently \boldmath$UU^\dagger$) \boldmath$=I$ where \boldmath$\dagger$ denotes the conjugate transpose}
+\item \textbf{Postulate 2: The evolution of \boldmath$\ket{\psi}$ obeys \boldmath$\ket{\psi_{\textrm{out}}} = U\ket{\psi_{\textrm{in}}}$ where \boldmath$U$ is a unitary matrix}
+\item Every unitary matrix is a quantum gate (quantum operator), and vice versa
+\item Proposition: Let $U$ be a unitary matrix. Then, $\psi' = U\psi$ and $\phi' = U\phi$ are orthogonal $\Leftrightarrow$ $\psi$ and $\phi$ are orthogonal\\
+Proof: $\psi'$ and $\phi'$ are orthogonal $\Leftrightarrow \braket{U\psi|U\phi} = 0 \Leftrightarrow \psi^\dagger U^\dagger U \phi = 0 \Leftrightarrow$\\
+$\psi^\dagger I \phi \Leftrightarrow \braket{\psi|\phi} = 0 \Leftrightarrow \psi$ and $\phi$ are orthogonal
+\item Proposition: Transforming a vector by a unitary matrix does not affect the magnitude of the vector\\
+Proof: Let $M \in \mathbb{C}^{d \times d}$ be an arbitrary unitary matrix and $\psi \in \mathbb{C}^d$ be an arbitrary vector. Recall that $\forall \phi \in \mathbb{C}^d; |\phi|^2 = \phi^\dagger \phi$. Thus, $|M\psi|^2 =$\\$ \left(M\psi\right)^\dagger M\psi = \psi^\dagger M^\dagger M\psi = \psi^\dagger I\psi = |\psi|^2$. Thus, $|M\psi| = |\psi|$ as required
+\item Taking the two propositions above together, it is apparent why unitary matrices are appropriate to describe quantum gates (they preserve the orthogonality of the basis directions, and the normalisation of the state vectors)
+\item \textit{Proposition: Let $U$ be a unitary matrix. Then, every eigenvalue (which may be complex-valued) of $U$ has magnitude 1\\
+Proof: Exercise}
+\end{itemize}
+\subsubsection{Hermitian quantum operators}
+\begin{itemize}
+\item Exactly as we could when doing linear algebra over the reals, we can consider a change of basis from $\{\ket{0}, \ket{1}\}$ to any set of linearly-independent orthonormal (pairwise orthogonal, and all normalised) vectors that span $\mathbb{C}^d$. Some quantum operators are more intuitive when seen in a different basis
+\item It can easily be seen that \boldmath$\left\{\ket{+} = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 1 \end{bmatrix}, \ket{-} = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ -1 \end{bmatrix}\right\}$\unboldmath is an alternative basis to $\{\ket{0}, \ket{1}\}$
+\item Recall that {\boldmath$M = \begin{bmatrix}
+a & b\\
+c & d
+\end{bmatrix} \Rightarrow M^{-1} = \frac{1}{ad-bc}\begin{bmatrix}
+d & -b\\
+-c & a
+\end{bmatrix}$}
+\item We call a real matrix $M$ symmetric iff $M^T = M$. \textbf{We call a (possibly complex) matrix \boldmath$M$ self-adjoint (or Hermitian) iff \boldmath$M^\dagger = M$}
+\item \textit{Theorem (Spectral theorem): Every Hermitian matrix has real eigenvalues. Moreover, every Hermitian matrix of dimension $n\times n$ has $n$ distinct orthogonal eigenvectors.\\
+Proof:\\
+Let $v_1, v_2, \lambda_1, \lambda_2$ be arbitrary eigenvectors of a self-adjoint matrix $M$ and their corresponding eigenvalues respectively.\\
+Real eigenvalues: $M\ket{v_1} = \lambda_1 \ket{v_1}$. Thus, $\bra{v_1}M\ket{v_1} = \bra{v_1} \lambda_1 \ket{v_1} =$\\$ \lambda_1\braket{v_1|v_1}$ and so $\lambda_1 = \frac{\bra{v_1}M\ket{v_1}}{\braket{v_1|v_1}}$. $\braket{v_1|v_1} \in \mathbb{R}$ is well-known, but the realness of the numerator will require an argument. $\bra{v_1}M\ket{v_1} = \left(\bra{v_1}M^\dagger\ket{v_1}\right)^\ast = \left(\bra{v_1}M\ket{v_1}\right)^\ast$ as M is self-adjoint. Thus, as $\bra{v_1}M\ket{v_1} = \left(\bra{v_1}M\ket{v_1}\right)^\ast$, $\bra{v_1}M\ket{v_1} \in \mathbb{R}$. Thus, $\lambda_1$ (which was arbitrary and so the same argument applies to every eigenvalue) is a ratio of two reals and so is itself real.
+\clearpage
+Orthogonal eigenvectors: $\braket{Mv_1|v_2} = \braket{\lambda_1 v_1|v_2}$. Thus, $\bra{v_1}M^\dagger\ket{v_2} =$\\$
+\bra{v_1}\lambda_1^\ast\ket{v_2} = \lambda_1\braket{v_1|v_2}$ using the previous part. As $M$ is self-adjoint (and $v_2$ is an eigenvector), $\bra{v_1}\lambda_2\ket{v_2} = \bra{v_1}M\ket{v_2} = \lambda_1\braket{v_1|v_2}$. Thus, $\left(\lambda_2 - \lambda_1\right)\braket{v_1|v_2} = 0$. If $\lambda_1 \neq \lambda_2$, $v_1$ and $v_2$ are evidently orthogonal.\\
+Suppose however that $\lambda_1 = \lambda_2 = \lambda$. Then, consider $\ket{v_2'} = \ket{v_2} + \braket{v_2|v_1}\ket{v_1}$. Then, $M\ket{v_2'} = \lambda_2\ket{v_2} + \lambda_1\braket{v_2|v_1}\ket{v_1} =$\\$
+\lambda\ket{v_2} + \lambda\braket{v_2|v_1}\ket{v_1} = \lambda\ket{v_2'}$ and so $\ket{v_2'}$ is also an eigenvector. Moreover, $\braket{v_1|v_2'} = \braket{v_1|v_2} + \braket{v_2|v_1}\braket{v_1|v_1} = \braket{v_1|v_2} - \braket{v_1|v_2}\braket{v_1|v_1} = \textrm{[assume wlog that $\braket{v_1|v_1}=1$] } 0$ and so $v_1, v_2'$ are orthogonal\\
+Exercise: Use induction to extend to to $n > 2$}
+\clearpage
+\item Lemma:\\
+i)\: If $M$ is self-adjoint, then ($M$ is unitary $\Leftrightarrow M^2 = I$)\\
+ii) If $M^2 = I$, then ($M$ is unitary $\Leftrightarrow M$ is self-adjoint)\\
+Proof:\\
+i)\: $\Leftarrow$: $M^2 = MM^\dagger = I$\\
+\;\;\;\; $\Rightarrow$: $I = M^2 = MM^\dagger$\\
+ii) $\Leftarrow$: As $MM^\dagger = I$, $M^2M^\dagger = M$. As $M^2 = I$, $M^\dagger = M$ as required\\
+\;\;\;\; $\Rightarrow$: This follows from i)
+\item Proposition: The transition matrix to change basis from $\{\ket{0}, \ket{1}\}$ to $\left\{\ket{+}, \ket{-}\right\}$ is
+\boldmath$\frac{1}{\sqrt{2}}\begin{bmatrix}
+1 & 1\\
+1 & -1
+\end{bmatrix}$\unboldmath.  \textbf{This matrix is called the Hadamard gate, denoted \boldmath$H$}. Moreover, $H = H^{-1}$ (although it is the case that all quantum gates are invertible (in stark contrast to classical gates) as they are unitary matrices, it is not always the case that they are self-inverse)
+\clearpage
+Proof:\\
+The matrices whose sets of column vectors are our basises are $\begin{bmatrix}
+1 & 0\\
+0 & 1
+\end{bmatrix}$ and $\frac{1}{\sqrt{2}}\begin{bmatrix}
+1 & 1\\
+1 & -1
+\end{bmatrix}$ respectively. Recall from linear algebra that, as our initial basis is the standard basis, the transition matrix will simply be the new basis.\\
+$H^2 = \frac{1}{\sqrt{2}\sqrt{2}}\begin{bmatrix}
+1+1 & 1-1\\
+1-1 & 1--1
+\end{bmatrix} = I$. Thus $H=H^{-1}$.\\
+$H^\dagger = \frac{1}{\sqrt{2}}\begin{bmatrix}
+1 & 1\\
+1 & -1
+\end{bmatrix}^T = \frac{1}{\sqrt{2}}\begin{bmatrix}
+1 & 1\\
+1 & -1
+\end{bmatrix} = H$.\\
+By the earlier lemma, $H$ is a unitary.
+\end{itemize}
+\clearpage
+\subsubsection{\textit{The Bloch sphere}}
+{\itshape
+\begin{itemize}
+\item Proposition: Although the state of a single qbit state $\psi \in \mathbb{C}^2 \cong \mathbb{R}^4$ and almost all humans cannot visualise in 4D, actually quantum states are constrained enough that they only contain 3 dimensions of independent information and so can be plotted on a unit sphere (the Bloch sphere). However, beyond single qbits we really do have to blindly follow the maths rather than trying to visualise\\
+Proof:\\
+$\exists \alpha, \beta \in \mathbb{C}: \ket{\psi} = \alpha\ket{0}+\beta\ket{1}$. We can write $\alpha, \beta$ in Euler form: $\exists r_\alpha, r_\beta, \psi_\alpha, \psi_\beta \in \mathbb{R}: \ket{\psi} = r_{\alpha}\exp(i \phi_\alpha)\ket{0} + r_{\beta}\exp(i \phi_\beta)\ket{1}$. Physics tells us that the ``global phase'' is an artefact of the mathematical model with no effect on reality, so we can remove any global phase we like: $\ket{\psi} =$ [technically this not mathematically equal to our original $\ket{\psi}$ but wlog to physical reality it is] $r_{\alpha}\ket{0} + r_{\beta}\exp\left(i\left(\phi_\beta - \phi_\alpha\right)\right)\ket{1}$ [$\phi_\beta - \phi_\alpha$ is called the relative phase and very much does have physical significance].
+\clearpage
+As $\ket{\psi}$ is a quantum state, $\braket{\psi|\psi} = |r_{\alpha}|^2 + |r_{\beta}\exp\left(i\left(\phi_\beta - \phi_\alpha\right)\right)|^2 = 1 \Rightarrow $\\
+${r_{\alpha}}^2 + {r_{\beta}}^2 = 1 \Rightarrow \exists \theta \in \mathbb{R}: r_{\alpha} = \cos(\theta), r_{\beta} = \sin(\theta)$. Thus, $\ket{\psi} = \cos(\theta)\ket{0} + \sin(\theta)\exp\left(i\left(\phi_\beta - \phi_\alpha\right)\right)\ket{1}$.\\
+It can be shown that this corresponds to $\ket{\psi}$ being a point on the unit sphere where: $\ket{0}$ is at the North pole ($x=y=0,z=1$), $\ket{1}$ is at the South pole ($x=y=0,z=-1$), $\phi_\beta - \phi_\alpha$ is the angle made between the x-axis and the projection of $\ket{\psi}$ onto the $xy$-plane, and $2\theta$ is the angle made between the z-axis and $\ket{\psi}$ (no projection involved here).\\
+Thus, (as can actually be seen from our algebra), $\theta$ controls the probability balance between $\ket{0}$ and $\ket{1}$ (ie is the sole influence on z in the sphere) and $\phi$ controls the balance between real and imaginary parts of the probabilities (which is relevant when the state is in superposition, and so is relevant for intermediate steps in the computation, but cannot be observed when the system is measured to be obtain the result)
+\begin{figure}[hp]
+\begin{center}
+\includegraphics[width=0.62\textwidth]{meta/IQC/Bloch_sphere.pdf}{}
+\end{center}
+\end{figure}
+\clearpage
+\item Lemma 1: If $U = \begin{bmatrix}
+a & b\\
+c & d
+\end{bmatrix}$ is a unitary matrix and |U| = 1, then $c=-b^\ast$ and $d = a^\ast$\\
+Proof: Exercise
+\item Lemma 2: If $U = \begin{bmatrix}
+a & b\\
+c & d
+\end{bmatrix}$ is a unitary matrix, then $\exists \alpha, \beta, \gamma, \delta \in \mathbb{R}$ such that $U = e^{i \alpha} \begin{bmatrix}
+e^{i \beta} \cos \gamma & e^{i \delta} \sin \gamma\\
+-e^{-i \delta} \sin \gamma & e^{-i \beta} \cos \gamma
+\end{bmatrix}$.
+
+Proof sketch: $e^{i \alpha}$ can correspond to taking out a factor so that lemma 1 is applicable to the remaining matrix. It fairly easy to see that the first row can represent any numbers necessary, and then the second row simply follows from lemma 1
+\clearpage
+\item Proposition: If $U$ is a quantum gate that acts on a single qubit, then $\exists \alpha, \beta, \gamma, \delta \in \mathbb{R}$ such that $U = e^{i \alpha} R_z(\beta) R_y(\gamma) R_z(\delta)$ where $R_z(\theta) = \begin{bmatrix}
+\exp(\frac{-i \theta}{2}) & 0 \\
+0 & \exp(\frac{i \theta}{2})
+\end{bmatrix}$ and $R_y(\theta) = \begin{bmatrix}
+\cos(\theta/2) & -\sin(\theta/2) \\
+\sin(\theta/2) & \cos(\theta/2)
+\end{bmatrix}$.  Moreover, $R_z, R_y$ are rotation matrices (of the Bloch sphere about the $z$- or $y$- axis respectively) and so are unitarities.\\
+Proof:
+By lemma 2, $\exists \alpha', \beta', \gamma', \delta' \in \mathbb{R}$ such that $U = e^{i \alpha'} \begin{bmatrix}
+e^{i \beta'} \cos \gamma' & e^{i \delta'} \sin \gamma' \\
+-e^{-i \delta'} \sin \gamma' & e^{-i \beta'} \cos \gamma'
+\end{bmatrix}$
+It remains to show that $\exists \beta, \gamma, \delta \in \mathbb{R}$ $R_z(\beta) R_y(\gamma) R_z(\delta) = \begin{bmatrix}
+e^{i \beta'} \cos \gamma' & e^{i \delta'} \sin \gamma' \\
+-e^{-i \delta'} \sin \gamma' & e^{-i \beta'} \cos \gamma'
+\end{bmatrix}$. Consider, $\beta = -\beta'-\delta', \gamma=-2\gamma', \delta=\delta'-\beta'$. With this substitution we have the required equivalence (proof by WolframAlpha)\\
+Corollary: $\{R_y(\theta), R_z(\theta): \theta \in \left[-\pi, \pi\right]\}$ is a set of universal gates
+\clearpage
+In case you do not believe that $R_y$, $R_z$ are unitarities:\\
+$R_y$ is unitary: $R_y(\theta)^\dagger = \begin{bmatrix}
+\cos(\theta/2) & \sin(\theta/2) \\
+-\sin(\theta/2) & \cos(\theta/2)
+\end{bmatrix}$ and $R_y(\theta)^{-1} = \frac{1}{\cos^2(\theta/2)+\sin^2(\theta/2)}\begin{bmatrix}
+\cos(\theta/2) & \sin(\theta/2) \\
+-\sin(\theta/2) & \cos(\theta/2)
+\end{bmatrix}$ and $\sin^2 + \cos^2 \equiv 1$\\
+$R_z$ is unitary: $R_z(\theta)^\dagger = \begin{bmatrix}
+\exp(\frac{i \theta}{2}) & 0 \\
+0 & \exp(\frac{-i \theta}{2})
+\end{bmatrix}$ and $R_z(\theta)^{-1} = \frac{1}{\exp(0)}\begin{bmatrix}
+\exp(\frac{i \theta}{2}) & 0 \\
+0 & \exp(\frac{-i \theta}{2})
+\end{bmatrix}$ and $\exp(0) = 1$\\
+\end{itemize}
+}
+\clearpage
+\subsection{Measurement}
+\begin{itemize}
+\item When we measure a quantum state $\ket{\psi}$ we do so with respect to a particular basis $\{\phi_1, ..., \phi_{2^n}\}$
+\item For now we will assume for simplicity that we are measuring a single qbit --- the generalisation to $n>1$ is intuitive and is proved in \autoref{sssec:tensorstates}
+\item Recall that: When we take a measurement, the superposition collapses and the probability of collapsing into each $\phi_i$ is given by $|\braket{\phi_i|\psi}|^2$ --- taking a measurement mid-computation alters the course of the rest of the computation
+\clearpage
+\item \textbf{Proposition: It suffices to only measure in the computational basis (\boldmath$\{\ket{0}, \ket{1}\}$). In particular, measuring \boldmath$\psi$ with respect to a basis \boldmath$B$ is equivalent to, given \boldmath$M$ the change of basis matrix from the computational basis to \boldmath$\phi$, applying the operator \boldmath$M^\dagger$ to \boldmath$\psi$ then measuring with respect to the computational basis}\\
+Proof: Let $\ket{\phi_i}$ be an arbitrary outcome in a basis $B$ we want to measure with respect to. Let $M$ be the matrix to change basis from the computational basis to $B$ \textit{(deduce that $M$ is the matrix with set of column vectors $B$)}. That is that, $\ket{\phi_i} = M\ket{i}$. Thus, $\bra{\phi_i} = \bra{i}M^\dagger$. And so, $\braket{\phi_i|\psi} = (\bra{i}M^\dagger)\ket{\psi} = \bra{i}(M^\dagger\ket{\psi})$ which is the required result.\\
+We ought to verify that $M$ will be a unitary matrix:\\
+$M = \begin{bmatrix}
+z_1 & z_2 \\
+z_3 & z_4
+\end{bmatrix}$ where $\phi_1 = \begin{bmatrix} z_1 & z_3 \end{bmatrix}$ and $\phi_2 = \begin{bmatrix} z_2 & z_4 \end{bmatrix}$.\\
+Because this comes from a legal basis, $\braket{\phi_1|\phi_2} = 0 = \braket{\phi_2|\phi_1}$ and so $z_1^\ast z_2 + z_3^\ast z_4 = 0 = z_1 z_2^\ast + z_3 z_4^\ast$. Moreover, $|\phi_1|^2 = 1 = |\phi_2|^2$ and so $|z_1|^2 + |z_3|^2 = 1 = |z_2|^2 + |z_4|^2$.
+$M^\dagger M = \begin{bmatrix}
+z_1^\ast & z_3^\ast \\
+z_2^\ast & z_4^\ast
+\end{bmatrix}\begin{bmatrix}
+z_1 & z_2 \\
+z_3 & z_4
+\end{bmatrix} = \begin{bmatrix}
+z_1^\ast z_1 + z_3^\ast z_3 & z_1^\ast z_2 + z_3^\ast z_4\\
+z_1 z_2^\ast + z_3 z_4^\ast & z_2^\ast z_2 + z_4^\ast z_4
+\end{bmatrix} = I$ by the previously identified properties and $z_iz_i^\ast \equiv |z_i|^2$
+\item Proposition (Principle of deferred measurement): Measurements can always be moved to the end of the circuit\\
+Proof: Exercise (ensure to demonstrate how classical conditional logic (for classical post-processing that now no longer has the measurement prior to it) can be rewritten as a quantum circuit)
+\end{itemize}
+\clearpage
+\subsection{Composition}
+\subsubsection{Tensor product}
+\begin{itemize}
+\item \textbf{Let A, B be matrices (not necessarily with any shared size). Then,} outer-product of $A$ and $B$ = \textbf{tensor-product of \boldmath$A$ and \boldmath$B$ = \boldmath$A \otimes B = [a_{ij}B]$ as a block matrix. For example, \boldmath$\begin{bmatrix}
+a_{1,1} & a_{1,2}\\
+a_{2,1} & a_{2,2}
+\end{bmatrix}\otimes
+\begin{bmatrix}
+b_{1,1} & b_{1,2}\\
+b_{2,1} & b_{2,2}
+\end{bmatrix}=
+\begin{bmatrix}
+a_{1,1}b_{1,1} & a_{1,1}b_{1,2} & a_{1,2}b_{1,1} & a_{1,2}b_{1,2}\\
+a_{1,1}b_{2,1} & a_{1,1}b_{2,2} & a_{1,2}b_{2,1} & a_{1,2}b_{2,2}\\
+a_{2,1}b_{1,1} & a_{2,1}b_{1,2} & a_{2,2}b_{1,1} & a_{2,2}b_{1,2}\\
+a_{2,1}b_{2,1} & a_{2,1}b_{2,2} & a_{2,2}b_{2,1} & a_{2,2}b_{2,2}\\
+\end{bmatrix}$}
+\item Note that the tensor-product is \underline{not} commutative
+\item Proposition: The tensor-product is associative\\
+Proof: By induction it suffices to prove that $(A \otimes B) \otimes C = A \otimes (B \otimes C)$\\
+Exercise
+\end{itemize}
+\label{sssec:tensorstates}
+\subsubsection{Combining states}
+\begin{itemize}
+\item \textbf{Let \boldmath$u = \begin{bmatrix}u_1 & ... & u_n \end{bmatrix}$ and \boldmath$v = \begin{bmatrix}v_1 & ... & v_m \end{bmatrix}$. Then, we know that \boldmath$u \otimes v = \begin{bmatrix}u_1v_1 & ... & u_1v_m & ... & u_nv_1 & ... & u_nv_m\end{bmatrix}$}
+\item Proposition: Let $H_{AB} = H_A \otimes H_B$ be the set of states the system composed of states from $H_A$ and $H_B$ can be in.\\
+Then, $\forall \ket{\psi} \in H_{AB}: \ket{\psi} = \sum_{i, j} \psi_{ij} \ket{i} \otimes \ket{j}$. That is that \textbf{every state of the system can be written as a linear combination of the tensor products of the basis vectors of the components of the system}, which as quantum mechanics is all about linear algebra is fortunate.\\
+Proof sketch: Deduce that each $\ket{i} \otimes \ket{j}$ is a basis vector of $H_{AB}$ and we are summing over all of them. Then, the required result is trivial\\
+\item \textbf{Postulate 4: Let \boldmath$\ket{\psi}$ be the state of a system composed of \boldmath$k$ subsystems in states \boldmath$\ket{\psi_1}, ... \ket{\psi_k}$. Then, \boldmath$\ket{\psi} = \ket{\psi_1} \otimes ... \otimes \ket{\psi_k}$}. For brevity, we will often write states as bit-strings $\ket{x_1...x_n}$ when technically we mean $\ket{x_1} \otimes ... \otimes \ket{x_n}$
+\item Postulate 4 only tells us how to write the state of the system when it is in a state where the states of each qbit are independent (for example in a classical input). There also exist states (such as if the system evolves by the application of certain gates) that cannot be factored out into independent subsystems (entangled states)
+\item Proposition: $k(\ket{u} \otimes \ket{v}) = (k\ket{u}) \otimes \ket{v} = \ket{u} \otimes (k\ket{v})$\\
+Proof: Exercise\\
+Corollary: $(a\ket{u} \otimes b\ket{v}) = ab(\ket{u} \otimes b\ket{v})$ and so $(k\ket{u} \otimes k\ket{v}) = k^2(\ket{u} \otimes b\ket{v})$ not $k(\ket{u} \otimes b\ket{v})$
+\item Proposition: Tensor product distributes over addition: $\ket{u}\otimes(\ket{v_1} + \ket{v_2}) = \ket{u}\otimes\ket{v_1} + \ket{u}\otimes\ket{v_2}$\\
+Proof: Exercise
+\item Proposition: \textbf{Let \boldmath$(a, b)$ denote the inner product of \boldmath$a$ and \boldmath$b$}. $\left(\sum_i a_i\ket{v_i} \otimes \ket{w_i}, \sum_j b_j\ket{v'_j} \otimes \ket{w'_j}\right) = \sum_{i,j}{a_i}^\ast b_j \braket{v_i|v'_j}\braket{w_j|w'_j}$\\
+Proof: Exercise\\
+Corollary: \boldmath$(\ket{v} \otimes \ket{w}, \ket{v'} \otimes \ket{w'}) = \braket{v|v'}\braket{w|w'}$\\
+\item We will abbreviate \unboldmath$\ket{\psi} \otimes ...\textrm{ ($k$ times)} \otimes \ket{\psi}$  to $\ket{\psi}^{\otimes k}$ or even further to $\ket{\psi}^k$
+\item Proposition: Measurement for multiple qbit systems extends single qbit measurement in the obvious way, that is that \textbf{\boldmath$\Pr(\ket{\overline{x}}) = |\braket{\overline{x}|\psi}|^2 = |\psi_{\overline{x}}|^2$ if \boldmath$\ket{\overline{x}}$ is a component of \boldmath$\psi$} (for example $\ket{\psi}$ is written in terms of the computational basis and $\ket{\overline{x}}$ is an element of the computational basis). Here $\overline{x}$ denotes a vector of bits rather than a complementation operator.\\
+Proof: $\Pr(\ket{\overline{x}}) = |\braket{\overline{x}|\psi}|^2$ is how we define qbit measurement in general. Then, $|\braket{\overline{x}|\psi}|^2 = |\bra{\overline{x}}\sum_{\overline{y} \in \{0, 1\}^n}\psi_{\overline{y}}\ket{\overline{y}}|^2 = |\psi_{\overline{x}}|^2$ as $\braket{\overline{x}|\psi_{\overline{y}}} = 0$ if $\overline{x} \neq \overline{y}$ (as then $x$ and $y$ are distinct basis vectors and so are orthogonal) and $\psi_{\overline{x}}$ if $\overline{x} = \overline{y}$
+\end{itemize}
+\clearpage
+\subsubsection{Combining operators}
+\begin{itemize}
+\item \textbf{The matrix of the operator that applies operator \boldmath$A$ to the first qbit and operator \boldmath$B$ to the second qbit is \boldmath$A \otimes B$} (by induction this extends to systems with $n>2$ qbits). Recall that $A, B$ are matrices and we already know how to compute the tensor product of matrices
+\item \textit{Simulating the quantum computer $A_1 \otimes ... \otimes A_n$ (for single-qbit matrices $A_1, ..., A_n$) on a classical computer requires a matrix with $4^n$ entries and so is computationally infeasible, and yet the universe is able to do it for us tractably! Albeit, using quantum phenomena is why we have to design quantum algorithms to work around the measurement collapse limitation, whereas the classical simulation does not suffer from this}
+\item Proposition: $(A \otimes B)(a\ket{v_i} \otimes \ket{w_i}) = a_iA\ket{v_i} \otimes B\ket{w_i}$\\
+Proof: Exercise\\
+Corollary: $(A \otimes B)(\ket{v} \otimes \ket{w}) = A\ket{v} \otimes B\ket{w}$. This is essentially a formalisation of the first bullet
+\end{itemize}
+\subsubsection{Entanglement}
+\begin{itemize}
+\item Proposition: \textbf{There exist states which \boldmath$n$-qbit systems can be in, but which cannot be written as a pure tensor product of \boldmath$n$ single-qbit states} (however they can, by a previous proposition, be written as a linear combination of ($2^n$ (or fewer)) tensor products of single-qbit states), \textbf{we call these states entangled states}. Measurements of the different qbits are not independent iff the state is entangled.\\
+Proof sketch: We will witness the existential claim of the first sentence in the next proposition. It remains to prove the second sentence.\\
+A state is not entangled iff it can be written as a direct tensor product iff the joint probabilities are the product of the elementary probabilities iff they are independent events
+\clearpage
+\item Proposition: \textbf{\boldmath$\{\ket{\phi^+} = ..., \ket{\phi^-} = ..., \ket{\psi^+} = ..., \ket{\psi^-} = ... \}$ is a basis for a 2-qbit system. Moreover, these are all maximally entangled states (that is that, although measuring one qbit causes that qbit to collapse into a random state, what the other qbit will collapse into if subsequently measured is then certain based on that (the same state for $\phi$, the opposite state for $\psi$)). These are called the Bell states, and the symbol given to each of them here is standard}\\
+Proof:
+Witness a circuit/unitary that shows a system can be in these states: Exercise\\
+For them to be a basis, it only remains to check that they are pairwise orthogonal. Exercise\\
+The most interesting property to verify is the entanglement. Exercise\\
+We can also demonstrate the maximal entanglement. Exercise\\
+\end{itemize}
+\clearpage
+\subsubsection{Projective measurement (partial measurement)}
+\begin{itemize}
+\item In linear algebra \textbf{a matrix P is a projector iff} $P^2 = P$. In quantum computing, we are only interested in self-adjoint projectors: {\boldmath$P^2 = P = P^\dagger$} --- note that projectors are typically not unitary
+\item Proposition: For every (self-adjoint (this is the last time we will specify this, but it will always hold)) projector $P$, there exists an orthonormal basis $\{\ket{u_i}\}$ such that {\boldmath$P = \sum_i \ket{u_i}\bra{u_i}$}\\
+Proof: Out of scope
+\item \textbf{Postulate 3: A quantum measurement is defined by a collection \boldmath$\{M_m\}$ of measurement operators where each $m$ corresponds to a possible measurement outcome. \boldmath$\Pr(m) = \left|M_m \ket{\psi}\right|^2 =$\\
+$\bra{\psi}{M_m}^\dagger M_m \ket{\psi}$. The state of the system after a measurement outcome \boldmath$m$ is \boldmath$\frac{M_m\ket{\psi}}{\sqrt{\bra{\psi}{M_m}^\dagger M_m \ket{\psi}}} = \frac{M_m\ket{\psi}}{\sqrt{\Pr(m)}}$}
+\item \textbf{Quantum measurement operators must obey the completeness equation \boldmath$\sum_m {M_m}^\dagger M_m = I$ as this is necessary and sufficient for \boldmath$\sum_m \Pr(m) = 1$}
+\item \textbf{In IQC we only need projective measurement: Each \boldmath$M_m$ is a projector}, or equivalently $\sum_m mM_m$ is a Hermitian matrix for which each $m$ is an eigenvalue
+\item \textit{Projective measurement corresponds to the very reasonable constraint that measurement is idempotent (repeating a measurement does not change the outcome, as we have already collapsed the state)}
+\item As projectors in QC are self-adjoint, we can replace the $M_m^\dagger$s with $M_m$. In particular, \textbf{the completeness equation ``simplifies'' to \boldmath$\sum_m P_m = I$ \underline{and} $\braket{P_m|P_{m'}} = \mathds{1}[m = m']$}
+\item Let $M = \{P_m\}$ be a projective measurement. Then, expected outcome of $M$ $=$ $\braket{M}$ $=$ $\sum_m m\Pr(m) = \sum_m m\bra{\psi}P_m\ket{\psi}$ $=$ $\bra{\psi}\left(\sum_m mP_m\right)\ket{\psi}$
+\end{itemize}
+\clearpage
+\section{Quantum algorithms}
+\subsection{Quantum gates}
+\begin{itemize}
+\item NOT gate = {\boldmath$X = \begin{bmatrix}
+0 & 1 \\
+1 & 0 \\
+\end{bmatrix}$}
+\item {\boldmath$Y = \begin{bmatrix}
+0 & -i \\
+i & 0 \\
+\end{bmatrix}$}
+\item {\boldmath$Z = \begin{bmatrix}
+1 & 0 \\
+0 & -1 \\
+\end{bmatrix}$}
+\item Hadamard gate = $H = \frac{1}{\sqrt{2}}\begin{bmatrix}
+1 & 1 \\
+1 & -1 \\
+\end{bmatrix}$
+\item Z-rotation gate = {\boldmath$R_{\theta} = \begin{bmatrix}
+1 & 0 \\
+0 & e^{i\theta} \\
+\end{bmatrix}$}
+\item Phase gate = $S = R_{\frac{\pi}{2}}$
+\item $T = R_{\frac{\pi}{4}}$
+\item For any unitary $U$, Controlled-U gate = $\ket{0}\bra{0} \otimes I + \ket{1}\bra{1} \otimes U$
+    \begin{itemize}
+    \item CNOT = $\ket{0}\bra{0} \otimes I + \ket{1}\bra{1} \otimes X$
+    \item $\bigwedge U_{i,j} = U$ on $j^\textrm{th}$ qbit controlled by $i^\textrm{th}$ qbit --- qbits are typically considered to be 1-indexed
+    \end{itemize}
+\item SWAP gate = $\Pi = \begin{bmatrix}
+1 & 0 & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 0 & 1 \\
+\end{bmatrix}$
+\clearpage
+\item Theorem: \{X, Z, H, S, T\} is a set of universal gates. Moreover, the construction is only exponential in the number of $T$ gates required (it is easy to see that it is unavoidable to, when creating arbitrary gates from a finite set of gates, use less than exponential number of overall gates in some cases, so being able to pin all the exponential behaviour to one type of gate is an achievement)\\
+Proof: Out of scope
+\item $A$ and $B$ commute iff $AB = BA$. We define {\boldmath$[A, B] = AB - BA$}. Then, $A$ and $B$ commute iff $[A, B] = 0$
+\item $A$ and $B$ anti-commute iff $AB = BA$. We define {\boldmath$\{A, B\} = AB + BA$}. Then, $A$ and $B$ anti-commute iff $\{A, B\} = 0$
+{A, B} = AB + BA. Thus, A and B anti-commute iff {A, B} = 0
+\item Proposition: \textbf{The set of Pauli matrices = \boldmath$\{I, X, Y, Z\}$}. Each Pauli matrix $\sigma$ is Hermitian. Moreover, \textbf{pairs of Pauli matrices anti-commute}\\
+Proof:\\
+$XX = I$, \;\;\;\;\;$XY = iZ$, \;\:$XZ = -iY$\\
+$YX = -iZ$, $YY = I$, \;\;\;\;\:$YZ = iZ$\\
+$ZX = iY$, \;\;$ZY = -iZ$, $ZZ = I$\\
+Symmetry $\times -1$ when reflected in diagonal demonstrates anti-commutation\\
+$ $\\
+As $\sigma$ is unitary and {\boldmath$\sigma^2 = I$}, $\sigma$ is Hermitian.
+\end{itemize}
+\clearpage
+\subsection{Phase-kickback}
+\begin{itemize}
+\item Proposition: Every classical oracle has a corresponding quantum oracle (possibly with additional inputs and outputs in order to make it reversible)\\
+Proof sketch: Consider the Toffoli gate $\ket{a} \otimes \ket{b} \otimes \ket{c} \mapsto \ket{a} \otimes \ket{b} \otimes \ket{c \oplus ab}$. The $\oplus ab$ (this type of thing will come up a lot) only has the classically intuitive meaning (XOR (a AND b)) on the $\ket{0}$, $\ket{1}$ states; for general quantum states we will have to break the state down into a sum of computational basis states first to be able to apply this definition.\\
+It is easy to see that this is a (self-inverse) quantum unitary. Moreover, it is also easy to see that this can simulate a NAND gate (which is a universal classical gate). Note that Toffoli is not universal for quantum computation, only for (reversible) classical computation.
+\clearpage
+\item Proposition: \textbf{Let \boldmath$O_f$ be a quantum oracle \boldmath$O_f\ket{xy} =$\\
+\boldmath$\ket{x} \otimes \ket{y \oplus f(x)}$. Then there exists a so called phase-kickback circuit \boldmath$U_f$ such that \boldmath$U_f\ket{x} = (-1)^{f(x)}\ket{x}$} $\left(\otimes \ket{z}\right)$ (we don't actually care about $\ket{z}$)\\
+Proof: Consider $U_f\ket{x} = O_f(I \otimes H)\left(\ket{x} \otimes \ket{1}\right)$.\\
+Then, $U_f\ket{x} = O_f\left(\ket{x} \otimes \ket{-}\right)$\\
+Case $f(x) = 0$: $O_f\ket{xy} = \ket{x} \otimes \ket{y}$. Thus, $U_f\ket{x} = \ket{x} \otimes \ket{-} =$\\$ (-1)^0\ket{x} \otimes \ket{-}$\\
+Case $f(x) = 1$: $O_f\ket{xy} = \ket{x} \otimes X\ket{y}$. Thus, $U_f\ket{x} = \ket{x} \otimes -1\ket{-} = $\\$-1\ket{x} \otimes \ket{-} = (-1)^1\ket{x} \otimes \ket{-}$\\
+\end{itemize}
+\subsection{Deutsch–Jozsa algorithm}
+\begin{itemize}
+\item Proposition \textbf{(Walsh-Hadamard Transform): \boldmath$H^{\otimes n}\ket{x} = \frac{1}{\left(\sqrt{2}\right)^n} \sum_{y \in \{0, 1\}^n}(-1)^{x \cdot y} \ket{y}$} where $x = x_1...x_n$ and $x_1, ..., x_n \in \{0, 1\}$\\
+Proof:\\
+$H\ket{0} = \frac{1}{\sqrt{2}}\left(\ket{0} + \ket{1}\right)$\\
+$H\ket{1} = \frac{1}{\sqrt{2}}\left(\ket{0} - \ket{1}\right)$\\
+Thus, $H\ket{x_i} = \frac{1}{\sqrt{2}} \sum_{y_i \in \{0, 1\}}(-1)^{x_i \cdot y_i} \ket{y_i}$.\\
+Thus, $H^{\otimes n}\ket{x} = \bigotimes_{i \in [n]} \frac{1}{\sqrt{2}} \sum_{y_i \in \{0, 1\}}(-1)^{x_i \cdot y_i} \ket{y_i} = \frac{1}{\left(\sqrt{2}\right)^n} \sum_{y \in \{0, 1\}^n}(-1)^{\sum_j x_j\cdot y_j} \ket{y} = \frac{1}{\left(\sqrt{2}\right)^n} \sum_{y \in \{0, 1\}^n}(-1)^{x \cdot y} \ket{y}$\\
+Corollary: {\boldmath$\ket{+}^{\otimes n} = \frac{1}{\left(\sqrt{2}\right)^n} \sum_{x \in \{0, 1\}^n}\ket{x}$}\\
+\item \textbf{Deutsch-Jozsa problem:} Given an oracle for a boolean function $f$, and a promise that $f$ is either constant ($\exists c \in \{0, 1\}: \forall x; f(x) = c$) or balanced (for \underline{exactly} half of the possible inputs $f(x) = 1$ (and for exactly half of the possible inputs $f(x) = 0$)), \textbf{decide whether \boldmath$f$ is constant or balanced}
+\item A classical computer requires $O(\frac{2^n}{2} + 1) = O(2^n)$ oracle calls as we need to put in half + 1 of the inputs to be sure to never make a mistake
+\item Proposition: A quantum computer can solve Deutsch-Jozsa using a single oracle call!\\
+Proof: The quantum circuit is {\boldmath$\psi_\textrm{out} = H^{\otimes n}\left(U_f\left(H^{\otimes n}\ket{0}^{\otimes n}\right)\right)$} where $U_f$ is the phase kickback unitary for the oracle.\\
+$\psi_\textrm{out} = H^{\otimes n}\left(U_f\ket{+}^{\otimes n}\right) = H^{\otimes n} \sum_{x \in \{0, 1\}^n}(-1)^{f(x)}\ket{x}$\\
+Using the lemma, $\psi_\textrm{out} = \frac{1}{\left(\sqrt{2}\right)^n} \sum_{x \in \{0, 1\}^n}\left((-1)^{f(x)} \frac{1}{\left(\sqrt{2}\right)^n}\sum_{y \in \{0, 1\}^n}(-1)^{x \cdot y}\ket{y}\right) = \sum_{y \in \{0, 1\}^n}\left(\frac{1}{2^n} \sum_{x \in \{0, 1\}^n}(-1)^{f(x) + x \cdot y}\right)\ket{y}$.\\
+Thus, {\boldmath$\Pr(0^{\otimes n})$} {\boldmath$=$} $\left|\frac{1}{2^n} \sum_{x \in \{0, 1\}^n} (-1)^{f(x) + x \cdot 0^{\otimes n}}\right|^2$ $=$ {\boldmath$\left|\frac{1}{2^n} \sum_{x \in \{0, 1\}^n} (-1)^{f(x)}\right|^2$}.\\
+Case $f(x) = c$ for all $x$: $\Pr(0^{\otimes n}) = \left|\frac{1}{2^n} \sum_{x \in \{0, 1\}^n}(-1)^c\right|^2 =$\\$ \left|\frac{1}{2^n} \left((-1)^c 2^n\right)\right|^2 = 1$\\
+Case $f$ is balanced: $\Pr(0^{\otimes n}) = \left|\frac{1}{2^n} 0\right|^2 = 0$
+\end{itemize}
+\subsection{Bernstein-Vazirani algorithm}
+\begin{itemize}
+\item \textbf{Bernstein-Vazirani problem: Given an oracle for an \boldmath$f(x) = a \cdot x$, find the value of \boldmath$a \in \{0, 1\}^n$}
+\item A classical computer requires at least $\Omega(n)$ oracle queries (proof out of scope, but uses communication complexity) to solve Bernstein-Vazirani
+\item Proposition: A quantum computer can solve Bernstein-Vazirani in a single oracle call! Moreover, \textbf{the same circuit as Deutsch–Jozsa suffices}.\\
+Proof: Recall that each output state $\ket{y}$ of the Deutsch-Jozsa circuit has probability $\left|\frac{1}{2^n} \sum_{x \in \{0, 1\}^n}(-1)^{f(x) + x \cdot y}\right|^2$. Using our definition of f(x), $\Pr(y) = \left|\frac{1}{2^n} \sum_{x \in \{0, 1\}^n}(-1)^{a \cdot x + x \cdot y}\right|^2 = \left|\frac{1}{2^n} \sum_{x \in \{0, 1\}^n}(-1)^{a \cdot x}(-1)^{x \cdot y}\right|^2$\\
+Suppose $y=a$, then $\Pr(y) = \left|\frac{1}{2^n} \sum_{x \in \{0, 1\}^n}(-1)^{ax}(-1)^{ax}\right|^2 = \left|\frac{1}{2^n} \sum_{x \in \{0, 1\}^n}\left((-1)^{ax}\right)^2\right|^2 = \left|\frac{1}{2^n} \sum_{x \in \{0, 1\}^n}1\right|^2 = 1$.\\
+Suppose $y \neq a$, then by elementary laws of probability $\Pr(y) \leq 1 - Pr(a) = 1-1 = 0.$\\
+\end{itemize}
+\subsection{Grover's algorithm}
+\begin{itemize}
+\item \textbf{Grover's problem: Given an oracle for a boolean function \boldmath$f$}, and a promise that there is exactly one satisfying input (this is only for simplicity, it can be relaxed fairly easily), \textbf{find the \boldmath$s \in \{0, 1\}^n$ such that \boldmath$f(s) = 1$}
+\item \textit{Note this is a "harder" problem than SAT (although actually it is not even known whether quantum algorithms can solve NP-Complete problems deterministically in polynomial time) as the boolean function is an oracle rather than a formula we can inspect}
+\item Lemma: $R = 2\ket{\phi}\bra{\phi} - I$ is the unitary that reflects in the line $\ket{\phi}$\\
+Proof:\\
+$R\left(a\ket{\phi} + b\ket{\phi^\bot}\right) = 2a\ket{\phi} + 0b\ket{\phi^\bot} - a\ket{\phi} - b\ket{\phi^\bot} = a\ket{\phi} - b\ket{\phi^\bot}$
+\item Proposition: \textbf{A quantum algorithm can solve Grover's problem with high probability in \boldmath$O(\sqrt{2^n})$ oracle calls, whereas corresponding classical algorithms would require \boldmath$O(2^n)$ oracle calls} (there can be no classical shortcuts for an arbitrary boolean function oracle, so asymptotically all of the elements have to be looked at to even attain high probability)\\
+\textbf{Algorithm: Start with the \boldmath$\ket{0}^{\otimes n}$ state (as many quantum algorithms do). Repeatedly apply identical units called Grover iterations. Each Grover iteration is \boldmath$\ket{\psi_{i+1}} = H^{\otimes n}U_0H^{\otimes n}U_f\ket{\psi_i}$ where \boldmath$U_0$ \boldmath$=$ the phase-kickback unitary for \boldmath$g(x) = \mathds{1}[x \neq 0^{\otimes n}]$}\\
+\clearpage
+Proof: Break-up $H^{\otimes n}\ket{0}^n = \frac{1}{\sqrt{2^n}}\ket{s} + \frac{\sqrt{2^n - 1}}{\sqrt{2^n}}\ket{s^\bot}$ where $\ket{s^\bot} = \left[\sum_{x \in \{0, 1\}^n: x \neq s} \ket{x}\right]$. Notice that $\left(\frac{1}{\sqrt{2^n}}\right)^2 + \left(\frac{\sqrt{2^n - 1}}{\sqrt{2^n}}\right)^2 = 1$ and thus deduce that $\exists \theta: \left(\sin(\theta) = \frac{1}{\sqrt{2^n}}\:\textrm{ and }\cos(\theta) = \frac{\sqrt{2^n - 1}}{\sqrt{2^n}}\right)$.\\
+Thus, $\psi_0 = \sin(\theta_0)\ket{s} + \cos(\theta_0)\ket{s^\bot}$. Let G be the grover iteration unitary. We will demonstrate later that {\boldmath$G^t\ket{\psi_0} = \sin((2t+1)\theta_0)\ket{s} +$\\
+\boldmath$\cos((2t+1)\theta_0)\ket{s^\bot}$}.\\
+Thus, by running {\boldmath$T = \frac{\pi}{4}\sqrt{2^n}$} Grover iterations we obtain an output state $G^T\ket{\psi_0} \approx$ [as $2T + 1 \approx T$ for large T (i.e. large $n$)] $\sin(\frac{\pi}{2}\sqrt{2^n}\theta_0)\ket{s} + \cos(\frac{\pi}{2}\sqrt{2^n}\theta_0)\ket{s^\bot} = \sin(\frac{\pi}{2}\frac{1}{\sin(\theta_0)}\theta_0)\ket{s} + \cos(\frac{\pi}{2}\frac{1}{\sin(\theta_0)}\theta_0)\ket{s^\bot}$\\
+$\approx$ [as $\sin(\theta_0) \approx \theta_0$ for small $\theta_0$]\\
+$\sin(\frac{\pi}{2})\ket{s} + \cos(\frac{\pi}{2})\ket{s^\bot} = \ket{s}$. Thus, the state is $\ket{s}$ with high probability (and we can use probability amplification to get it even higher if we necessary, as we get the same quantum state every time and it collapses independently every time) and we used $T \in O(\sqrt{2^n})$ oracle calls.\\
+Now we need to actually prove that each Grover iteration does the rotation we claimed.\\
+As $U_f$ $=$ the matrix which is 0 everywhere expect for the diagonal where it is $+1$ expect for the s position on the diagonal where it is $-1$, $U_f = I - 2\ket{s}\bra{s}$. Thus, by the lemma, (up to an irrelevant global phase) \textbf{\boldmath$U_f$ is reflection in the line \boldmath$\ket{s}$}.\\
+As $U_0$ $=$ the matrix which is 0 everywhere expect for the diagonal where it is $-1$ expect for the $0^{\otimes n}$ position on the diagonal where it is $+1$, $U_f = 2\ket{0^{\otimes n}}\bra{0^{\otimes n}} - I$. Thus, $U_0$ is reflection in the line $\ket{0}^{\otimes n}$. Thus, as $\ket{\psi_0} = H^{\otimes n}\ket{0}^{\otimes n}$, \textbf{\boldmath$H^{\otimes n}U_0H^{\otimes n}$ is reflection in the line \boldmath$\ket{\psi_0}$}.\\
+We have shown that a Grover iteration corresponds to reflection in the line $\ket{s}$ followed by reflection in the line $\ket{\psi_0}$. It remains to demonstrate what rotation this composition corresponds to.
+\clearpage
+The definition of $\theta_0$ was that it is the angle made between $\ket{\psi_0}$ and $\ket{s^\bot}$. Let $\phi_t$ be the angle made between $\ket{\psi_t}$ and $\ket{\psi_0}$. Then, the state after $\ket{\psi_t}$ is reflected in $\ket{s^\bot}$ by $U_f$ makes an angle of $\theta_0 + \phi_t$ with $\ket{s^\bot}$. It is this state which is reflected in $\ket{\psi_0}$ by $H^{\otimes n}U_0H^{\otimes n}$ to obtain $\phi_{t+1}$. Thus, $\phi_{t+1}$ makes an angle of $2\theta_0 + \phi_t$ with $\ket{\psi_0}$ and so makes an angle of $2\theta_0$ with $\ket{\psi_t}$.\\
+\FloatBarrier
+\begin{figure}[hp]
+\begin{center}
+\includegraphics[width=0.26\textwidth]{meta/IQC/Grover.png}{}
+\end{center}
+\end{figure}
+\FloatBarrier
+Thus, as $\ket{\psi_0}$ makes an angle of $\theta_0$ with $\ket{s^\bot}$ and each $\ket{\psi_{t+1}}$ makes an angle of $2\theta_0$ with $\ket{\psi_t}$, by induction each $\ket{\psi_{t}}$ makes an angle of $(2t+1)\theta_0$ with $\ket{\psi_0}$
+\end{itemize}
+\subsection{Simon's algorithm}
+\begin{itemize}
+\item \textbf{Simon's problem: Given an oracle for a function \boldmath$f: \{0, 1\}^n \mapsto \{0, 1\}^n$, and a promise that $\exists a \in \{0, 1\}^n:$\\
+\boldmath$ \forall x; \forall x' \neq x; f(x') = f(x)$ \underline{if and only if} $x' = x \oplus a$, find the value of $a$}
+\item \textbf{To solve Simon's problem it suffices to find any pair \boldmath$x, x'$ such that \boldmath$x' \neq x$ but \boldmath$f(x) = f(x')$ as then \boldmath$a = x' \oplus x$}. However, a classical algorithm would need $\Omega(\sqrt{2^n})$ to find such a pair with high probability
+\item Proposition: A quantum algorithm can solve Simon's problem with high probability exponentially faster than a classical algorithm could\\
+\textbf{Algorithm: \boldmath$\ket{\psi_y} \otimes \ket{z} = H^{\otimes n} \otimes I^{\otimes n} \left(O_f \left(H^{\otimes n} \otimes I^{\otimes n} \left(\ket{0}^{\otimes n} \otimes \ket{0}^{\otimes n}\right)\right)\right)$}\\
+Proof:\\
+Let $\ket{\phi} =$ the state immediately after the $O_f$.\\
+Then, $\ket{\phi} = O_f\left(\ket{+}^{\otimes n} \otimes \ket{0^{\otimes n}}\right) = \frac{1}{\sqrt{2^n}}\sum_{x \in \{0, 1\}^n} \ket{x}\otimes\ket{f(x)} = \frac{1}{\sqrt{2^n}}\sum_{y \in \{0, 1\}^n}\left(\sum_{x \in f^{-1}(y)} \ket{x}\right)\otimes\ket{y}$.\\
+We will suppose of the sake of simplifying the proof that $\ket{z}$ is measured at this point. It is important to understand that this has no impact on correctness.\\
+Let $y$ now refer to the particular (arbitrary) measurement outcome of the lower register. The corresponding projector is $P_y = I^{\otimes n} \otimes \ket{y}\bra{y}$. $P_y\ket{\phi} = \frac{1}{\sqrt{2^n}}\left(\sum_{x \in f^{-1}(y)} \ket{x}\right)\otimes\ket{y}$. $\Pr(y) = \frac{\left|f^{-1}(y)\right|}{2^n}$\\
+$\ket{\psi_y} = H^{\otimes n}\frac{1}{\sqrt{\Pr(y)}}P_y\ket{\phi} = H^{\otimes n}\frac{1}{\sqrt{\left|f^{-1}(y)\right|}} \sum_{x \in f^{-1}(y) \ket{x}}$\\
+By the promise, $f$ is either one-to-one or two-to-one. Assume (HOW?) that it is two-to-one for the output $y$. Then, $\ket{\psi_y} = H^{\otimes n}\frac{1}{\sqrt{2}}\left(\ket{x_y} + \left(x_y \oplus a\right)\right)$\\
+By the Walsh-Hadamard transform, $\ket{\psi_y} = \frac{1}{\sqrt{2}}\frac{1}{\left(\sqrt{2}\right)^n} \sum_{z \in \{0, 1\}^n}\left((-1)^{x_y \cdot z} + (-1)^{\left(x_y \oplus a\right) \cdot z}\right)\ket{z} = \frac{1}{\sqrt{2}}\frac{1}{\left(\sqrt{2}\right)^n} \sum_{z \in \{0, 1\}^n}\left((-1)^{x_y \cdot z} + (-1)^{x_y \cdot z}(-1)^{a \cdot z}\right)\ket{z} =$\\
+$\frac{1}{\sqrt{2}}\frac{1}{\left(\sqrt{2}\right)^n}\left(\sum_{z \in \{0, 1\}^n: a \cdot z = 0}\left((-1)^{x_y \cdot z} +(-1)^{x_y \cdot z}\right)\ket{z}\right) +$\\
+$\frac{1}{\sqrt{2}}\frac{1}{\left(\sqrt{2}\right)^n}\left(\sum_{z \in \{0, 1\}^n: a \cdot z = 1}(-1)^{x_y \cdot z} - (-1)^{x_y \cdot z}\ket{z}\right)) = \frac{1}{\sqrt{2}}\frac{1}{\left(\sqrt{2}\right)^n}\left(2 \sum_{z \in \{0, 1\}^n: a \cdot z = 0}(-1)^{x_y \cdot z}\ket{z}\right) = \frac{1}{\left(\sqrt{2}\right)^{n-1}}\sum_{z \in \{0, 1\}^n: a \cdot z = 0}(-1)^{x_y \cdot z}\ket{z}$.\\
+Thus, \textbf{measuring the upper register gives us some \boldmath$z$ such that \boldmath$a \cdot z = 0$}. Note we no longer care about $y$, it just made the algebra a bit easier (yes really!) to have y be deterministic.\\
+By repeating this process until we obtain linearly independent $z^{(1)}, ..., z^{(n - 1)}$, we can use classical post-processing to build and solve a system of simultaneous equations to find $a$: $\forall i \in [n]; a_i \in \{0, 1\}$ and $a_1 + ... + a_n \neq 0$ and $\forall j \in \{1, ..., n-1\}; a_1z_1^{(k)} \oplus ... \oplus a_nz_n^{(k)} = 0$.\\
+The luckiest our algorithm can be is to only make $n-1 \in O(n)$ runs and immediately get a set of $n-1$ linearly independent $z$s, it is possible to show that this happens with probability at least $\frac{1}{4}$. Suppose we make $O(n)$ runs of our algorithm (where our algorithm includes internally running the circuit $O(n)$ times (and each run of the circuit only makes a single oracle call)), then the probability we don't get a linearly independent set is at most $O\left(\left(\frac{3}{4}\right)^n\right)$ which means we succeed with high probability and we only used $O(n) \times O(n)=O(n^2)$ oracle calls
+\end{itemize}
+\clearpage
+\section{Quantum subroutines}
+\subsection{Hadamard test}
+\begin{itemize}
+\item \textbf{Hadamard test circuit: Let $\Pi_0, \Pi_1$ be projectors that partition the Hilbert space into subspaces (ie $\Pi_0 + \Pi_1 = I$). The Hadamard test induced by $\Pi_0, \Pi_1$ is \boldmath$U_m\ket{0} \otimes \ket{\psi}$ where \boldmath$U_m = \left(H \otimes I\right)\bigwedge A_{1, ...}\left(H \otimes I\right)$ where $A = \Pi_0 - \Pi_1$}
+\item Proposition: $A$ is unitary, and so this is a valid circuit\\
+Proof: $AA^\dagger = \left(\Pi_0 - \Pi_1\right)^2 = \Pi_0^2 - \Pi_0\Pi_1 - \Pi_1\Pi_0 + \Pi_1^2 = \Pi_0 + \Pi_1 = I$\\
+\item Proposition: $\Pi_0, \Pi_1$ are eigenspaces of A with eigenvalues $+1, -1$ respectively\\
+Proof:\\
+$A\Pi_0 = \Pi_0^2 - \Pi_1\Pi_0 = \Pi_0$ by properties of projectors\\
+$A\Pi_1 = \Pi_0\Pi_1 - \Pi_1^2 = -\Pi_1$ by properties of projectors\\
+\item Proposition: \textbf{Measuring the top qbit gives measurement outcome \boldmath$i$ with probability \boldmath$\Pr(i) = \left|\Pi_i \ket{\psi}\right|^2$ and sends the lower register \boldmath$\ket{\psi}$ to \boldmath$\Pi_i \ket{\psi}$}\\
+Proof: Exercise\\
+Corollary: If $\ket{\psi}$ lies entirely inside one of $\Pi_0, \Pi_1$, then the measurement of the upper qbit tells us deterministically which one it is in and the projection of the lower register does not affect the state (by the definition of projection). This is useful as it means we can measure certain properties of a quantum state for quantum error correction purposes without collapsing the state
+\item Proposition: \textbf{For any Hadamard test, bias of outcomes \boldmath$=$ \boldmath$\Pr(0) - \Pr(1)$} $=$ $|\Pi_0\ket{\psi}|^2 - |\Pi_1\ket{\psi}|^2 = \braket{A}$ $=$ \textbf{\boldmath$\bra{\psi}A\ket{\psi}$}\\
+Proof: Exercise\\
+Corollary: Hadamard test with $A$ as the SWAP gate and input state $\ket{\psi} = \ket{\phi_1} \otimes \ket{\phi_2}$ gives probability bias $|\braket{\phi_1|\phi_2}|^2$
+\end{itemize}
+\subsection{Quantum Fourier transform}
+\begin{itemize}
+\item \textbf{\boldmath$\textrm{QFT}_q = \frac{1}{\sqrt{q}}\sum_{y \in \{0, ..., Q-1\}} \exp(i\frac{2\pi}{q})^{xy}\ket{y}$}. Thus, $H=\textrm{QFT}_2$
+\item We will only consider $q$ where $\exists n: q = 2^n$
+\item Proposition: \textbf{\boldmath$\textrm{QFT}_{2^n} \ket{x_1...x_n} = \frac{1}{\sqrt{2^n}} \bigotimes_{j \in \{0, ..., n-1\}} \left(\ket{0}+\exp(2\pi i \left(0.x_{n-i}...x_n\right)\right)\ket{1}$ where \boldmath$0.x_{n-i}...x_n$ is a fixed point binary fraction}\\
+Proof: Omitted due to time
+\end{itemize}
+\clearpage
+\subsection{Quantum phase estimation}
+\begin{figure}[hp]
+\begin{center}
+\includegraphics[width=0.95\textwidth]{meta/IQC/QPE.pdf}{}
+\end{center}
+\end{figure}
+\begin{itemize}
+\item \textbf{Quantum phase estimation uses QFT to generalise the Hadamard test. The state is projected onto some \boldmath$P_j$ subspace (with probability \boldmath$|P_j|\ket{\psi}|^2$), and we obtain the \boldmath$t$ most significant bits of the fixed point binary representation of \boldmath$\gamma_j$ where the eigenvalue of \boldmath$P_j$ is \boldmath$\exp(2 \pi i \gamma_j)$}
+\item Intuition: Each $U^{\left(2^j\right)}$ doubles the phase of $U$ causing a bit shift in $\gamma_j$. The $QFT^\dagger$ then extracts the most-significant fractional bit from the amplitude of $\ket{1}$ on each wire.
+\end{itemize}
+% \section{Shor's algorithm}
+% \subsection{Order-finding algorithm}
+% \begin{itemize}
+% \item For many problems apply quantum phase estimation requires using expoentially many gates to construct the $U^{\left(2^j\right)}$s, but for order-finding (and thus Shor's algorithm) we can apply QPE efficently
+% \end{itemize}
+% \subsection{Shor's algorithm}
+\clearpage
+\section{Quantum Algorithms For Optimization}
+\subsection{Variational Quantum Algorithms (VQA)}
+\subsubsection{Motivation}
+\begin{itemize}
+\item Because we are currently in the NISQ (Noisy Intermediate-scale Quantum) era of quantum computing hardware, we have enough qbits for quantum advantage in principle but not enough qbits to be able to do error correction (to account for the noisiness) on large enough inputs for the algorithms we have seen so far to have demonstrable quantum advantage
+\item VQA solves problems of the form: Given a Hermitian matrix $H$ compute the smallest eigenvalue. In physics terms: Given a Hamiltonian $H$ compute the ground state energy
+\item It is unfortunate that we have a notation clash with the Hadamard gate, but this is the standard notation!
+\item $BQP$ is the quantum equivalent of $P$
+\item $QMA$ is the quantum equivalent of $NP$
+\item $P \subseteq BQP \subseteq QMA$
+\item $NP \subseteq QMA$
+\item $\exists X: X \in NP$ but $X \notin BQP$
+\item $\exists X: X \in BQP$ but $X \notin NP$
+\item k-local-Hamiltonian = Given a Hermitian matrix $H = \sum_i H_i$, where each $H_i$ acts on at most $k$ qbits, compute the smallest eigenvalue. This sounds similar to k-SAT because it is: $k-local-Hamiltonian \in QMA-Complete$. Thus, as VQA can solve k-local-Hamiltonian, VQA can solve any $X \in QMA$ and so certainly any $X \in NP \cup BQP$. However, $VQA$ takes exponential time unless approximations are acceptable (in which case heuristics can be used)
+\end{itemize}
+\subsubsection{VQA framework}
+VQA framework for solving some problem $X$:
+\begin{enumerate}
+\item Determine how to express $X$ as finding the ground state energy of a Hamiltonian $H$
+\item Identify a quantum algorithm to estimate the energy $\bra{\psi}H\ket{\psi}$ of a given state $\ket{\psi}$
+\item Select a family of states $\psi(\overrightarrow{\theta})$ to consider. Restricting our attention in this way means we may only approximate the ground state energy
+\item Use a classical optimization algorithm (eg gradient decent) to solve $\underset{\overrightarrow{\theta}}{\min} C(\overrightarrow{\theta}) = \bra{\psi(\overrightarrow{\theta})}H\ket{\psi(\overrightarrow{\theta})}$ with the aid of the quantum oracle from step 2
+\end{enumerate}
+\subsubsection{VQA framework: Step 1}
+\begin{itemize}
+\item \textbf{Many NP-Complete problems correspond to finding the ground state energy of some Ising Spin Glass Hamiltonian: \boldmath$H = -1\left(\sum_{i, j} \left(J_{ij}Z_i \otimes Z_j\right) + \mu \left(h_i z_i\right)\right)$} where $Z$s are the Pauli gate, and $\mu, J_{ij}, h_i$ are constants encoding the problem.
+\item MAX-CUT corresponds to $H(\overrightarrow{x}) = \sum_{i, j \in E(G)} 1 - 2\sum_{i, j \in E'(G)}$ where $E'(G)$ denotes the edges that cross the cut induced by $\overrightarrow{x}$. This in turn corresponds to (PROVE IT!) $H = \sum_i, j \in E(G) Z_i \otimes Z_j$ where $Z_i, Z-j$ denotes Z gates on the ith and jth qbits (and I gates everywhere else). This is an Ising Spin Glass Hamiltonian with $\mu = 0$ and $J_{ij} = -1\; \forall i, j$.
+\end{itemize}
+\clearpage
+\subsubsection{VQA framework: Step 2}
+\begin{itemize}
+\item We will decompose H into Pauli's as these are best for NISQ measuremements
+\item Ising Spin Glass Hamiltonians are already written as a sum of Paulis
+\item It is known that for any n-bit Hamiltonian $H$, {\boldmath$\exists P_1, ..., P_n \in \{I, X, Y, Z\}: H = \sum_i c_i P_i$} for a sequence of Paulis $P_i$s of the appropriate length and vector $c_i$
+\item \textbf{Pauli decomposition: Define \boldmath$<A, B> = \frac{\textrm{Trace}(A^\dagger B)}{2^n}$ (recall that the trace is the sum along the leading diagonal) where $n$ is the number of qbits $H$ (or equiv $P_j$) operates on. Then, each \boldmath$c_i = <P_i, H>$}
+\item N copies of $\ket{\psi}$ will be prepared for us by the VQA process. For each $j$, we will compute $\bra{\psi}P_j\ket{\psi}$ on the $j^\textrm{th}$ copy of $\ket{\psi}$
+\item Using a Hadamard test we can measure the $\pm 1$ eigenvalue of $P_j$ (probabilistically collapsing into one or the other in the likely event that $\ket{\psi}$ is not an eigenstate of $P_j$). Call the measurement outcome $O_i \in \{-1, +1\}$. By making $K$ runs for each $P_j$, we can classically compute an estimate $O = \frac{\sum_i O_i}{K}$ of $\bra{\psi}P_j\ket{\psi}$. Using our decomposition, we can classically compute an estimate of $\bra{\psi}H\ket{\psi}$
+\end{itemize}
+\subsubsection{VQA framework: Step 4}
+\begin{itemize}
+\item Gradient decent is the most straightforward choice, but there are the risks of local minima and flat regions
+\item Proposition: If $E$ is a sum of Pauli's, then $\pdv{}{\theta}\left(E(\theta)\right) =$\\
+$E\left(\theta + \frac{\pi}{4}\right) - E\left(\theta - \frac{\pi}{4}\right)$\\
+Proof: Out of scope\\
+Corollary: We don't have to use the limit definition to approximate the gradient
+\item We could use \textbf{Monte-Carlo optimization} instead of gradient decent: \textbf{At each step \boldmath$t+1$ randomly vary a parameter in \boldmath$\theta_t$ to obtain a candidate \boldmath$\theta'_t$. Let \boldmath$\delta = E(\theta'_t) - E(\theta_t)$. If \boldmath$\delta \leq 0$, certainly set \boldmath$\theta_{t+1} = \theta'_t$. If \boldmath$\delta > 0$, set \boldmath$\theta_{t+1} = \theta'_t$ with probability \boldmath$\exp(-\beta\delta)$ and set \boldmath$\theta_{t+1} = \theta_t$ otherwise}. temperature $=$ $\frac{1}{\beta}$ --- $\beta$ is often set to increase alongside round number $t$
+\end{itemize}
+\clearpage
+\subsection{Quantum Machine Learning}
+\subsubsection{Quantum neural network}
+\begin{itemize}
+\item Quantum neural network inference: Encode input $x$ into a quantum state $\ket{\phi(x)}$. Use a variational circuit $U(\theta)$ with trainable parameters $\theta$ to obtain an output $z$. Apply an activation function $f$ to $z$
+\item \textbf{Quantum neural network training: In the style of VQA, search for a \boldmath$\theta$ that minimizes \boldmath$\bra{\phi(x)}U^\dagger(\theta)f(z)U(\theta)\ket{\phi(x)}$}
+\item \textbf{Basis encoding: \boldmath$\phi_B(x) = \ket{x_{n-1}...x_0}$}
+\item \textbf{Amplitude encoding: \boldmath$\phi_A(x) = \frac{1}{n}\sum_{i \in \{0, ..., n-1\}} x_i \ket{i}$}
+\item Amplitude encoding only requires $\log_2 n$ qbits whereas basis encoding requires $n$ qbits
+\item \textbf{Unitary encoding: \boldmath$\phi(x) = V(x)\ket{0}$} where $V$ is a given unitary
+\end{itemize}
+\subsubsection{Quantum kernels}
+\begin{itemize}
+\item Recall the SVM kernel trick, and that is corresponds to altering the definition of the inner product
+\item \textbf{The inner product is easy to product in a quantum circuit. To compute \boldmath$|\braket{\phi(y)|\phi(x)}|^2$ we simply use the circuit \boldmath$U_\phi^\dagger(y)U_\phi(x)\ket{0}^{\otimes n}$}
+\end{itemize}
+\clearpage
+\section{Measurement-Based Quantum Computing (MBQC)}
+\subsection{Foundations}
+\begin{itemize}
+\item Our entanglement resources is defined as a graph state: Each vertex corresponds to a qbit initialized to $\ket{+}$. For each edge apply $\bigwedge Z$ (for control Z it does not matter which qbit is the control), thus entangling the endpoints. That is that {\boldmath$\ket{G} = \left(\prod_{a,b \in E}\wedge Z_(a,b)\right)\ket{+}^{\otimes |V|}$}
+\item \textbf{\boldmath$\bigwedge Z$ commutes with other \boldmath$\bigwedge Z$s}
+\item \textbf{\boldmath$M_j^B$ \boldmath$=$ measurement of \boldmath$j^\textrm{th}$ qbit in basis \boldmath$B$}
+\item \textbf{\boldmath$Z$-basis \boldmath$=$ \boldmath$\{\ket{0}, \ket{1}\}$}
+\item \textbf{\boldmath$\theta$-basis \boldmath$=$ \boldmath$\{\ket{+_\theta}, \ket{-_\theta}\}$ where \boldmath$\ket{\pm_\theta} = \frac{1}{\sqrt{2}}\left(\ket{0} \pm \exp(i \theta)\ket{1}\right)$}
+\item \textbf{By convention inputs are on the far LHS of G and outputs are on the far RHS of G. Non-output nodes are labelled with their measurement (typically a measurment angle $\theta$ with which to measure in the $\theta$-basis) and the outcome of their measurement}
+\end{itemize}
+\subsection{Correcting measurement angles}
+\begin{itemize}
+\item If the measurement outcome is 0, then the measured qbit collapsed into the $+_\theta$ state and the state teleported to the neighbour as wanted. If a measurement outcome is 1, then the state teleported to the neighbour with an unwated $X$ applied
+\item Proposition: \textbf{For each \boldmath$i \in V$, \boldmath$K_i = X_i\left(\prod_{j \in N_G(i)} Z_j\right)$ is a stabilizer of \boldmath$\ket{G}$} ($\ket{G}$ is an eigenstate with eigenvalue +1)\\
+Proof: Omitted due to time
+\item \textbf{A qbit $i$ needs an $X$ correction from \underline{the} qbit $f^{-1}(i)$ and Z corrections from each qbit in $\{j: i \in N_G(f(j))$ and $j \neq i\}$}
+\item \textbf{An X correction corresponds to correcting a $\phi$ to $-\phi$ and a Z correction corresponds to correcting a $\phi$ to $\phi+ \pi$}
+\item We can only rewrite the correction of intermediate qbits in this way as changes to the measurement angles in this way, the output qbits must actually have gates applied
+\end{itemize}
+\clearpage
+\subsection{Blind MBQC}
+\begin{itemize}
+\item Alice will prepare single qbits. Bob: store qbits, entangle qbits, make measurements, apply gates. Can Alice use Bob as a quantum computing cloud while keeping her data private?
+\item Alice can use MBQC and hide both her true resource state $\ket{G}$ and her true measurement angles from Bob
+\item Measurement angles can be hidden because rotations and the same axis are additive (and so commute). Alice sends Bob an angle $\phi + \theta$ to measure in and keeps $\theta$ secret, she pre-rotates her states by $\theta$ and so Bob is really measuring in $\phi$ without knowing $\phi$
+\item Hiding the measurement angles means the measurement outcome is also hidden as which corrections to apply are only known to Alice
+\item Each step in the computation requires Bob to communicate with Alice to correct the output of that step then apply a new secret rotation to obtain the state for Bob to use in the next step
+\end{itemize}
+\clearpage
+\section{Quantum Error Correcting Codes (QECC)}
+\subsection{Quantum error correction}
+\begin{itemize}
+\item When error correcting quantum computers we need to deal with phase flips as well as bit flips
+\item We cannot make independent replicas of quantum states (due to the no-cloning theorem), we can only create redundancy through entanglement: Let $\ket{\psi} = a\ket{0} + b\ket{1}$. Then, $CNOT(\ket{\psi} \otimes \ket{0}) = a\ket{00} + b\ket{11}$
+\item Principle of digitization of error: Every error (other than those that cause the state to actually collapse, which we can't do anything about because of no cloning) can be expressed as a unitary that rotates the Bloch sphere and so can be rewritten using X and Z gates only. Thus, the ability to detect and correct X-errors (bit-flips) and Z-errors (phase flips) is sufficient despite the continuous nature of quantum computation
+\item \textbf{Proposition: A pair of Pauli operators (tensor products of single-qbit Paulis) which have an odd number of overlaps (on the same qbit there is a different Pauli to itself that is also not $I$) anti-commute. A pair of Pauli operators which have an even number of overlaps commute}\\
+Proof sketch: Single-qbit Paulis anti-commute. Thus, each overlap multiplies on a (-1) phase, creating the described effect
+\end{itemize}
+\subsection{Stabilizers and logical operators}
+\begin{itemize}
+\item The Pauli group $P = \{\pm I, \pm iI, \pm X, \pm iX, \pm Y, \pm iY, \pm Z, \pm iZ\}$. A stabiliser group $S_G$ is an $S_G \subseteq P^{\otimes n}$ such that $\forall G_i \in S_G; G_i\ket{\psi}_L = \ket{\psi}_L$ or equivalently logical basis states are eigenstates of $G_i$ with eigenvalue $+1$
+\item Recall from group theory that $\langle S \rangle = \{U^k: U \in S, k \in \mathbb{Z}\}$. \textbf{We detect errors by running Hadamard tests with each element in turn of a generating set of stabalizers} $S \subseteq S_G$ such $\langle S \rangle = S_G$.\\ Outcome of 0 means the error operator (if there is one at all eg may be $I$) commutes with $S$, outcome of 1 means the error operator anti-commutes with $S$. \textbf{We call the concatenation of Hadamard test outcomes the error syndrome}
+\item By using a Hadamard test to measure the error without measuring the underlying state, we can carry on applying quantum operations to our state (having applied any necessary quantum error correcting operation if an error was detected) as we have not collapsed the actual information in it
+\item \textbf{A generating set \boldmath$S$ is minimal iff \boldmath$\forall U \in S; \forall T \subseteq S; U \neq \prod_{U' \in T} U'$}
+\item \textbf{number of logical qbits \boldmath$k$ encoded by \boldmath$n$ physical qbits: \boldmath$k = n - \textrm{rank}(S_G) = n - |S|$ where \boldmath$|S|$ is the size of a \underline{minimal generating set}}
+\item \textbf{An \boldmath$[n, k, d]$ code is an encoding of \boldmath$k$ logical bits into \boldmath$n$ physical bits such that the minimum distance between codewords is \boldmath$d$ error operations}
+\item Proposition: \textbf{Let \boldmath$t$ = maximum number of error operations that can occur for a state to always be able to be corrected. Then \boldmath$t = \lfloor \frac{d - 1}{2}\rfloor$}
+\item Unique syndromes are sufficient but not necessary to be able to correct all errors, as we can get $d$ high enough by other means as we only need their to be able to correct every error operator into \underline{a} stabilizer not necessarily $I$ specifically
+\item \textbf{\boldmath$L_G$ = group of logical operators = set of Pauli operators that act non-trivially on basis states \underline{and} commute with \underline{all} the operators in \boldmath$S_G$}
+\item Proposition: {\boldmath$\forall L_i \in L_G;\forall S_i \in S_G; S_iL_i \in L$}\\
+Proof: Exercise (hint: $G_iL_i = L_iG_i$ by definition of logical operator)
+\item For a stabilizer code we must chose a logical operator $X_L$ such that $X_L\ket{0}_L = \ket{1}_L$ and $X_L\ket{1}_L = \ket{0}_L$ and a logical operator $Z_L$ such that $Z_L\ket{0}_L = \ket{0}_L$ and $Z_L\ket{1}_L = -1\ket{1}_L$
+\item Proposition: \textbf{\boldmath$d$ $=$ number of non-$I$ gates in a logical operator for which this counter is minimal (which may not be $X_L$ nor $Z_L$ but rather their product with a stabilizer)}\\
+Proof: Out of scope
+\end{itemize}
+\clearpage
+\subsection{Code concatenation}
+\begin{itemize}
+\item Designate one code as outer and the other as inner
+\item {\boldmath$\ket{\psi}_L = \otimes_{\phi \in \ket{\psi}_L^\textrm{outer}}\ket{\phi}_L^\textrm{inner}$}
+\item \textbf{Stabilizer set = inner stabilizer with a (suitably re-indexed) copy for each qbit in the outer code unioned with outer stabilizers with their Pauli's replaced by the corresponding logical Pauli in the inner code}
+\item \textbf{Each logical operator = logical operator in outer code with its Pauli's replaced by the corresponding logical Pauli in the inner code}
+\item \textbf{A CSS-code is a code for which the stabilizers can be partitioned into ones that only contain $I$s and $X$s (detect phase flips only) and ones that only detect $I$s and $Z$s (detect bit flips only). For a concatenated CSS-code, \boldmath$d = \min(d_X^\textrm{outer}d_X^\textrm{inner}, d_Z^\textrm{outer}d_Z^\textrm{inner})$}
+\end{itemize}
+\subsection{Surface codes}
+\begin{itemize}
+\item In a Tanner graph: circles denote data qbits, and squares denote syndrome measurements (where the type of lines coming out of to the data qbits determines the type of stabalizer it measures according to a key provided with the graph)
+\begin{figure}[hp]
+\begin{center}
+\includegraphics[width=0.55\textwidth]{meta/IQC/SurfaceCode_Lecture_Square.png}{}
+\end{center}
+\caption{A surface code for a single logical qbit. Can be tiled for more logical qbits}
+\end{figure}
+\item \textbf{Xs on the physical qbits of any left-to-right path across the surface code is an $X_L$ --- if this occurs as an error, then there is zero syndrome but the data has been changed!}
+\item \textbf{Zs} on the physical qbits of any \textbf{top-to-bottom} path across the surface code is a \boldmath$Z_L$ --- if this occurs as an error, then there is zero syndrome but the logical data has been changed!
+\item \textbf{Zero syndrome errors that neither an $X_L$ nor a $Z_L$ are stabilisers --- if these occur as an error, then there is no problem as the logical data is unaffected}
+\begin{figure}[hp]
+\begin{center}
+\includegraphics[width=0.62\textwidth]{meta/IQC/SurfaceCode_Lecture_Rotated.png}{}
+\end{center}
+\caption{A rotated surface code. The same rules apply}
+\end{figure}
+\end{itemize}
+\end{flushleft}
+\end{document}

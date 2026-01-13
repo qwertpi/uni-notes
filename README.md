@@ -122,7 +122,11 @@ Images copied from module materials have been removed for copyright reasons.
 - [External resource (Video): Concurrency in Go by Jake Wright](https://www.youtube.com/watch?v=LvgVSSpwND8)  
 - [External resource (Video): Go Concurrency Patterns by Rob Pike](https://www.youtube.com/watch?v=f6kdp27TYZs)  
 #### IQC: Introduction to Quantum Computing
-Coming soon
+- [IQC Notes](MSc/IQC.pdf)  
+- [External resource (Video): I made a (useless) quantum computer at home by Mithuna Yoganathan](https://www.youtube.com/watch?v=muoIG732fQA)  
+- [External resource (Video): What can my homemade quantum computer do? by Mithuna Yoganathan](https://www.youtube.com/watch?v=tHfGucHtLqo)  
+- [External resource (Academic publication): Polynomial-Time Algorithms for Prime Factorization and Discrete Logarithms on a Quantum Compute by Peter W. Shor](https://doi.org/10.1137/S0036144598347011)  
+- [External resource (Academic publication): Quantum error correction: an introductory guide by Joschka Roffe](https://doi.org/10.1080/00107514.2019.1667078)  
 #### PBI: Programming for Biomedical Informatics
 Coming soon
 ### Informally studied
