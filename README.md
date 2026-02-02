@@ -86,6 +86,7 @@ Images copied from module materials have been removed for copyright reasons.
 - [External resource (Academic publication): Learning representations by back-propagating errors by David E. Rumelhart, Geoffrey E. Hinton, and Ronald J. Williams](https://www.nature.com/articles/323533a0)  
 - [External resource (Academic publication): Deep learning by Yann LeCun, Yoshua Bengio, and Geoffrey Hinton](https://www.nature.com/articles/nature14539)  
 - [External resource (Blogpost): Mathematics of Backpropagation by Brian Dolhansky](https://www.briandolhansky.com/blog/2013/9/27/artificial-neural-networks-backpropagation-part-4)  
+- [External resource (Textbook Chapter): Sensor and data fusion: a tool for information assessment and decision making — Chapter 7 Artificial Neural Networks by Lawrence A. Klein](https://archive.org/details/sensordatafusion0000klei)  
 #### CS349: Principles of Programming Languages
 - [CS349 Notes](Y3/CS349.pdf)  
 - [External resource (Magazine article/Blogpost): Peter Landin: Elegance from Logic by Paul Curzon](https://cs4fn.blog/2025/02/08/peter-landin-elegance-from-logic/)  
