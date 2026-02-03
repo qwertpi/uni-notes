@@ -131,7 +131,10 @@ Images copied from module materials have been removed for copyright reasons.
 #### PBI: Programming for Biomedical Informatics
 - [PBI Notes](MSc/PBI.pdf)  
 - [External resource (Video): A gentle introduction to RNA-seq by Josh Starmer](https://www.youtube.com/watch?v=tlf6wYJrwKY)  
-- [External resource (Video): DESeq2, part 1, Library Normalization by Josh Starmer](https://www.youtube.com/watch?v=UFB993xufUU)  
+- [External resource (Video): DESeq2, part 1, Library Normalization by Josh Starmer](https://www.youtube.com/watch?v=UFB993xufUU)
+#### ADBS: Advanced Database Systems
+#### AGTA: Algorithmic Game Theory and its Applications                    
+#### CCN: Computational Cognitive Neuroscience and Computational Psychiatry
 ### Informally studied
 #### CS275: Probability and Statistics (2024/25 in-person lectures)
 - [CS275 Notes (WIP)](Misc/CS275.pdf)  
