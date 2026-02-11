@@ -129,7 +129,9 @@ Images copied from module materials have been removed for copyright reasons.
 - [External resource (Academic publication): Polynomial-Time Algorithms for Prime Factorization and Discrete Logarithms on a Quantum Compute by Peter W. Shor](https://doi.org/10.1137/S0036144598347011)  
 - [External resource (Academic publication): Quantum error correction: an introductory guide by Joschka Roffe](https://doi.org/10.1080/00107514.2019.1667078)  
 #### PBI: Programming for Biomedical Informatics
-- [PBI Notes](MSc/PBI.pdf)  
+- [PBI Notes](MSc/PBI.pdf)
+- [External resource (Video): From DNA to protein by Wellcome Connecting Science](https://www.youtube.com/watch?v=gG7uCskUOrA)  
+- [External resource (Video): DNA replication by Wellcome Connecting Science](https://www.youtube.com/watch?v=TNKWgcFPHqw)  
 - [External resource (Video): A gentle introduction to RNA-seq by Josh Starmer](https://www.youtube.com/watch?v=tlf6wYJrwKY)  
 - [External resource (Video): DESeq2, part 1, Library Normalization by Josh Starmer](https://www.youtube.com/watch?v=UFB993xufUU)
 #### ADBS: Advanced Database Systems
