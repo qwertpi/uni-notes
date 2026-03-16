@@ -104,6 +104,7 @@ Images copied from module materials have been removed for copyright reasons.
 - [External resource (Book): Don't Park Your Brain Outside: A Practical Guide To Improving Shareholder Value with SMART Management by Francis T. Hartman](https://archive.org/details/dontparkyourbrai00fran)  
 - [External resource (Manga): The Five Dysfunctions of a Team: An Illustrated Leadership Fable by Patrick M. Lencioni and Kensuke Okabayashi](https://ebookcentral.proquest.com/lib/warw/detail.action?docID=832248)  
 - [External resource (Blogpost): Let Us Dismantle the Artifice of Standup by Valerie Burzynski](https://www.valerieburzynski.com/blog/let-us-dismantle-the-artifice-of-standup/)  
+- [External resource (Book chapter/Blogpost): Continuous Integration by Martin Fowler](https://www.martinfowler.com/articles/continuousIntegration.html)  
 #### CS356: Approximation and Randomised Algorithms
 - [CS356 Notes](Y3/CS356.pdf)  
 - [CS356 Quiz](https://app.studius.ai/decks/d9747d1e8e16a13fff097749f17a18a0?invite=UKtFiMdOcZQst3yCpqAznIb5aag1)  
