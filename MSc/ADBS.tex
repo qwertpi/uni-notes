@@ -1,0 +1,468 @@
+\documentclass[20pt,a4paper,landscape]{extarticle}
+\usepackage[margin=1.25in]{geometry}
+\usepackage{placeins}
+\usepackage{latexsym}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[UKenglish]{babel}
+\usepackage[UKenglish]{isodate}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{titletoc}
+\usepackage{listings}
+\usepackage{dsfont}
+\usepackage{changepage}
+\usepackage{tikz}
+\usepackage{derivative}
+\usepackage{mathabx}
+\usepackage{breqn}
+\usetikzlibrary{arrows.meta, mindmap, trees, shapes.geometric, positioning, matrix}
+\lstset{
+    basicstyle=\ttfamily,
+    mathescape
+}
+\PassOptionsToPackage{hyphens}{url}
+\usepackage{xurl}
+\input{glyphtounicode}
+\pdfgentounicode=1
+\usepackage[all]{nowidow}
+\usepackage{hyperref}
+\hypersetup{
+        colorlinks,
+        citecolor=black,
+        filecolor=black,
+        linkcolor=black,
+        urlcolor=black
+}
+\usepackage[protrusion=true,expansion=true]{microtype}
+\newcommand{\ind}{\perp\!\!\!\!\perp}
+\newcommand{\Obj}{\textrm{Obj}}
+\renewcommand{\th}[1]{#1^\textrm{th}}
+\let\max\relax
+\DeclareMathOperator*{\max}{max\:}
+\let\min\relax
+\DeclareMathOperator*{\min}{min\:}
+\DeclareMathOperator*{\argmax}{arg\,max\:}
+\DeclareMathOperator*{\argmin}{arg\,min\:}
+\begin{document}
+\tableofcontents
+\clearpage
+\begin{flushleft}
+\section{Databases Recap}
+\subsection{The Relational Model}
+\begin{itemize}
+\item A database = a set of named relations
+\item A relation (table) consists of a schema (metadata) describing its structure and an instance (a collection of data that satisfies the schema)
+\item An instance is a multiset (bag) (or sometimes an ordinary set for convenience) of tuples (records/rows) made up of attributes (fields/columns)
+\item \textbf{Tuples are really maps (i.e. mathematical functions) from column names (or equivalently indices) to column values} rather than tuples in the mathematical sense, as \underline{the elements within a} \underline{database tuple are not considered to be ordered}
+\end{itemize}
+\subsection{SQL}
+\begin{itemize}
+\item DDL = data definition language
+\item DML = data manipulation language
+\item DCL = data control language (access control)
+\item SELECT keeps duplicates unless DISTINCT is added
+\item UNION/INTERSECT/EXCEPT remove duplicates unless ALL is added
+\item \textbf{A natural join is an INNER JOIN ON all columns that have the same name in both tables, and so is a [CROSS] JOIN if there are no shared columns} (as the universally quantified join condition has empty domain and so is vacuously true)
+\end{itemize}
+\subsection{Relational Algebra}
+\begin{itemize}
+\item SQL and relational calculus (SQL's formalisation) are declarative languages. Whereas relational algebra is an imperative language
+\item \textbf{Selection: \boldmath$\sigma$ = WHERE (\underline{careful, not SELECT})}
+\item \textbf{Projection: \boldmath$\pi$ = SELECT}
+\item Renaming: $\rho$ --- only for the benefit of humans, computers can work quite happily referring to columns by indices
+\item Union: $\cup$ = UNION
+\item Intersection: $\cap$ = INTERSECT --- not needed for a universal set as $R \cap S = R - (R - S)$
+\item Set difference: $-$ = EXCEPT
+\item Cross product: $\times$ = [CROSS] JOIN
+\item Join: $R \bowtie_\theta S$ = $\sigma_\theta(R \times S)$ = R JOIN S ON $\theta$ \textit{--- pedantically only a theta join if the condition is $a \circ b$ and $\circ \in \{\leq, \geq, <. >, =, \neq\}$ --- if $\circ$ is =, it is an equijoin}
+\item $R \bowtie S$ = R NATURAL JOIN S $\approx$ an equijoin on all shared columns
+\item Group by: $\gamma$
+\item Duplicate elimination: $\delta$
+\item Sorting: $\tau$
+\item Division: $\div$
+\end{itemize}
+\clearpage
+\section{Conjunctive Queries}
+\subsection{Conjunctive Queries}
+\begin{itemize}
+\item Recall relational calculus:\\
+SELECT airline FROM Flight AS F JOIN Airport AS Oa ON F.origin = Oa.code JOIN Airport AS Da ON F.destination = Da.code WHERE Oa.city = 'London' AND Da.city = 'Glasgow' $\Leftrightarrow$\\
+$\{z: \exists x, y: Airport(x, London) \land Airport(y, Glasgow) \land Flight(x, y, z)\}$
+\item Conjunctive queries = the $\{\exists, \land\}$-fragment of relational calculus (no $\neg, \lor. \forall$)\\
+= $\{\sigma, \pi, \bowtie\}$-fragment of relational algebra/SQL with the $\sigma$ condition restricted to $\{=, \land\}$
+\item A conjunctive query naturally lends itself to being written as a Prolog rule: $Q(x) \Leftarrow R_1(v_1), ..., R_m(v_m)$ (note that $x$ and $v_i$s are all tuples of variables rather than necessarily single variables)
+\item Evaluating conjunctive queries reduces to pattern matching the query body against the database in order to find all possible assignments of values to variables in the query that result in tuples in the database
+\item \textbf{\boldmath$terms(A)$ =} the set of terms used in an atom $A$ = \textbf{\boldmath$\{t: t\textrm{ is a variable which occurs in }A\} \cup\allowbreak \{t: t\textrm{ is a constant which occurs in }A\}$}
+\item \textbf{A substitution from a set of terms \boldmath$S$ to a set of terms $T$ is nothing more than a function \boldmath$h: S \to T$}
+\item \textbf{A homomorphism from a set of atoms \boldmath$A$ to a set of atoms $B$ is a substitution $h: terms(A) \to terms(B)$ which preserves structure ($h(A) \subseteq h(B)$ ($x \in A \rightarrow h(x) \in B$)) and does not affect (i.e. is the identity on) constants}
+\clearpage
+\item A match of a conjunctive query is a homomorphism from the body of the query to the database. The answer to a conjunctive query is the set of tuples which are the values of the distinguished (i.e. output) variables of the query under each match of the query
+\end{itemize}
+\clearpage
+\subsection{Computational Complexity}
+\begin{itemize}
+\item By considering the decision problem corresponding to query evaluation rather than the search problem of query evaluation itself, we avoid having to compare the total complexity against the component attributable to simply outputting the result (which is naturally of varying size): CQ-Evaluation = Given a database D, a conjunctive query $Q$, and a tuple $(a_1, ..., a_k)$. Is $(a_1, ..., a_k) \in Q(D)$?
+\item \textbf{Combined complexity of evaluation = complexity with query and data both part of the input}
+\item \textbf{Data complexity of evaluation = complexity when query is fixed in the problem itself} (rather than provided in the problem instance) \textbf{leaving only the database and the candidate tuple as inputs} --- in real life, the database content evolves and the queries are constant, as described by data complexity
+\item \textbf{Proposition: CQ-Evaluation is NP-Complete in combined complexity but is PTIME in data complexity}\\
+Proof:\\
+$\in NP$:
+\begin{adjustwidth}{1em}{}
+Use a substitution $h: terms(body) \to terms(D)$ as a certificate. We need to check that $h$ is a homomorphism and more specifically that $h$ is a match of $Q$ in $D$.\\
+Verify that $h$ is the identity on constants. Verify that $h(body) \subseteq D$. Verify that $(h(x_1), ..., h(x_k)) = (a_1, ..., a_k)$
+As $D$ is an input, our certificate certainly is polynomial length and verifiable in polynomial time
+\end{adjustwidth}
+$\in PTIME$ in data complexity:
+\begin{adjustwidth}{1em}{}
+Let $n$ be the maximum cardinality of the domains of the columns of $D$. Let $k$ be the number of variables in $Q$. If we were to enumerate $h$s as part of using the $NP$ness to build a decider, then we would have $n^k$ to check and each one would take polynomial time to check. This is polynomial time as $Q$ and so $k$ is fixed (and was exponential time when $k$ was a characteristic of the input)
+\end{adjustwidth}
+$\in NP\mbox{-}Hard$: $SAT \leq_P CQ\mbox{-}Evaluation$ (proof of this reduction is out of scope, but it is hopefully reasonably intuitively true)
+\item Problems that are given a query $Q$ without a database are called static analysis problems. Because, as previously mentioned often queries are static and the database is evolving, being able to carry out static analysis would be very useful
+\item CQ-Satisfiability = Given a conjunctive query $Q$, does there exists a database $D$ such that $Q(D)$ is non-empty? --- if CQ-Satisfiability(Q) = reject, then there is no need for evaluation
+\item Proposition: CQ-Satisfiability $\in O(1)$ (and thus is pointless)\\
+Proof: \textbf{We can construct a so called canonical database \boldmath$D[Q]$ for $Q$. $D[Q]$ has a tuple for each clause of the body of $Q$ wherein each distinct variable in $x$ has been replaced by a special constant \underline{x} associated to it (note the same value is reused when a variable is reused). By the construction of $D[Q]$ there is a match from $Q$ to $D[Q]$} (the mapping used to create it is a bijection between variables in $Q$ and constants in $D[Q]$, and so by extending it to accept constants and act as the identify on them it is a match).\\
+We have shown that, for every $Q$, $Q(D[Q])$ is non-empty. Thus, for every $Q$, CQ-Satisfiability$(Q)$= Yes, and so accepting without reading the input would be a suitable decider!
+\item CQ-Equivalence = Given two conjunctive queries $Q_1, Q_2$. Does \textbf{\boldmath$\forall D; Q_1(D) = Q_2(D)$ (abbreviate to $Q_1 \equiv Q_2$)}?
+\item CQ-Containment = Given two conjunctive queries $Q_1, Q_2$. Does \textbf{\boldmath$\forall D; Q_1(D) \subseteq Q_2(D)$ (abbreviate to $Q_1 \subseteq Q_2$)}?
+\item \textit{Containment is undecidable for the full relational algebra/SQL!}
+\item Proposition: CQ-Equivalence $\equiv_P$ CQ-Containment\\
+Proof sketch: $\land$ distributes over $\forall$. $Q_1 \equiv Q_2 \Leftrightarrow Q_1 \subseteq Q_2 \land Q_2 \subseteq Q_1$. $Q_1 \subseteq Q_2 \Leftrightarrow Q_1 \equiv Q_3$ where $Q_3$ is obtained by concatenating (i.e. conjuncting) the bodies of $Q_1$ and $Q_2$
+\item \textbf{A query homomorphism from \boldmath$Q_1(x_1, ..., x_k) \Leftarrow body_1$ to \boldmath$Q_2(y_1, ..., y_k) \Leftarrow body_2$ is a homomorphism $h: body_1 \to body_2$ such that $(h(x_1), ... h(x_k)) = (y_1, ..., y_k)$}
+\item Lemma: Homomorphisms are closed under composition\\
+Proof: Trivial
+\item \textbf{Theorem (homomorphism theorem): Let \boldmath$Q_1, Q_2$ be conjunctive queries. $Q_1 \subseteq Q_2$ iff there exists a query homomorphism from $Q_2$ to $Q_1$} (\underline{be careful: direction of} \underline{homomorphism is opposite to that of containment!})\\
+Proof: Omitted due to time
+\item Let QueryHomomorphism = Given conjunctive queries decide whether there exists a query homomorphism from $Q_2$ to $Q_1$. Deduce that (CQ-Equivalence $\equiv_P$) CQ-Containment $\leq_P$ QueryHomomorphism
+\item Proposition: QueryHomomorphism (and so CQ-Containment and so CQ-Equivalence) is NP-Complete\\
+Proof sketch:\\
+$\in NP$: Certificate = substitution. Verifier = verify is a query homomorphism\\
+$\in NP\mbox{-}Hard$:\\We have previously shown that CQ-Evaluation $\in NP{-}Complete$. It turns out that QueryHomomorphism $\leq_P$ CQ-Evaluation by constructing the canonical database for $Q_1$. The inverse of the bijection that makes the canonical database can be composed on to the matching (if there is one) from the evaluation in order to obtain the needed query homomorphism; and if there is a query homomorphism then the bijection itself can be composed on to obtain a matching for the evaluation.
+\item \textbf{Query minimization by deletion: If there exists an atom that can be removed from the query body without causing any output variable to no longer appear anywhere in the body and there is a \underline{query} homomorphism to this new query, then update the query to this new query. Once there exists no such atom, we are done. variables to no longer appear anywhere in the body}
+\item There is a loop invariant in query minimization by deletion of equivalence to previous query (and thus inductively to the original query) as we check for containment (due to the query homomorphism) of the new query in the old one and the other direction of containment is trivial (removing an atom weakens the body and so isn't going to have removed any tuples, we only needed to check it hadn't allowed new ones)
+\item It can be shown (proof out of scope) that any equivalent query has at least as large a body as that obtained by minimization by deletion, and thus that \textbf{query minimization by deletion (despite its greedy nature) is sufficient to obtain a query with the fewest possible atoms}. Moreover, minimal conjunctive queries are actually isomorphic (the same up to variable renaming). \textbf{The result of query minimization is called the core of the query}
+\item \textit{Although (most) static analysis and query evaluation are both NP-complete, static analysis has a smaller input. Thus, being able to do CQ-Equivalence (e.g. in order to optimize queries before CQ-Evaluation) in (at least not worse than thanks to the NPness) exponential time might actually be okay whereas in evaluation the database could well be large}
+\end{itemize}
+\clearpage
+\subsection{Acyclic Conjunctive Queries}
+\begin{itemize}
+\item Some graph problems are NP-Complete for general graphs but actually are polynomial time for when the input is known to be drawn from a specific class of graphs (e.g. trees, planar graphs). The same applies to databases query evaluation, and we will actually represent queries as (hyper-)graphs
+\item The hyper-graph of a conjunctive query has vertex set of the terms of the body and has for each atom a set of of the vertices (a hyper-edge, which unlike a normal edge can have cardinality greater than 2) that are the terms used in that atom
+\item \textbf{A join tree of a hyper-graph of a conjunctive query is a tree with nodes labelled by hyper-edges such that: for every hyper-edge in the hyper-graph there is a node in the tree with that label and for every node in the hyper-graph the set of all hyper-edges that contain it is a connected subtree of nodes in the tree}
+\item \textbf{A conjunctive query is called acyclic iff its hyper-graph has a join tree}
+\item Proposition: It can be decided in polynomial time ($O(($number of nodes $+$ number of hyper-edges$)^2)$) whether a conjunctive query is acyclic\\
+\textbf{Proof (GYO-reduction algorithm):}
+\begin{lstlisting}[basicstyle=\ttfamily\bfseries,
+    columns=fixed,
+    numbers=left,
+    breaklines=true,
+    breakatwhitespace=true,
+    breakindent=0pt]
+Start with a join ``tree'' with a node for every hyper-edge and no edges in the tree
+While there exists a node that occurs in at most one hyper-edge or there exists a hyper-edge that is a subset of another hyper-edge (note this may be because it is the empty set)
+    Remove that object from the hyper-graph
+    If removing a hyper-edge, add to the join ``tree'' an edge between it and its superset
+If we have the empty hyper-graph
+    We will have a true join tree and so the hyper-graph will be acyclic
+If we do not have the empty hyper-graph
+    There will exist no join tree (proof out of scope) and so the hyper-graph will be cyclic
+\end{lstlisting}
+\item \textit{There exists a linear time algorithm for acyclicity, but we only need to know the quadratic one above}
+\clearpage
+\item \textbf{\boldmath$R \ltimes S$ = R SEMIJOIN S = $\pi_R(R \bowtie S)$} = SELECT * FROM R WHERE NatJoinKey IN (SELECT NatJoinKey FROM S)
+\item Proposition: Let ACQ-Evaluation = Given a database D, an acyclic conjunctive query Q, and a tuple $(a_1, ..., a_k)$. Is $(a_1, ..., a_k) \in Q(D)$?. ACQ-Evaluation $\in PTIME$ (specifically $O(||D|| \cdot \log ||D|| \cdot ||Q|||)$)\\
+\textbf{Proof (Yannakakis’s Algorithm):}
+\begin{lstlisting}[basicstyle=\ttfamily\bfseries,
+    columns=fixed,
+    numbers=left,
+    breaklines=true,
+    breakatwhitespace=true,
+    breakindent=0pt]
+Compute the join tree T of H(Q)
+Replace the node labels in T (hyperedges) with the set of tuples in the database for the relation that corresponds to that hyperedge
+In a bottom-up traversal of T carry out Parent SEMIJOIN Child
+Accept iff the result at the root is not the empty set (otherwise reject)
+\end{lstlisting}
+\item \textit{ACQ-Evaluation $\in O(||D|| \cdot ||Q||)$ but that algorithm is out of scope}
+\end{itemize}
+\clearpage
+\section{Storage}
+\subsection{Disk Space Management}
+\subsubsection{Storage Hardware}
+\begin{itemize}
+\item \textbf{A track = the path traced out by a disk head on a platter}
+\item \textbf{A cylinder = the paths traced out by all disk heads (when aligned) on their respective platters}
+\item \textbf{Seek time = the time taken for disk arm to find the correct track}
+\item \textbf{Rotational delay = the time taken for the target block of the track to be under the head}
+\clearpage
+\item \textbf{Sequential IO = store contiguous data on the same track, then on other tracks in the same cylinder (switch to the next disk head), then start again in the adjacent cylinder (move each disk head one step)}
+\item \textbf{Sequential IO has no rotational delay within a track once it has found the start of its data and only switches tracks when necessary. Whereas, random IO incurs for every block seek time + rotational delay}
+\item \textbf{Solid state drives have fine-grained reads} ($\approx$8KB pages) \textbf{but coarse-grained writes} ($\approx$1MB blocks)
+\item Write amplification of an SSD = writing small amounts of data (i.e. a few pages) requires erasing an entire block to rewrite --- as each cell of an SSD can only be written a few thousands times, write amplification is a risk to longevity
+\item The difference between sequential reads and random reads on an SSD is negligible. Whereas, \textbf{\underline{even on an SSD sequential writes are} \underline{noticeably faster than random writes}} (as random writes lead to more write bandwidth being wasted on write amplification)
+\end{itemize}
+\subsubsection{Disk Space Manager}
+\begin{itemize}
+\item \textbf{A DBMS' disk space manager obtains one or more large files on disk} (relying on the filesystem to store it as contiguously as possible) \textbf{then manages the location of database pages within this file itself} (aiming to store ``nearby'' pages ``near'' to each other in the file (and thus on disk))
+\item Multiple database files are required if the database is to be spread over multiple disks: the disk space manager maintains a bijection between page IDs and tuples of file name and offset within the file
+\end{itemize}
+\subsection{Buffer Management}
+\begin{itemize}
+\item \textbf{A buffer pool = an in-memory cache (of disk pages). The buffer pool is partitioned into frames each of which is either empty or holding \underline{a} disk page}
+\item The buffer pool provides an abstraction to the higher levels of the DBMS that the database is stored in RAM (albeit this leaks as we allow the planner to tell the buffer pool what to evict and what not to evict)
+\item \textbf{Pin(pageID): If it is in the buffer pool, return a pointer to its frame. If it is not in the buffer pool, load it into the buffer pool and return a pointer to its frame}
+\item \textbf{Unpin(pageID, dirtied): Once \underline{every} pin of this page has unpinned, it is \underline{eligible} for eviction. If a page is dirtied (on any unpin) it has been modified and so should be flushed to disk upon eviction}
+\item \textbf{Fix(pageID): Evict only after all non-fixed pages}
+\item \textbf{Hate(pageID): Evict before all non-hated pages}
+\item The buffer manager maintains a HashMap<PageID, FrameID>, and an Array<Tuple<IsDirty, PinCount>{}> indexed by frameID
+\item LRU (least recently used) eviction policy = evict the entry that was touched the longest ago (e.g. maintain a priority queue based on most recent access time) --- careful: not least frequently used!
+\item \textbf{The CLOCK eviction policy} approximates LRU without the overhead of having to find the minimum\textbf{: Consider the frames to be arranged in a circular buffer (``clock''). Maintain a pointer (``clock hand'') to the next frame to consider evicting the page of. Increment pointer (rotate clock hand) until (i.e. always at least one step) a frame that has pin count 0 is found, mark this ``warned''. Have the pin function unset the ``warned'', and have  empty frames initialised as ``warned''. Continue in this fashion (potentially ``warn''ing more frames) until a frame with pin count 0 and ``warned'' already true is found, evict}
+\item LRU/clock is good for random access, but counter-intuitively \textbf{most recently used (MRU) is optimal for repeated sequential scans (e.g. a join). This is because MRU has a stable prefix of the table in the cache} whereas LRU is cyclical with the scan (and so evicts what is old but will be read again soon in order to keep what is new but won't be re-read until it has aged to have also been evicted)
+\end{itemize}
+\subsection{File Management}
+\subsubsection{Types of logical file}
+\begin{itemize}
+\item Records are packed into pages which are cached in memory by the buffer manager. Pages are packed into \underline{logical} files in order to assist the storage manager in storing them in \underline{physical} files sensibly
+\item I/O-only cost model: P = number of data pages in file, R = number of records per page, D = average time to read/write a disk page
+\item \textbf{A heap file stores records in no particular order (unlike a heap data structure!) --- begins with a page directory (header pages storing metadata (e.g. pointer to and amount of free space in) the data pages)}
+\item \textbf{Scan all records in \underline{any} file = \boldmath$P \times D$} (we have to read all the pages to produce the output of this query)
+\item \textbf{Search on key in a heap file = \boldmath$\frac{P}{2} \times D$ on average} (we know there will be at most one hit)
+\item \textbf{Search on non-key in a heap file = \boldmath$P \times D$} (we have to check all records to be sure to get all hits)
+\item \textbf{Range search in a heap file = \boldmath$P \times D$} (we have to check all records to be sure to get all hits)
+\item \textbf{Insert record into a heap file = \boldmath$2D$} (read last page (1D) + append new record to page (0) + write updated page back to disk (1D))
+\item \textbf{Delete record from a heap file = \boldmath$\left(\frac{P}{2} + 1\right)D$ on average} (search on key to find page containing record ($\frac{P}{2} \times D$ on average) + delete record from page (0) + write updated page back to disk (1D))
+\clearpage
+\item \textbf{A sorted file stores records in a particular order}
+\item \textbf{Search on key in a sorted file \underline{if sorted by search attribute} = \boldmath$\log_2(P) \times D$ in worst case} (we can now use binary search instead of linear search)
+\item \textbf{Search on non-key in a sorted file \underline{if sorted by search} \underline{attribute} = \boldmath$(\log_2(P) + \textrm{number of hits})D$} (all hits will be contiguous)
+\item \textbf{Range search in a sorted file \underline{if sorted by search attribute} = \boldmath$(\log_2(P) + \textrm{number of hits})D$} (all hits will be contiguous)
+\item \textbf{Any search in a sorted file if sort attribute is not search attribute = cost of that search in a page file} (we have to go back to linear search)
+\item \textbf{Insert record into a sorted file = \boldmath$(\log_2 P + P)D$ on average} search for insert point ($\log_2 P \times D$ on average) + shift subsequent pages to make gap at insert point (read half the pages on average + write half the pages on average = $P \times D$ cost on average)
+\item \textbf{Delete record from a sorted file = \boldmath$(\log_2 P + P)D$ on average} search for record ($\log_2 P \times D$ on average) + shift subsequent pages to fill gap
+\item \textbf{An index file stores records (or pointers to records) so that they can be efficiently searched}
+\end{itemize}
+\clearpage
+\subsubsection{Record layout}
+\begin{itemize}
+\item \textbf{Fixed-length record layout = Let every field have a fixed length (e.g. place upper bounds, which we can afford to always hit, on the size of each field). Fields can be accessed by pointer arithmetic --- a metadata bitmap is needed to track whether nullable fields are null} (specifically, field storing empty string and empty field due to null are indistinguishable otherwise)
+\item \textbf{Variable-length record layout = Store an array of field offsets in a header alongside the isNull bitmap}
+\item \textbf{It is common to use fixed-length record layout for everything. This is achieved by replacing the true data of variable-length fields with a tuple (offset, length) and storing the true data at that offset at the end of the record}
+\end{itemize}
+\subsubsection{Page layout}
+\begin{itemize}
+\item \textbf{Slotted-pages page layout = Maintain a slot directory: a mapping from slotID (recordID = (pageID, slotID)) to offset of start of slot (i.e. start of record)} --- the slot directory provides indirection which allows pages to be de-fragmented (VACUUM in PostgreSQL) within a page without having to change record IDs
+\end{itemize}
+\clearpage
+\subsection{Storage Models}
+\subsubsection{Query workloads}
+\begin{itemize}
+\item On-Line Transactional Processing (OLTP) = Simple queries that read and write small amounts of data per transaction --- needs to be fast
+\item On-Line Analytical Processing (OLAP) = Complex read-heavy queries that read large amounts of data to compute aggregates --- doesn’t need to be fast but we should still optimize for it if we know it is common
+\item Hybrid Transactional and Analytical Processing (HTAP) = the same database instance needs to support both OLTP and OLAP without them getting in the way of each other i.e. we want to run data analytics on the primary without disrupting user-facing services
+\end{itemize}
+\subsubsection{Storage models}
+\begin{itemize}
+\item \textbf{Row storage = what we would normally think of = store all attributes of a tuple contiguously} (and thus in the same page) --- good for OLTP (as we can use the index to jump to the row we are inserting/updating/deleting then access any and all attributes we need)
+\item \textbf{Columnar storage = store each attribute for all tuples contiguously (and thus in the same page). This can be achieved by storing each attribute as an array of fixed-length values indexed into by the tuples and using dictionary compression to convert any variable-length data into fixed-length (assign an identifier to each unique value then store a mapping from identifiers to values elsewhere)} --- good for OLAP (as OLAP scans down particular attributes for lots of rows to aggregate them)
+\item Partition Attributes Across (PAX) = In order to combine the benefits of columnar and row, horizontally partition tuples into row groups and vertically partition attributes of row groups into column chunks
+\end{itemize}
+\subsubsection{Compression}
+\begin{itemize}
+\item Compression not only decreases disk/RAM capacity requirements but also allows more data to be transferred for the same IO cost. It does though increase CPU cost
+\item \textbf{Categorical data can be compressed by run-length encoding, sorted numerical data can be compressed by delta encoding, frequent strings can be compressed by dictionary encoding}
+\end{itemize}
+\section{Indexes}
+\subsection{Types of Index}
+\begin{itemize}
+\item The (search) key of an index is not necessarily the same as the (primary) key of the relation (although the primary key definitely should be one set of attributes for which an index is created). In particular, a search key does not have to uniquely identify tuples
+\item \textbf{Primary/unique index = search key is a superset of the primary/a candidate key} --- searches will match at most one tuple
+\item \textbf{Secondary index = searches may match more than one tuple}
+\item An index can store the records themselves (acts as a sorted file) (only used for primary key to avoid wasting storage), or store a reference to the location of the records in a heap file (used for additional indexes) --- typically store records twice: once in a sorted file (primary index) and once in a heap file (but only one heap file for all additional indexes)
+\item \textbf{Clustered index = “near” search keys have “near” references} ---
+range search has to read fewer pages to get the records it needs, and the pages it needs have spatial locality
+\item Unclustered index = is not a clustered index (e.g. keys are approximately uniformly distributed across pages)
+\item \textbf{Index of primary key is vacuously clustered as this is a sorted file rather than references to the heap}
+\item We can only guarantee clustering of one additional index as we only have one heap file to (approximately) sort one way
+\end{itemize}
+\subsection{Tree Indexes}
+\subsubsection{Tree Indexes}
+\begin{itemize}
+\item A tree-structured index can be viewed as an index for an index ... for an index
+\item By using wide trees, we can have a much larger base on our logarithm than binary search in a sorted file (or equivalently a binary search tree). Moreover, a greater amount of similar data is in the same disk block
+\item When working with string keys, we can optimise search trees by making them trie like (only storing the prefix that characterises that level)
+\end{itemize}
+\clearpage
+\subsubsection{ISAM (Indexed Sequential Access Method)}
+\begin{itemize}
+\item In ISAM, ``non-leaf'' pages (used to direct the search) are immutable, only ``leaf'' pages (data pages) are manipulated
+\item \textbf{ISAM ``non-leaf'' node structure: \boldmath$\langle P_0, K_1, P_1, ..., K_m, P_m \rangle$ where $P_0$ is a pointer to the far-left subtree and that subtree contains keys up to $K_1$, $P_1$ is a pointer to the subtree of keys $k$ that obey $K_1 \leq k < K_2$, ..., $P_m$ is a pointer to the keys that are at least $K_m$}
+\item \textbf{ISAM ``leaf'' node structure: \boldmath$\langle O, K_1, P_1, ..., K_m, P_m \rangle$ where each $P_i$ is a pointer to the location in the data file that contains key $K_i$ and $O$ is a pointer to an overflow leaf page (which itself may point to another overflow leaf page ...) for further equalities that lie inside the range of the parent}
+\item ISAM has the same issue as a binary search tree without a balancing algorithm that the ordering of insert operations can cause the height of the tree to grow unnecessarily
+\end{itemize}
+\subsubsection{B+ trees}
+\begin{itemize}
+\item \textbf{B+ trees are self-balancing: All leaves are at the same depth}
+\item \textit{b-order of a B+-tree (branching factor) = number of direct children permitted to each node (the same for all nodes)}
+\item \textbf{The node structure of B+ trees is essentially the same as ISAM} (but don't need the overflow pointer in leaves any more), but the insert algorithm is no longer straight forward due to the need to rebalance
+\item Order ($d$) = the value such that there are $2d$ $K$s (and thus $2d+1$ (max fan-out) $P$s) available to each node
+\item Search: Start at root. At each level, use binary search to find the child whose interval contains the value we are looking for, move to this node and repeat. Upon reaching a leaf, do a binary search of its elements, if we find our key, we can follow the pointer to the record; if we don’t, there is no such record
+\item \textbf{Insert: Use the search algorithm to find the leaf and the insert point within the leaf's elements which will maintain the ordering of keys within the leaf. If leaf has no remaining capacity, split current node before the insert then reattempt the insert (it will now succeed)}
+\item \textbf{Node split algorithm: Find the median (fast as already ordered). Place the elements less than the median in one new node and the elements at least than the median in the other new node (which side the median goes to is arbitrary). We no longer need the node we split. Incorporate the median into the range of the parent of the node we split (“copy up” at leaf, “push up” at non-leaf). If this overflows, repeat this procedure. If we overfill the root, imagine it has an empty parent (i.e. make a new root that splits the data into 2 ranges based on the median of the present root)} --- by pushing up towards the root the growth needed to maintain the branching limit, balance is implicitly maintained
+\item Delete: Search for the node. Remove the element. We are done --- \textit{in general, B(+)-trees are meant to have every node at least half-full so that they do not have unnecessary depth, and there is a "redistribution" algorithm for after a delete to ensure this. However, in databases we often don’t bother with this as we are typically happy to burn some disk space in order to save IO time by having free space for future inserts}
+\end{itemize}
+\subsection{Hash Indexes}
+\begin{itemize}
+\item \textbf{Static chained hashing: Allocate a fixed number \boldmath$N$ of successive pages to form primary buckets. Each bucket has capacity for a certain number of index entries} (as before, either records themselves or pointers to records) \textbf{plus a pointer to an overflow page (which may store a pointer to another overflow page...). Each bucket consists of the primary bucket page and all the overflow pages connected to it. A hash function maps a key to a primary bucket page and the whole bucket can then be traversed to find the desired page}
+\item \textbf{Extensible hashing allows the number of buckets to be expanded (and thus overflow chains to be eliminated) without the need to rehash all the pages: Use the \boldmath$n$ (global depth) least significant bits of the hash value to index into a directory to find a pointer to a bucket. For search/delete, scan the bucket until a matching key is found (for delete may be able to decrease global depth)}
+\item \textbf{Local depth (\boldmath$d$) of a bucket in extensible hashing = the number of least significant bits which all hash values in a given bucket agree on — for correctness $n$ must be at least (for efficiency will be exactly) the greatest $d$}
+\item Insert into a bucket with capacity in extensible hashing: Straightforward
+\item \textbf{Insert into a full bucket in extensible hashing: Split the bucket potentially causing the local depth of this bucket (and the new one) to increase. Update the directory (increase global depth if necessary)}
+\end{itemize}
+\section{Operators}
+\subsection{Sorting}
+\begin{itemize}
+\item Sorting is not only for ORDER BY. It can also be a way of implementing DISTINCT, GROUP BY, (equi-)JOIN
+\item External sorting refers to the use of sorting algorithms that are designed around the cost of disk IO when sorting data which exceeds the available main memory space
+\item \textbf{($B-1$)-way external merge sort ($B \geq 2$): Firstly read $B$ pages at a time into memory, sort data within this group, then write this run of sorted data back to disk. We end up with $\lceil \frac{N}{B}\rceil$ runs each of size $B$. Then stream groups of $B-1$ runs using $B - 1$ buffer pages in order to merge them into a stream of output using one new buffer page. Recursively merge until there is only one run}
+\item \textbf{External merge sort requires \boldmath$1 + \lceil\log_{B - 1} N\rceil$ passes and $2N(1 + \lceil\log_{B - 1} N\rceil)$ disk IOs}
+\end{itemize}
+\subsection{Aggregation}
+\begin{itemize}
+\item Unless there is a subsequent operator that will also benefit from the data being sorted, GROUP BY and DISTINCT are typically more efficient by hashing than by sorting
+\item \textbf{External hashing: We are given a budget of $B$ buffer pages (much like external sorting). Use a hash function $h_p$ to partition the data into $B-1$ partitions. Use the remaining page to stream data in from disk. In each partition use a different hash function $h_r$ to create a hash table for the partition}
+\item Data with the same key will always be mapped to the same slot of the same partition, this is helpful. Data with different keys will sometimes be mapped to the same slot of the same partition (hash collision), which is not desirable: we can use open chaining (store a pointer to the head of a linked list at the slot and scan the keys of the list) for collision resolution
+\item DISTINCT: Hash keyed on the SELECT attributes. If data arrives with a duplicate hash key, discard the duplicate
+\item Aggregation functions: Hash keyed on the GROUP BY. If data arrives with a duplicate hash key, reduce the current value and the new value into the next current value using the aggregation function (for AVG track COUNT and SUM as we go along, then use these to compute the mean at the end)
+\end{itemize}
+\subsection{Joins}
+\begin{itemize}
+\item Let table $R$ have $M$ pages and $m$ tuples (deduce $M < m$), and table $S$ have $N$ pages and $n$ tuples (deduce $N < n$)
+\item Naive join: $R \bowtie_C S \equiv \sigma_C(R \times S)$ --- never use this one!
+\item \textbf{Simple nested loops join: for page \boldmath$P_r \in R$ for tuple $r \in P_r$ for page $P_s \in S$ for tuple $s \in P_s$ emit if (r, s) satisfies join condition} --- also never use this one! --- repeats a full scan of S for every \underline{tuple} in R (we are likely to lose $P_r$ from the buffer while scanning $S$, and so have to reload it each time we need to get the next tuple $r \in P_r$)
+\item \textbf{Cost of simple nested loops join = \boldmath$M + mN$}
+\item \textbf{Block nested loops join: for block of $B - 2$ pages $B_R \in R$ for page $P_s \in S$ for tuple $r \in B_r$ for tuple $s \in P_s$ emit if (r, s) satisfies join condition} --- repeats a full scan of S for every block of $B - 2$ \underline{page}s from R
+\item \textbf{Cost of block nested loops join = \boldmath$M + \lceil \frac{M}{B - 2}\rceil N$} --- if $M \leq B - 2$, this collapses to $M + N$ which is theoretically optimal as it is the amount of output that would have to be produced if the join condition accepted every tuple (but that is not very realistic)
+\item \textbf{Page nested loops join = block nested loops join with B=3}
+\item \textbf{If we have a suitable index for the inner table, we don't need to scan it at all to find tuples that match the outer table}
+\item \textbf{If we are doing an equijoin we can use a sort-merge join or a hash join instead of a nested loops join}
+\item \textbf{Sort-merge join:}
+\begin{lstlisting}[basicstyle=\ttfamily\bfseries,
+    columns=fixed,
+    numbers=left,
+    breaklines=true,
+    breakatwhitespace=true,
+    breakindent=0pt]
+sort R on join key A (e.g. external merge sort) to obtain R_sorted
+sort S on join key A (e.g. external merge sort) to obtain S_sorted
+r =: head(R_sorted)
+s =: head(S_sorted)
+while r $\neq$ EOF and s $\neq$ EOF:
+    if r.A > s.A then s = s.next
+    else if r.A < s.A then r = r.next
+    // r.A = S.A
+    else then { emit (r, s); s = s.next } // this does not handle the edge case of duplicates in R.A
+\end{lstlisting}
+\item \textbf{If all tuples match each other, sort-merge join degenerates to simple nested loop! But if every tuple has at most one match, then the merge cost is the optimal M + N} (and we won't need to do the sorting if we get sorted data from a previous operator)
+\item \textbf{Hash join: Build a hash table for the \underline{outer} relation \boldmath$R$ keyed on the join key. Scan the \underline{inner} relation $S$ and for each tuple $s \in S$ use the hash table for R to jump to matching tuples}
+\item Hash join has the optimal IO cost $M + N$ (if the hash table fits into RAM) as each tuple is scanned exactly once
+\item \textbf{GRACE hash join: Use a hash function to create partitions in which all relations with the same value of the join key are in the same partition. Write partitions to disk temporarily. One partition at a time (i.e. a pair of R and S for the same partition hash value) create a hash table (note can discard the current hash table once we move onto the next partition) to carry out the join for that partition}
+\item \textbf{IO cost of GRACE hash join is \boldmath$3(M+N)$} (scan data to create portions + write partitions to disk + read portions for hash join)
+\end{itemize}
+\section{Query Planning}
+\subsection{Plan Space}
+\begin{itemize}
+\item The query rewriter uses rules that do not rely on the relation state (e.g. remove predicates that are always true/false, remove tables from which no attributes are used)
+\item The query optimizer works with the output of the query rewriter to enumerate plans and uses a cost estimation system to decide which plan to follow based on statistics about the relation state
+\item Plan space = which plans to consider — trade-off of time spent on search of optimization and time gained on execution from optimization
+\item The order in which tables are joined (as $\bowtie$ is commutative and transitive the order does not affect the output) can have a big impact on performance
+\item \textbf{Projection push-down: Project away as soon as possible columns that are not needed by subsequent operators} --- only makes sense for row stores, not column stores
+\item \textbf{Selection push-down: Apply \boldmath$\sigma$ as soon as possible} e.g. apply part of a predicate before a join
+\item \textbf{Predicate pushdown: Apply the most selective predicate in a conjunction first}
+\end{itemize}
+\subsection{Scan Methods}
+\begin{itemize}
+\item Logical equivalences create equivalence classes of query trees by reordering (or rewriting) the relation algebra operators themselves, but there are also physical equivalences for how to label the tree nodes with how to execute them (e.g. which join algorithm to use)
+\item Sequential scan: Iterate through pages and iterate through tuples in each page --- we can always do this
+\item \textbf{Hash indexes only support index scans for equality predicates (on the entire key), whereas a tree index supports index scans for so called lexicographic predicates} (for some prefix of the key (thus the ordering of columns within the key matters) apply equality predicates to all columns except the last in the prefix which can possibly be inequality/between)
+\item Index-only scan: Query only uses search key attributes, so it isn’t even necessary to retrieve the data page itself from the pointer keyed to by the index (the key itself contains the information we need) e.g. taking an average of a range of a column for which there is a tree index --- more precisely, for such scans unclustered indexes behave like clustered indexes
+\item \textbf{Bitmap scan: If a predicate can be partitioned into a conjunction/disjunction of predicates for which there are different indexes, retrieve the sets of matches from each index then take intersection/union}
+\item If there are additional clauses conjuncted on that we don’t have indexes for, we can still use a bitmap scan and select by the additional clauses as we scan
+\item If there are additional clauses disjuncted on that we don’t have indexes for, we cannot use an index scan (have to use a sequential scan and select by the entire predicate)
+\end{itemize}
+\subsection{Costing}
+\begin{itemize}
+\item \textbf{NKeys = number of distinct values in a column}
+\item \textbf{Selectivity (aka reduction factor) of a predicate = |output| / |input|} --- \underline{careful: higher selectivity means the filter drops fewer tuples!}
+\item Assuming that data is uniformly distributed, $sel(A = i) = \frac{1}{NKeys(A)}$
+\item \textbf{Selectivity follows laws of probability}: $sel(\neg P) = 1 - sel(P)$; if $P1$, $P2$ are independent then $sel(P1 \land P2) = sel(P1) \cdot sel(P2)$; $sel(P1 \lor P2) = sel(P1) + sel(P2) - sel(P1 \land P2)$
+\item \textbf{\boldmath$sel(A = B)$ (e.g. an equijoin) $=$ $\sum_i sel(A = i \land B = i) =\allowbreak \frac{1}{\max(NKeys(A), NKeys(B))}$} (under the assumption that columns A and B are independent)
+\item \textbf{If R and S are (equi-)joined on a column A which is a foreign key in S referencing R,} then $\pi_A(S) \subseteq \pi_A(R)$ and so \textbf{\boldmath$|R \bowtie S| \leq |S|$} (exact equality if A is not nullable in S)
+\item \textbf{If R and S are (equi-)joined on a column A that is not a key for either table, \boldmath$|R \bowtie S| = sel(R.A = S.A) \cdot |R| \cdot |S|$} $=$ $\frac{|R||S|}{\max(NKeys(R.A), NKeys(S.A))}$
+\item To make accurate estimates for non-uniformly distributed attributes (i.e. most data), we need the database to track more statistics than just NKeys
+\item \textbf{A histogram is a partition of the domain into intervals (buckets) with counts in each bucket of the number of tuples and the number of distinct values --- we still approximate uniformly within each bucket but at least we now do not effectively have a single bucket for the entire distribution}
+\item Equi-width histogram: Every interval has the same width (i.e. number of distinct values)
+\item Equi-depth histogram: Every bucket contains approximately the same number of tuples --- motivation: Have the most accuracy on the most frequently occurring data (as this is likely to be queried most often) --- corollary: equi-width is better for the low frequency data (but this is likely queried less often)
+\end{itemize}
+\subsection{Search}
+\begin{itemize}
+\item \textbf{Cost of using a B-tree index I to lookup a primary key is Height(I) + 2} (+2 is from + 1 to reach the leaf, + 1 to follow the reference in the leaf)
+\item \textbf{Cost of using a clustered index I for a selection in a relation R is asymptotically \boldmath$[NPages(I) + NPages(R)] \cdot selectivity$}
+\item \textbf{Cost of using an unclustered index I for a selection in a relation R is asymptotically \boldmath$[NPages(I) + NTuples(R)] \cdot selectivity$}
+\item \textbf{Cost of using a sequential scan for a selection in a relation R is NPages(R)}
+\item There are (2N-2)!/(N-1)! equivalent join orderings, it is completely infeasible to enumerate all
+\item Multi-table plans have optimal substructure, so \textbf{we can use dynamic programming to create single-table plans (as described above) then 2-table plans from these then 3-table plans from these and so on until we have a plan for our full query: \boldmath$OPT(R \bowtie S \bowtie T) = min(OPT(R, S) \bowtie T, OPT(R, T) \bowtie S, OPT(S, T) \bowtie R)$}
+\end{itemize}
+\clearpage
+\section{Transactions}
+\subsection{Atomicity}
+\begin{itemize}
+\item \textbf{Shadow paging (copy-on-write): Make copies of pages for transaction to modify then replace pages with the copy upon commit}
+\item \textbf{Logging: Log actions, use log to know how to reverse actions upon abort} --- popular in industry as will want an audit log anyway
+\end{itemize}
+\subsection{Isolation}
+\begin{itemize}
+\item \textbf{Pessimistic concurrency control = Don’t allow operations that have the potential to conflict to be interleaved (i.e. use locking)}
+\item \textbf{Optimistic concurrency control = Deal with conflicts as and when they happen (i.e. wait until commit then rollback if a conflict actually occurred)}
+\item \textbf{Schedule for a set of transactions = a sequence that contains the steps (read/write table named ...) of all of the transactions and in which the ordering of the steps in each transaction relative to the others in that transaction has been preserved}
+\item \textbf{We can define an equivalence relation over transactions based on bringing the database into the same state as each other \underline{for every initial state and for every possible combination of} \underline{record(s) touched by the steps of the transaction}}
+\item \textbf{Serial schedule = a schedule in which transactions have not been interleaved}
+\item \textbf{Serializ\underline{able} schedule = a schedule which is equivalent to a serial schedule}
+\item \textbf{Schedules \boldmath$s1$, $s2$ are conflict equivalent iff for every pair of conflicting actions $p1$, $p2$; $p1 s1 p2$ $\Rightarrow$ $p1 s2 p2$ and $p2 s1 p1$ $\Rightarrow$ $p2 s2 p1$
+}
+\item \textbf{A schedule is conflict serializable iff it is conflict equivalent to a serial schedule iff it can be transformed into a serial schedule by swapping consecutive non-conflicting operations}
+\item \textbf{A dependency graph can be created to represent the conflicts in a schedule. A schedule is conflict-serilizable iff its dependency graph is acyclic} (a conflict-equivalent serial schedule can be obtained by a topological sort of the graph)
+\item \textbf{A schedule is view-serilizable iff it is conflict-serilizable or is only not conflict-serilizable due to “blind writes”}
+\end{itemize}
+\subsection{Isolation}
+\begin{itemize}
+\item S-lock = shared lock (reader)
+\item X-lock = exclusive lock (writer)
+\item \textbf{2-phase locking: A transaction can request locks iff it has not yet released any locks. Phase 1 (growing): Transaction requests locks. Transaction cannot release locks. Phase 2 (shrinking): Transaction releases locks. Transaction cannot request locks}
+\item \textbf{Strict 2-phase locking: X-locks are not released until commit/abort --- prevents cascading aborts as other transactions are not able to read uncommitted writes}
+\item Deadlock detection: Periodically create “waits-for” graph and check for cycles, if a cycle is found chose a transaction to abort
+\item \textbf{Deadlock prevention: If a transaction tries to acquire a lock held by another transaction, consider whether we need to abort a transaction to avoid a cyclic wait in the future. Can either use wait-die policy or wound-wait policy}
+\item \textbf{Wait-die: If requester is older it waits for holder, otherwise the requester ``kills itself''}
+\item \textbf{Wound-wait: If the requester is older than the holder then the requester ``murders'' the holder, otherwise the requester waits}
+\end{itemize}
+\subsection{Recovery}
+\begin{itemize}
+\item The buffer pool manager is responsible for managing the trade-off between performance and durability
+\item \textbf{Write-ahead logging: Information needed to describe a change (and thus to ``redo'' or ``undo'' it) is recorded in an append-only log before the change is made}
+\item \textbf{Associated WAL records must be flushed to disk before a ``steal'' (eviction to disk of pages dirtied by an uncommitted transaction) or a “no force” (marking of transaction as committed but buffering flush of dirtied data pages to disk) but these operations are made possible by the existence of the WAL}
+\end{itemize}
+\subsection{Distributed Transactions}
+\begin{itemize}
+\item \textbf{2-phase commit: Phase 1 prepare (try to get unanimous decision to commit), phase 2 accept (disseminate result of vote)}. Each node tells coordinator whether it wants to commit or abort based on its local state; coordinator tells each node to commit iff no node wanted to abort (ie tells every node to abort if even one node asked to abort); nodes acknowledge receipt of this consensus decision
+\item \textbf{To facilitate crash recovery, nodes should log their vote to their local disk before sending their vote and coordinator should log consensus decision to its local disk before multicasting it. Then each node should log its receipt of the consensus decision to their local disk between actioning it and acking the message, and coordinator should log receipt of ack from each node}
+\item \textbf{Ordering of messages is necessary for correctness (e.g. use a logical clock)}
+\item If a node involved in the transaction is unresponsive in submitting a vote, the transaction will timeout and be aborted by the coordinator \textit{(to be able to make progress we would need full Paxos/Raft)}
+\item \textbf{If a node voted but is unresponsive to the result, the coordinator waits for it and when it recovers it will ask the coordinator what the consensus was (which the coordinator will be able to find from its logs)}
+\item \textbf{If a node voted but is unresponsive to the result, the coordinator waits for it and when it recovers it will ask the coordinator what the consensus was (which the coordinator will be able to find from its logs)}
+\item \textbf{If a node cannot reach the coordinator to ack the consensus or does not receive a consensus from the coordinator, the node waits for it and the coordinator when it recovers will resend the (same, from its logs) consensus}
+\end{itemize}
+\end{flushleft}
+\end{document}

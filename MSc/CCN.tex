@@ -1,0 +1,183 @@
+\documentclass[20pt,a4paper,landscape]{extarticle}
+\usepackage[margin=1.25in]{geometry}
+\usepackage{placeins}
+\usepackage{latexsym}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[UKenglish]{babel}
+\usepackage[UKenglish]{isodate}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{titletoc}
+\usepackage{listings}
+\usepackage{dsfont}
+\usepackage{changepage}
+\usepackage{tikz}
+\usepackage{derivative}
+\usepackage{mathabx}
+\usetikzlibrary{arrows.meta, mindmap, trees, shapes.geometric, positioning, matrix}
+\lstset{
+    basicstyle=\ttfamily,
+    mathescape
+}
+\PassOptionsToPackage{hyphens}{url}
+\usepackage{xurl}
+\input{glyphtounicode}
+\pdfgentounicode=1
+\usepackage[all]{nowidow}
+\usepackage{hyperref}
+\hypersetup{
+        colorlinks,
+        citecolor=black,
+        filecolor=black,
+        linkcolor=black,
+        urlcolor=black
+}
+\usepackage[protrusion=true,expansion=true]{microtype}
+\newcommand{\ind}{\perp\!\!\!\!\perp}
+\newcommand{\Obj}{\textrm{Obj}}
+\renewcommand{\th}[1]{#1^\textrm{th}}
+\let\max\relax
+\DeclareMathOperator*{\max}{max\:}
+\let\min\relax
+\DeclareMathOperator*{\min}{min\:}
+\DeclareMathOperator*{\argmax}{arg\,max\:}
+\DeclareMathOperator*{\argmin}{arg\,min\:}
+\begin{document}
+\tableofcontents
+\clearpage
+\begin{flushleft}
+\section{Good Scientific Practice for Computational Modelling of Behavioural Data}
+\begin{enumerate}
+\item Design an experiment that will collect good data --- good data is necessary (but not sufficient) for good results from computational modelling
+\item Select computational models to (eventually) fit to the data. This should include baselines as well as ones with parameters that correspond to our hypotheses
+\item Create artificial data to use to validate our computational pipeline (before we burn real data in it (reduce accidental p-hacking))
+\item Decide on a parameter fitting approach (e.g. maximum likelihood estimation (e.g. use gradient decent (with multiple runs from multiple starting points) to minimize negative log likelihood))
+\item Check how well applying the parameter fitting to the artificial data recovers the parameters used to generate it
+\item Decide on a model comparison approach, taking into account that models with more parameters may be able to overfit to data they do not actually explain well (e.g. chose the model with the minimal Bayes Information Criterion: 2 $\times$ negative log likelihood + $k_m$ $\times$ $\log(T)$ where $k_m$ is the number of parameters and $T$ is the number of trials). Check how well this works for the artificial data
+\item At long last we can apply our pipeline to our experimental data (note we could have been designing the pipeline while someone else runs the experiment if we wanted to be efficient)
+\item Generate artificial data from the best fitting model to check that it appears to extrapolate sensibly (i.e. is actually a good model rather than just the best of a bunch of bad models)
+\end{enumerate}
+\section{Working Memory}
+\subsection{Working Memory}
+\begin{itemize}
+\item Working memory = the ability to hold information for seconds/minutes \textit{--- it is suspected that information must pass through working memory to get to long-term memory}
+\item \textbf{Storing new information in long-term memory leads to detectable changes in the connectivity between neurons, whereas the dynamic process involved on working memory is less well understood (but is believed to involve so called sustained activity)}
+\item The prefrontal cortex is responsible for working memory
+\item Oculomotor delayed response task: Monkey is shown a cue on a screen then the screen goes blank for a few seconds (delay period) then the monkey has to move its eye to where the cue was
+\item Funahshi et al 1989 found in the oculomotor delayed response task that the neurons whose activity increased when the cue was presented maintained their activity throughout the delay period
+\end{itemize}
+\clearpage
+\subsection{Hopfield Networks}
+\begin{itemize}
+\item Hopfield 1982 provided a recurrent artificial neural network with dynamical attractors
+\item \textit{John Hopﬁeld won the 2024 Nobel Prize in Physics alongside Geoffrey Hinton for work based on the Hopﬁeld network}
+\item \textbf{Hopfield network unit update rule: \boldmath$s_i$ $=$ 1 iff $\sum_j w_{ij}s_j > 0$; $-1$ iff $\sum_j w_{ij}s_j \leq 0$}
+\item \textbf{Hopfield network learning rule for \boldmath$N$ patterns $\xi^{(1)}, ..., \xi^{(N)}$: $w_{ij} = \frac{1}{N}\sum_{k \in [N]} \xi^{(k)}_i\xi^{(k)}_j$}
+\item The weights of a Hopfield network are symmetric ($w_{ij}=w_{ji}$) and have no self-loops ($w_{ii} = 0$)
+\clearpage
+\item \textbf{Given any initial state, a Hopfield network will settle into one of a fixed set of stored patterns (local minima of the energy function). Ideally, the stored pattern would be a pattern presented during training, but depending on the exact examples presented and the number of units there may be false patterns stored and/or training examples missing}
+\end{itemize}
+\subsection{Schizophrenia}
+\begin{itemize}
+\item Positive symptoms = presence of abnormal experiences (e.g. visual and auditory hallucinations)
+\item Negative symptoms = absence of normal experiences (e.g. loss of pleasure, social withdrawal)
+\item \textit{Medications exist to aid the positive symptoms, but the side effects can exacerbate the negative symptoms}
+\item \textbf{Endophenotype = an easy to detect biomarker that provides a bridge between foundational biological causes (e.g. genetic sequencing is expensive and semi-invasive) and the (hard to objectively capture) behavioural symptoms they cause}
+\item Deficit in working memory is a proposed endophenotype for schizophrenia
+\item Hoffman 1989 proposed that \textbf{schizophrenia could be caused by the body doing too much cortical pruning as pruning of Hopfield networks leads to merging of attractors (lose your train of thought) and creation of spurious attractors (hallucinations)}
+\end{itemize}
+\clearpage
+\subsection{Ring Model}
+\begin{itemize}
+\item Recall the ring model of orientation selectivity in primary visual cortex (V1): $\tau\odv{r\left(\theta\right)}{t}=-r(\theta) +\allowbreak \phi[A +B\cos\left(2\left(\theta - \theta_s\right)\right) +\allowbreak \int_{-\frac{\pi}{2}}^{\frac{\pi}{2}}\left[C + D\cos\left(2\left(\theta - \theta'\right)\right)r\left(\theta'\right)\right]\odif{\theta'}]$ where $\phi$ is the ReLU activation function, $\theta_s$ represents the (possibly only weak) orientation tuning from the thalamus and $\theta'$ represents recurrent connectivity with neurons with similar preferred orientations to each other exciting each other and neurons with far apart preferred orientations inhibiting each other
+\item \textbf{If the strength of the recurrent connections is set high enough, the ring model's activity persists when the input is removed, thus providing a (somewhat) biologically plausible model of working memory!}
+\end{itemize}
+\subsection{Biology}
+\begin{itemize}
+\item \textbf{The ring model is a firing rate model. Converting it to a spiking model would provide more insight into the underlying biophysics. However, the conversion can destabilize the persistent activity}
+\item \textbf{Example spiking model: Leaky integrate and fire neuron (\boldmath$\odv{V}{t} = \frac{1}{\tau}\left[-\left(V - E_m\right) + \frac{I_{ext}}{g_m}\right]$) with threshold-reset rule}
+\item Recall from CNS that glutamate is the human brain's main excitatory neurotransmitter. Moreover, recall that excitatory synapses can have AMPA receptors for fast response to glutamate or NMDA receptors for slow response to glutamate
+\item \textbf{Spiking ring models are most stable when the synaptic transmission is primarily due to NMDA receptors (slow excitement) rather than AMPA receptors (fast excitement)}
+\item \textbf{Ketamine blocks NMDA receptors and is known} (both recreationally and in clinical trials for this specific purpose) \textbf{to temporarily induce in healthy individuals symptoms similar to those of schizophrenia}
+\item Issues with NMDA receptors leading to a disruption of the balance between excitement and inhibition could simulate the pruning effect proposed by Hoffman
+\end{itemize}
+\clearpage
+\section{Decision Making}
+\subsection{Bayesian Decision Theory}
+\begin{itemize}
+\item \textbf{Bayesian likelihood ratio test: Chose \boldmath$h_1$ in a binary choice between $h_1, h_2$ in view of some evidence $e$ iff $\Pr(h_1|e) > \Pr(h_2|e)$} iff $\frac{\Pr(e|h_1)Pr(h_1)}{P(e)} > \frac{\Pr(e|h_2)Pr(h_2)}{P(e)}$ \textbf{iff \boldmath$\frac{\Pr(e|h_1)}{P(e|h_2)} > \frac{\Pr(h_{\underline{2}})}{\Pr(h_{\underline{1}})}$}
+\item \textbf{Let $V_{ij}$ be the utility from choosing $h_i$ when $h_j$ was correct. Then, the threshold becomes \boldmath$\frac{\left(V_{22}-V_{21}\right)\Pr(h_2)}{\left(V_{11}-V_{12}\right)\Pr(h_1)}$}
+\item \textbf{Wald's sequential probability ratio test: Let \boldmath$e_1, ..., e_n$ be \underline{independent} evidence observed at different points in time. Then,} as $\log$ is monotonic and increasing, \textbf{we can compare the evolving quantity \boldmath$DV = \sum_{[n]} \log(\frac{\Pr(e_i|h_1)}{Pr(e_i|h_2)})$ to our static threshold} ($\frac{\left(V_{22}-V_{21}\right)\Pr(h_2)}{\left(V_{11}-V_{12}\right)\Pr(h_1)}$) in order to make our decision --- this is a streaming algorithm for online decision making
+\end{itemize}
+\subsection{Drift Diffusion Model}
+\begin{itemize}
+\item \textbf{Wiener process (1D Brownian motion): \boldmath$\odv{x(t)}{t} = v(t) + \sigma \eta(t)$} where $v$ is the mean drift rate, $\sigma^2$ is the variance, and $\eta$ is Gaussian white noise. \textbf{\boldmath$x$ drifts until it reaches a boundary at which point the corresponding decision is made}
+\item \textbf{Ornstein-Ulhenbeck process (1D Brownian motion with friction): \boldmath$\odv{x(t)}{t} = v(t) + \sigma \eta(t) - x(t)$}
+\item Changing any parameter affects reaction time
+\item Drift rate is controlled by quality of evidence specifically --- \textbf{if mean drift rate = log likelihood ratio} (and boundaries (relative to starting point) are decision variable thresholds) \textbf{then the drift diffusion model is Wald's sequential probability ratio test}
+\item Location of starting point is controlled by prior beliefs (biases) specifically
+\item Trade-off between speed and accuracy is controlled by distance between boundaries specifically
+\item A variant of the drift diffusion model is the race model where 2 separate $x$s (for $h_1$ and $h_2$) drift independently until one of them hits its respective (now one-sided) threshold at which point the corresponding decision is made
+\end{itemize}
+\clearpage
+\section{Reinforcement Learning}
+\subsection{Reinforcement Learning}
+\begin{itemize}
+\item Classical conditioning: If an animal is presented with food (unconditioned stimulus) they will naturally salivate (a detectable signal that they expect a reward). If an animal is presented with food following the ringing of a bell (conditioned stimulus) they will eventually salivate upon hearing a bell alone even though they would not have naturally done so
+\item \textbf{Rescorla-Wagner model of classical conditioning: \boldmath$V_{t+1}(CS_i) = V_{t}(CS_i) + \alpha\left[r_{US} - \sum_j V_t(CS_j)\right]$ --- error-driven learning: change in expected utility from each present conditioned stimulus = learning rate $\times$ (observed utility from unconditioned stimulus $-$ net expected utility from all present conditioned stimuli)}
+\item The idea from the 1980s that dopamine encodes (predicted) reward has taken root in the public consciousness. However, this was refined in the 1990s to dopamine encodes prediction error (observed reward $-$ predicted reward)
+\item Kamin Blocking: If an animal has already been conditioned to expect the presentation of food from a bell alone, then switching to shining a light as well as ringing the bell will \underline{not} lead to the animal salivating upon the shining of the light alone --- this matches the error-driven learning of Rescorla-Wagner
+\item \textbf{Rescorla-Wagner is not able to give credit to earlier stimuli for delayed rewards} (even when they are not fully blocked by later stimuli but rather do have their own predictive value). To resolve this, temporal difference learning rule incorporates discounted future rewards: $V_{t+1}(S_t) = V_{t}(S_t) + \alpha\left[r_{t+1} + \gamma V_t(S_{t+1}) - V_t(S_t)\right]$ --- note if discount factor $\gamma=0$ then this becomes Rescorla-Wagner (just in a more computer science language)
+\end{itemize}
+\subsection{Addiction}
+\begin{itemize}
+\item Redish 2004 proposed that, as cocaine is known to cause extra dopamine, addiction can be explained by it skewing the encoding of prediction error for reinforcement learning causing expected utility to grow boundlessly despite the bounded observed utility
+\item People also develop serious addictions to depressive drugs and even to habits rather than substances --- dopamine produced in these situations is well within what the brain should be able to handle!
+\clearpage
+\item \textbf{Model-free decision making = habitual decision making by procedures} --- learning expected rewards without learning the underlying causal structure --- what we have been considering so far
+\item \textbf{Model-based decision making = goal-directed decision making by planning} --- learning expected rewards through learning the underlying causal structure
+\item Addiction could correspond to model-based decision making failing and so falling back on model-free
+\item Two-steps decision task: Chose between two actions in first round that will probabilistically determine which of 2 sets of choices (each of 2 actions) you get in second round. Choice in second round will probabilistically determine how much money you get --- model-based learns the probabilities of the transitions to the second round options from the first round actions and applies these when propagating up the reward, whereas model free blindly associates second round outcomes with the first round action
+\end{itemize}
+\subsection{Depression}
+\begin{itemize}
+\item It was proposed in the 1960s that depression is caused by learned helplessness: After experiencing repeated negative genuinely uncontrollable events, animals eventually give up and don't take opportunities to improve their situations once they arise --- lab animals which are repeatedly electrocuted give up on escaping even once the physical barrier is removed
+\item Reinforcement-learning (e.g. Rescorla-Wagner) can be equipped with a decision function in order to chose actions based on the estimated rewards. Softmax decision function: In a binary choice between actions $a, b$ choose action $a$ with probability $\frac{1}{1+\exp\left(-\beta(V_a - V_b)\right)}$ where $\beta$ is the ``temperature''
+\item Rescorla-Wagner can be extend with an outcome sensitivity parameter (multiplied onto the observed utility (may also be separated into different sensitivity for rewards vs punishments)) or with a forgetting rate for the previous estimate
+\item Signal detection task: Participants are shown a cartoon face for a fraction of a second then shown two similar faces (e.g. slightly different mouth lengths) and asked which one they observed. If they chose correctly they sometimes get a reward before the next trial, if they chose incorrectly they advance to the next trial with no feedback. The participants are not explicitly told, but some faces have higher probabilities of reward --- healthy participants develop a stronger bias than patients with depression towards the faces that are more likely to lead to a reward (if correct) to help them to rationally decide when uncertain
+\item It has been proposed by varying authors that fitting reinforcement learning models to depression shows it to be caused by: too low reward sensitivity in updating values, too high punishment sensitivity in updating values, too much randomness in decision function, too high forgetfulness of previous values --- i.e. no one really knows
+\end{itemize}
+\subsection{Anxiety}
+\begin{itemize}
+\item As well as sensitivity to rewards vs punishments, Rescorla-Wagner can be further extended with different learning rates for rewards vs punishments
+\item It has been suggested that anxiety is entirely a reward vs punishment learning rate discrepancy rather than a reward vs punishment sensitivity discrepancy. In particular, that anxious individuals have the same high learning rate from punishments in steady and volatile environments, whereas healthy individuals increase their learning rates in volatile environments
+\end{itemize}
+\clearpage
+\section{Bayesian Brain}
+\subsection{Multisensory Integration}
+\begin{itemize}
+\item Let $d_1, d_2$ be observations (e.g. visual and auditory cues) and $x$ be a candidate explanation. Suppose the $d_1, d_2$ are conditionally independent given $x$. Then, $\Pr(x|d_1, d_2) = \frac{\Pr(d_1,d_2|x)P(x)}{\Pr(d_1, d_2)} \propto\allowbreak \Pr(d_1|x)\Pr(d_2|x)\Pr(x)$. \textbf{Suppose that the conditional likelihoods are Gaussian}. \textbf{Then,} $\Pr(d_1|x)\Pr(d_2|x) \propto\allowbreak \exp\left(-\frac{(d_1-x)^2}{2\sigma_1^2}\right)\exp\left(-\frac{(d_2-x)^2}{2\sigma_2^2}\right) \propto\allowbreak \exp\left(-\frac{(d_1-x)^2}{2\sigma_1^2}-\frac{(d_2-x)^2}{2\sigma_2^2}\right) \propto\allowbreak \exp\left(\frac{\left(x-\frac{\sigma_2^2d_1+\sigma_1^2d_2}{\sigma_1^2 + \sigma_2^2}\right)^2}{\frac{2\sigma_1^2\sigma_2^2}{\sigma_1^2+\sigma_2^2}}\right)$ i.e. \textbf{the Posterior is also a Gaussian (with mean \boldmath$\frac{\sigma_2^2}{\sigma_1^2 + \sigma_2^2}d_1+\frac{\sigma_1^2}{\sigma_1^2 + \sigma_2^2}d_2$ and variance $\frac{\sigma_1^2\sigma_2^2}{\sigma_1^2 + \sigma_2^2}$)}
+\item \textbf{The mean of integrated cues is a weighted average of the individual cues (weighted towards that with lower variance (as the weights are the variance of the other)), and the variance of integrated cues is lower than that of the individual cues}
+\item Dependent on their separation in space and time, the brain has to decide whether or not to integrate cues (a causal inference problem): Use Bayes' rule to determine probabilities of common vs separate causes given the observations and use these to take a weighed average of the (same as before, Bayesian) probability of the overall explanation given both the causes and the probability of the overall explanation given only the separate cause
+\end{itemize}
+\clearpage
+\subsection{\textit{Optical Illusions}}
+\begin{itemize}
+\item \textit{Sensory priors explain optical illusions}
+\item \textit{The brain has a prior towards light coming from above, as this is the case in nature due to the sun}
+\item \textit{The brain has a prior for low speeds, which causes drivers to underestimate their speed in fog}
+\item \textit{The brain has a prior towards orientation judgements being in cardinal orientations, as this is the case in nature due to gravity}
+\end{itemize}
+\clearpage
+\subsection{Psychiatry}
+\begin{itemize}
+\item Schizophrenia may be caused by weak sensory priors leading to higher-level reasoning trying to make sense of unstable sensory inputs
+\item Autism may be caused by too much (compared to Bayesian optimal) weight being put on conditional likelihoods (sensory inputs) relative to that put on priors --- this could be because priors are weaker than neurotypicals or because sensory inputs are sharper than neurotypicals
+\end{itemize}
+\end{flushleft}
+\end{document}

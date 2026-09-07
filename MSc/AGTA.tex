@@ -1,0 +1,450 @@
+\documentclass[20pt,a4paper,landscape]{extarticle}
+\usepackage[margin=1.25in]{geometry}
+\usepackage{placeins}
+\usepackage{latexsym}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[UKenglish]{babel}
+\usepackage[UKenglish]{isodate}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{titletoc}
+\usepackage{listings}
+\usepackage{dsfont}
+\usepackage{changepage}
+\usepackage{tikz}
+\usepackage{derivative}
+\usepackage{mathabx}
+\usepackage{lpform}
+\usetikzlibrary{arrows.meta, mindmap, trees, shapes.geometric, positioning, matrix}
+\lstset{
+    basicstyle=\ttfamily,
+    mathescape
+}
+\PassOptionsToPackage{hyphens}{url}
+\usepackage{xurl}
+\input{glyphtounicode}
+\pdfgentounicode=1
+\usepackage[all]{nowidow}
+\usepackage{hyperref}
+\hypersetup{
+        colorlinks,
+        citecolor=black,
+        filecolor=black,
+        linkcolor=black,
+        urlcolor=black
+}
+\usepackage[protrusion=true,expansion=true]{microtype}
+\newcommand{\ind}{\perp\!\!\!\!\perp}
+\newcommand{\Obj}{\textrm{Obj}}
+\renewcommand{\th}[1]{#1^\textrm{th}}
+\renewcommand{\mathbb}{\mathds}
+\let\max\relax
+\DeclareMathOperator*{\max}{max\:}
+\let\min\relax
+\DeclareMathOperator*{\min}{min\:}
+\DeclareMathOperator*{\argmax}{arg\,max\:}
+\DeclareMathOperator*{\argmin}{arg\,min\:}
+\begin{document}
+\tableofcontents
+\clearpage
+\begin{flushleft}
+\section{Introduction}
+\subsection{Definitions and notation}
+\begin{itemize}
+\item \textbf{A game is a strategic-form (aka normal-form) game iff all players chose their strategy simultaneously} (and so players chose strategies independently of each other). \textbf{Conversely a game is an extensive-form game iff players take turns to chose moves} (and so can alter their approach based on the actions of other players)
+\item An n-player strategic-form game $\Gamma$ (capital gamma) is described by: a set $N = [n]$ of players; for each player $i \in N$ their own set $S_i$ of pure strategies (i.e. available moves); for each player $i \in N$ their own payoff function $u_i: S \to \mathds{R}$ where $S = \bigtimes_{i \in N} S_i$
+\item $\Gamma$ is a zero-sum game iff $\forall s \in S; \sum_{i \in N} u_i(s) = 0$
+\item A strategic-form game $\Gamma$ is a finite game iff every $S_i$ is a finite set. Let $m_i = |S_i|$ (the number of moves available to player $i$)
+\item A mixed strategy $x_i \in X_i$ is a probability distribution over $S_i$. Thus, $\forall j \in [m_i]; x_i(j) \geq 0$ and $\sum_{j \in [m_i]} x_i(j) = 1$. Let $X = \bigtimes_{i \in N} X_i$
+\item Expected payoff for player $i$ under a given mixed strategy profile $x \in X$ = $U_i(x) = \sum_{s \in S} x(s)u_i(s)$ where \textbf{\boldmath$x(s) = \prod_{j \in [n]} x_j(s_j)$ \boldmath$=$ the probability of \boldmath$s$ under \boldmath$x$} (recall players make their choices independently of each other) --- note \textbf{\boldmath$U_i$ is the expected payoff of a mixed strategy whereas \boldmath$u_i$ is the definite payoff of a pure strategy}
+\item \textbf{\boldmath$\pi_{i,j}$ \boldmath$=$} the $x_i \in X_i$ such that $x_i(j) =1$ (and so $\forall j' \neq j; x_i(j') = 0$) = \textbf{the pure strategy for player \boldmath$i$ in which they play move \boldmath$j$}
+\item Given a strategy profile $x$, \textbf{let \boldmath$\left(x_{-i}; y_i\right)$ denote the profile that is the same as $x$ for all players expect for $i$ who plays strategy $y_i$ instead}
+\end{itemize}
+\subsection{Nash's Theorem}
+\begin{itemize}
+\item \textbf{A strategy profile is a Nash equilibrium iff no player can strictly improve their \underline{expected} payoff by \underline{unilaterally} deviating}
+\item \textbf{\boldmath$z_i \in X_i$ is a best response for player $i$ to $x_{-i}$ iff $\forall y_i \in X_i; U_i(x_{-i};z_i) \geq U_i(x_{-i};y_i)$}
+\item Proposition: \textbf{A strategy profile \boldmath$x$ is a Nash equilibrium iff\\
+$\forall i$ $x_i$ is a best response to $x_{-i}$}\\
+Proof: $\forall i$ $x_i$ is a best response to $x_{-i}$ $\Leftrightarrow$ $\forall i \forall y_i \in X_i; U_i(x_{-i};x_i) \geq U_i(x_{-i};y_i)$ $\Leftrightarrow$ no player can improve their own payoff by unilaterally deviating from $x$ $\Leftrightarrow$ $x$ is a Nash equilibrium
+\item \textbf{Proposition: A strategy profile \boldmath$x$ is a Nash equilibrium $\Leftrightarrow$ $\forall i \in N; \forall j \in S_i; U_i(x) \geq U_i(x_{-i}; \pi_{i,j})$} --- \textbf{this will be computationally useful} as it tells us that we only need to iterate through pure strategies to verify a candidate (mixed) Nash equilibrium\\
+Proof: $\Rightarrow$ is trivial, it remains to prove $\Leftarrow$\\
+Pick an arbitrary player $i$\\
+Note that $U_i(x_{-i};x_i) = \sum_{j \in [m_i]} \left(x_i(j)U_i(x_{-i};\pi_{i,j})\right)$\\
+Thus, by the hypothesis, $U_i(x_{-i};x_i) \leq \sum_{j \in [m_i]} \left(x_i(j)U_i(x)\right) = U_i(x)\sum_{j \in [m_i]} x_i(j) = U_i(x)$\\
+Thus, for each player $i$, $x_i$ is a best response to $x_{-i}$\\
+Thus, $x$ is a Nash equilibrium
+\clearpage
+\item \textbf{Lemma: Let \boldmath$x$ be a strategy profile. For every player $i$, there is a move $j$ which they play with strictly positive probability and has pure payoff at most the payoff of $x$}\\
+\textbf{Proof sketch: \boldmath$U_i(x)$ is a weighted average of the payoffs for $i$ of unilaterally deviating from $x$ to each pure strategy weighted by their probability in $x_i$. It would be absurd for every (non-zero weighted) term in the average to be greater than the value of the average}
+\item Theorem (Brouwer's Fixed Point Theorem, 1909): Every continuous function $f : D \to D$ mapping a compact and convex non-empty $D \subseteq \mathds{R}^m$ to itself has a fixed point ($\exists x^\ast \in D: f (x^\ast) = x^\ast$)\\
+Proof: Out of scope (uses topology not informatics)
+\item Lemma: X is a compact and convex non-empty subset of $\mathds{R}^m$ where $m = \sum_{i \in N} m_i$\\
+Proof: Out of scope
+\clearpage
+\item \textbf{Theorem (Nash's Theorem): Every \underline{finite} game has a Nash equilibrium}\\
+Proof: Let $\psi_{i,j}(x) = \sigma\left(U_i(x_{-i}; \pi_{i,j}) - U_i(x)\right)$ where $\sigma$ denotes clipping negative values to 0. Deduce (by the previous useful proposition) that $x$ is a Nash equilibrium iff $\forall i, j; \psi_{i,j}(x) = 0$\\
+Define $f: X \to X$ by $\forall i, j; f(x)_i(j) = \frac{1}{1 + \sum_{k \in [m_i]} \psi_{i,k}(x)}\left(x_i(j) + \psi_{i,j}(x)\right)$. Note that the fraction merely renormalises so that we obtain a new valid probability distribution (sums to 1), it is the other term that determines the behaviour of the new distribution.
+Deduce that $x \in X \Rightarrow f(x) \in X$ and that $f$ is continuous (it is easy to see will never divide by 0, and everything else is composition of trivially continuous functions). Thus, by Brouwer's Fixed Point Theorem, $\exists x^\ast \in X: f(x^\ast) = x^\ast$. We will show that such a $x^\ast$ must be a Nash equilibrium (although not relevant to this proof it will from our argument also easily follow that every Nash equilibrium is such a $x^\ast$).\\
+Let $x^\ast$ be an arbitrary fixed point of $f$. Then, $\forall i, j; x^\ast_i(j) = f(x^\ast)_i(j) = \frac{1}{1 + \sum_{k \in [m_i]} \psi_{i,k}(x^\ast)}\left(x^\ast_i(j) + \psi_{i,j}(x^\ast)\right)$. By grade-school algebraic simplification, $x^\ast_i(j)\sum_{k \in [m_i]}\psi_{i,k}(x^\ast) = \psi_{i,j}(x^\ast)$\\
+Recall that we wish to show that $\forall i, j; \psi_{i,j}(x^\ast) = 0$.
+Chose an arbitrary player $i$. By the lemma $\exists k: \psi_{i,k}(x^\ast) = 0$ and $x^\ast_i(k) > 0$. Thus, $x^\ast_i(k)\sum_{j \in [m_i]}\psi_{i,j}(x^\ast) = 0$. As $x^\ast_i(k) > 0$, $\sum_{j \in [m_i]}\psi_{i,j}(x^\ast) = 0$ and so  as $\forall j; \psi_{i,j}(x^\ast) \geq 0$, $\forall j; \psi_{i,j}(x^\ast) = 0$ as required.
+\item Proposition (Indifference Principle): \textbf{Let \boldmath$x^\ast$ be a Nash equilibrium. $\forall i, j; x^\ast_i(j) > 0 \Rightarrow U_i(x^\ast_{-i}; \pi_{i, j}) = U_i(x^\ast)$}. That is that each player would not change their expected utility if they were to \underline{unilaterally} deviate to any pure strategy they play with non-zero probability (i.e. each pure strategy that they play with non-zero probability is a best response to the Nash equilibrium) \textbf{--- this will be useful}\\
+Proof: From our proof of Nash's theorem, $\forall i, j; \psi_{i,j}(x^\ast) = 0$. That is that $U_i(x_{-i}; \pi_{i,j}) - U_i(x) \leq 0$ and so $U_i(x) \geq U_i(x_{-i}; \pi_{i,j})$ as required
+\item There may or may not be a pure strategy that is a Nash equilibrium, but there will always be a mixed strategy (recall that pure strategies are merely special mixed strategies) that is a Nash equilibrium
+\item Some games have more than one Nash equilibrium, but every game has at least one Nash equilibrium
+\item We have only proved the existence of a Nash equilibrium, how to compute it is not yet apparent (recursion with our Brouwer function may diverge instead of converging to a fixed point)
+\end{itemize}
+\clearpage
+\subsection{Alternative notions of optimality}
+\begin{itemize}
+\item \textbf{Social welfare of \boldmath$x \in X$ $=$ $\sum_i U_i(x)$}
+\item \textbf{\boldmath$x$ is Pareto efficient (Pareto optimal) iff $\forall x'; \exists k: U_k(x) < U_k(x') \Rightarrow \exists i: U_i(x) > U_i(x')$}
+\item Proposition: \textbf{``Maximizes social welfare'', ``is Pareto optimal'', and ``is a Nash equilibrium'' are potentially (but not always) distinct}\\
+Proof:\\
+Consider the Prisoner's Dilemma game $[[(2, 2), (0, 3)], [(3, 0), (1,1)]]$. The only Nash equilibrium is the (1, 1) payoff but this is does not maximize social welfare (note thus cannot possibly be Pareto optimal)\\
+Remaining cases: Exercise
+\clearpage
+\item \textbf{We call a 2-player game is symmetric iff both players have the same action sets (\boldmath$S_1, S_2$) and their payoff matrices are the transposes of each other ($u_1(s_1, s_2)=u_2(s_2, s_1)$) (do not confuse with a zero-sum 2-player game)}
+\item \textbf{Proposition: Every symmetric game has a symmetric Nash equilibrium (a Nash equilibrium in which both players have the same strategy)}\\
+Proof: Out of scope
+\item \textit{Let $x_1$ be a strategy for (wlog) player 1 in a 2-player symmetric game. $x$ is an evolutionarily stable strategy iff $(x_1, x_1)$ is a (symmetric) Nash equilibrium and at any additional (i.e. other tha $x_1$ itself) best responses $x_1'$ to $x_1$ by player 2 player 1 gets \underline{strictly} higher utility by still playing $x_1$ rather than joining the deviation to $x_1'$}
+\item \textit{Every evolutionarily stable strategy is a Nash equilibrium (however not vice versa)}
+\item \textit{There exist (2-player symmetric) games for which there does not exist an evolutionarily stable strategy. Moreover, deciding whether a 2-player symmetric game has an evolutionarily stable strategy is in NP-Hard $\cap$ coNP-Hard}
+\end{itemize}
+\clearpage
+\section{Linear Programming}
+\subsection{Fourier-Motzkin}
+\begin{itemize}
+\item \textbf{Fourier-Motzkin elimination algorithm for solving linear programmes (awlog objective function is $x_0$):}
+\begin{lstlisting}[basicstyle=\ttfamily\bfseries,
+    columns=fixed,
+    numbers=left,
+    breaklines=true,
+    breakatwhitespace=true,
+    breakindent=0pt]
+for i in range n to 1 step -1
+    Rearrange each constraint in which $x_i$ has a non-zero coefficient to be in the form either $\alpha \leq x_i$ or $x_i \leq \beta$ where $\alpha, \beta$ are linear combinations of $x_0, ..., x_{i-1}$ (and a constant). Call this set of constraints $H_i$
+    Eliminate $H_i$ from the system of equations by removing the constraints in $H_i$ from our working copy of the system and adding new constraints $\alpha_j \leq \beta_l$ for all combinations of $\alpha$and $\beta$ used (if we only used $\alpha$s or only used $\beta$s, we do nothing and indeed the variable was redundant). Keep a record however of $H_i$ as we will need to it later
+The single variable system ($x_0$) that remains can be easily solved (take intersection of intervals of constraints)
+Substitute the found value of $x_0$ into $H_1$, this gives another single variable system which can be easily solved to obtain $x_1$. Then, substitute $x_0, x_1$ into $H_2$. And so on
+\end{lstlisting}
+\item Unlike Gaussian elimination (the special case of Fourier-Motzkin elimination where all constraints are equality) which is linear time, Fourier-Motzkin can (in the worst case) square the number of constrains with each variable it removes resulting in an exponential number of increase in the constraints at the end
+\item Proposition: Every feasible and bounded linear program with rational coefficients has a rational optimal feasible solution (fortunately, imagine having to output an irrational number from a computer!)\\
+Proof: If there is a solution, Fourier-Motzkin will find it, and will do so using additional, multiplication, division of the (rational) coefficients
+\end{itemize}
+\subsection{Simplex method}
+\begin{itemize}
+\item The feasible region of a linear programme is convex, and so a local optimum of the (linear) objective is the global optimum
+\item To apply the simplex method, rewrite the LP in primal form (maximization objective and all constraints $\leq$) then introduce slack variables to obtain equality constraints
+\clearpage
+\item \textbf{Call an LP a dictionary iff all constraints (except non-negativity constraints) are equality constraints \underline{and} have at least one variable which has coefficient 1 \underline{and} does not appear in any other (equality) constraint \underline{nor} in the objective function}
+\item \textbf{Call a set of variables (one from each (equality) constraint) that witnesses an LP being a dictionary a basis}
+\item Example: An LP pre-processed for the simplex method is a dictionary and the slack variables form a basis
+\item \textbf{Call a dictionary feasible iff setting its non-basic variables (variables not in its basis) to 0 gives non-negative solutions for the basic variables. Call such a feasible solution to the LP a basic feasible solution}
+\clearpage
+\item \textbf{Simplex method:}
+\begin{lstlisting}[basicstyle=\ttfamily\bfseries,
+    columns=fixed,
+    numbers=left,
+    breaklines=true,
+    breakatwhitespace=true,
+    breakindent=0pt]
+Assume we are given an initial basic feasible solution
+Rearrange so that basis variables are on LHS of equality and all other variables are on RHS
+while True
+    if all variables in objective function have non-positive coefficients then we are at an optimum and so we should return the current basic feasible solution
+    if there is a variable with positive coefficient in the objective function and non-negative coefficients in all constraints then it is unbounded and we should return this fact
+    // If we are not done, we pivot
+    // Bland's rule guarantees no cycling: Chose the lexicographically smallest $(i, j)$ (amongst those that obey the below correctness conditions) (deduce that ties are much more likely in $i$ than in $j$). A rule that is often faster but risks cycling (but we can always detect cycling and switch to Bland's) is to pick the $x_i$ with the largest coefficient in the objective function
+    // Our requirement on $i$ guarantees that the new bfs will not strictly decrease the objective, and our requirement on $j$ guarantees that the new dictionary will be feasible
+    Chose a basic variable $x_i$ with positive coefficient in the objective function to enter the basis and a variable $x_j$ to leave the basis such that the value of $x_i$ in a basic solution to the constraint which $x_j$ is current basic in is minimal.
+    Rewrite the constraint with current basic variable $x_j$ to be in the form $x_i = \alpha$
+    Substitute $\alpha$ for $x_i$ in all $\texttt{\underline{other}}$ constraints and the objective function
+\end{lstlisting}
+\clearpage
+\item \textbf{We do not need to worry about how we will find an initial basic feasible solution with which to start simplex: For any constraints in which the constant is negative multiply both sides by $-1$. Add an extra slack variable to each constraint. Having the extra slack variables be the basis is a trivial bfs for this new LP. Make the objective function of this new LP to \underline{minimize} the sum of the extra slack variables. Run simplex starting from our trivial bfs}, if the original LP was feasible we will find an optimal solution with dummy objective value 0 and the bfs at this optimal solution is also a bfs for the original LP (as the extra slack variables are all 0)
+\item Each simplex pivot takes only polynomial time. However, Simplex can require exponentially many pivots. However, on natural problems Simplex requires linearly many pivots in the number of constraints
+\item The interior-point method can be used to solve absolutely any LP in polynomial time
+\end{itemize}
+\clearpage
+\subsection{Duality}
+\vspace{-18pt}
+\begin{lpformulation}
+\lpobj*{max}{cx}
+\lpeq*{(Ax)_i \leq b_i}{i \in \{1, ..., d\}}
+\lpeq*{(Ax)_i = b_i}{i \in \{d+1, ..., m\}}
+\lpeq*{x_1, ..., x_r \geq 0}{}
+\lpeq*{x_{r+1}, ..., x_n \in \mathbb{R}}{}
+\end{lpformulation}
+$\underset{\textrm{dual}}{\Leftrightarrow}$
+\vspace{-8pt}
+\begin{lpformulation}
+\lpobj*{min}{b^Ty}
+\lpeq*{(A^Ty)_j \geq \left(c^T\right)_j}{j \in \{1, ..., r\}}
+\lpeq*{(A^Ty)_j = \left(c^T\right)_j}{i \in \{r+1, ..., n\}}
+\lpeq*{y_1, ..., y_d \geq 0}{}
+\lpeq*{y_{d+1}, ..., y_m \in \mathbb{R}}{}
+\end{lpformulation}
+\begin{itemize}
+\item \textbf{Proposition (Weak Duality): The dual of a (maximization) LP upper bounds its objective value}\\
+\textbf{Proof: \boldmath$y^TA \geq c$ by the dual constraints. Thus, $cx \leq y^TAx \leq y^Tb$ as $Ax \leq b$ by the primal constraints. Thus, $cx \leq b^Ty$ for all feasible $x, y$}\\
+Corollary: If $x^\ast, y^\ast$ are optimal solutions to primal and dual respectively, then $cx^\ast \leq b^Ty^\ast$
+\item Proposition: Let $-y^\ast$ be the vector of coefficients of the slack variables in the objective function of the final dictionary used by the simplex algorithm to obtain an optimal solution $x^\ast$ to a primal LP. Then, $y^\ast$ is a feasible solution to the dual LP and moreover $cx^\ast = b^Ty^\ast$\\
+Proof: Out of scope
+\clearpage
+\item \textbf{Theorem (Strong Duality): If both the primal and dual LPs are feasible, then their optimal objective function values coincide}. If the dual is unbounded, then the primal is infeasible (this follows easily from weak duality). Symmetrically, if the primal is unbounded, then the dual is infeasible. Finally, it is possible that the primal and dual are both infeasible.\\
+Proof sketch:
+If both are feasible, then simplex will witness the optimal dual solution with the same objective function value as the primal. If one is unbounded, then by weak duality the other must be infeasible
+\clearpage
+\item \textbf{Proposition (Complementary Slackness): A pair of feasible solutions to primal and dual respectively are optimal iff whenever a primal variable is non-zero the dual constraint is tight (has zero slack) \underline{and} whenever a dual variable is non-zero the primal constraint is tight}\\
+\textbf{Proof: Recall from our proof of weak duality that \boldmath$cx \leq y^TAx \leq y^Tb$. By strong duality, $cx^\ast = \left(y^\ast\right)^Tb$. Thus, $cx^\ast = \left(y^\ast\right)^TAx$ and so $\left(\left(y^\ast\right)^TA - c\right)x^\ast = 0$}
+\end{itemize}
+\clearpage
+\section{(Finite) Strategic Games}
+\subsection{Zero-sum games}
+\begin{itemize}
+\item A 2-player game is a zero-sum game iff $\forall s \in S; u_1(s) = -u_2(s)$. Thus a zero-sum game is fully described by a matrix containing only the payoffs for player 1 (row player). Players want to maximize their own payoffs and so player 2 (the column player) wants to minimize the payoffs written in this matrix as their own payoffs of the negatives of these
+\item Lemma: Let $A, B, C$ be matrices. If $A \geq B$ and $C \geq 0$, then $AC \geq BC$ and $CA \geq CB$\\
+Proof: Out of scope
+\item Proposition: Let $A$ be a payoff matrix for a 2-player zero-sum game and $x_1, x_2$ be mixed strategies chosen by player 1 and player 2 respectively. Then, $U_1(x_1, x_2) = x_1^TAx_2$ (and so $U_2(x_1, x_2) = -x_1^TAx_2$)\\
+Proof: Exercise
+\item \textbf{A mixed strategy for player 1/2 is a minmaximizer/maxminimizer iff it is a best response by player 1/2 to the worst move for player 1/2's utility that player 2/1 could make}
+\item $x_1$ is a minmaximizer if $\underset{x_2 \in X_2}{\min} (x_1)^TAx_2 = \underset{{x_1}' \in X_1}{\max} \underset{x_2 \in X_2}{\min} ({x_1}')^TAx_2$
+\item $x_2$ is a maxminimizer if $\underset{x_1 \in X_1}{\max} (x_1)^TAx_2 = \underset{{x_2}' \in X_2}{\min} \underset{x_1 \in X_1}{\max} (x_1)^TA{x_2}'$
+\item Theorem (Minimax Theorem, von Neumann): \textbf{Let \boldmath$A$ be a matrix defining a 2-player zero-sum game. Then, there exists a \underline{unique} value $v^\ast$ such that payoff (to player 1) at minmaximizer $=$ $v^\ast$ $=$ payoff (to player 1) at maxminimizer}. Moreover, the payoff (to player 1) of every Nash equilibrium is $v^\ast$ (and so every Nash equilibrium of a 2-player zero-sum game has the same value)\\
+Proof sketch:\\
+It is trivial to see that for any pair of mixed strategies $x_1, x_2$ $\underset{x_2' \in X_2}{\min} (x_1)^TAx_2' \leq (x_1)^TAx_2 \leq \underset{x_1' \in X_1}{\max} (x_1')^TAx_2$.\\
+It is also trivial to see that $\underset{x_1' \in X_1}{\max} \underset{x_2' \in X_2}{\min} (x_1')^TAx_2' \leq \underset{x_2' \in X_2}{\min} \underset{x_1' \in X_1}{\max} (x_2')^TAx_1'$\\
+The theorem is that $\underset{x_1' \in X_1}{\max} \underset{x_2' \in X_2}{\min} (x_1')^TAx_2' = \underset{x_2' \in X_2}{\min} \underset{x_1' \in X_1}{\max} (x_2')^TAx_1'$\\
+We will show that every \underline{pure} strategy of player 2 gives (for every (mixed) strategy of player 1) payoff at least $v^\ast$ to player 1, and that every \underline{pure} strategy of player 2 gives (for every (mixed) strategy of player 1) payoff at most $v^\ast$ to player 1. We will then show that these together are sufficient.\\
+Pick an arbitrary 2-player zero-sum game defined by a matrix $A$. Pick an arbitrary Nash equilibrium $(x_1^\ast, x_2^\ast)$ of the game. Let $v^\ast$ be the payoff to player 1 of the Nash equilibrium ($(x_1^\ast)^TAx_2^\ast$).\\
+As they are strategies in a Nash equilibrium we know that they are best responses to each other: $\forall j; U_1(\pi_{1,j},x^\ast_2) \leq U_1(x^\ast_1,x^\ast_2)$ and $\forall j; U_2(x^\ast_1, \pi_{2,j}) \leq U_2(x^\ast_1,x^\ast_2)$. By definitions, $U_1(\pi_{1,j},x^\ast_2) = (Ax_2^\ast)_j$ and $U_1(x^\ast_1,x^\ast_2) = v^\ast$, and $U_2(x^\ast_1, \pi_{1,j}) = ((x_1^\ast)^TA)_j$ and $U_2(x^\ast_1,x^\ast_2) = -v^\ast$. Thus we have exactly the inequalities we said would be helpful.\\
+Mixed strategies are weighted averages of the underlying pure strategies, thus our bound on each pure strategy also applies to every mixed strategy (and so even to the (mixed) strategy that maximizes/minimizes the bounded quantity): $\underset{x_2' \in X_2}{\min} (x_1^\ast)^TAx_2' \geq v^\ast \geq \underset{x_1' \in X_1}{\max} (x_1')^TAx_2^\ast$. This is exactly the reverse of our previous trivial inequality, so all the signs must be exact equality: $\underset{x_2' \in X_2}{\min} (x_1^\ast)^TAx_2' = v^\ast = \underset{x_1' \in X_1}{\max} (x_1')^TAx_2^\ast$.\\
+\item \textbf{As every (2-player) minimax profile is a Nash equilibrium, the indifference principle applies to them also}
+\clearpage
+\item Unlike general games where computing a Nash equilibrium can be computationally hard, for 2-player zero-sum games computing a minimax profile (and so a Nash equilibrium) can be done in polynomial time using linear programming:
+\begin{lpformulation}
+\lpobj*{max}{v}
+\lpeq*{(x_1^TA)_k \geq v}{k \in [m_2]}
+\lpeq*{\sum_{j \in [m_1]} x_1(j) = 1}{}
+\lpeq*{x_1(j) \geq 0}{j \in [m_1]}
+\end{lpformulation}
+\clearpage
+\item Proposition: minimax theorem $\Leftrightarrow$ strong duality theorem\\
+Proof:\\
+$\Leftarrow$: Exercise\\
+$\Rightarrow$:
+Encode the primal LP as the symmetric zero-sum game defined by payoff (block) matrix $M = \begin{bmatrix}
+0 & A & -b \\
+-A^T & 0 & c \\
+b^T & -c^T & 0
+\end{bmatrix}$\\
+As this is a symmetric zero-sum game the minimax value is 0 and every minmaximizing strategy is also a maxminimizing strategy. Let $((Y^\ast, X^\ast, z), (Y^\ast, X^\ast, z))$ be a Nash equilibrium in which $z > 0$ (validity of this restriction is an exercise (assessed assignment)). Thus, by the minimax theorem, $AX^\ast - bz \leq 0$ and $cz - A^TY^\ast \leq 0$ (and $b^TY^\ast - c^TX^\ast \leq 0$). Thus $x^\ast = \frac{1}{z}X^\ast$ and $y^\ast = \frac{1}{z}Y^\ast$ are feasible solutions to the LP and its dual.
+\end{itemize}
+\clearpage
+\subsection{General games}
+\begin{itemize}
+\item \textbf{We say \boldmath$x_i$ dominates \boldmath${x_i}'$ iff $\forall x_{-i} \in X_{-i}; U_i(x_{-i}; x_i) \geq U_i(x_{-i}; {x_i}')$}
+\item \textbf{We say \boldmath$x_i$ strictly dominates \boldmath${x_i}'$ iff $\forall x_{-i} \in X_{-i}; U_i(x_{-i}; x_i) > U_i(x_{-i}; {x_i}')$}
+\item Deduce (by the same averaging argument as previously) that to determine (strict) domination it suffices to only compare to pure profiles
+\item \textbf{We call a (mixed) strategy a (strictly) dominant strategy iff it (strictly) dominates every other strategy}
+\item Proposition: Every pure strategy played with non-zero probability in a dominant mixed strategy is itself a dominant strategy\\
+Proof sketch: Averaging argument\\
+Corollary: To enumerate all (strictly) dominant strategies it suffices to enumerate all combinations of pure strategies
+\item Proposition: \textbf{If a strategy is strictly dominant, then it is a pure strategy}\\
+Proof sketch: Averaging argument
+\item \textbf{We call a (mixed) strategy a strictly dominated strategy iff there exists another stratergy that strictly dominates it}
+\item \textbf{We call a (mixed) strategy a weakly dominated strategy iff there exists another strategy that dominates it \underline{and} has strictly higher utility than it for at least one player}
+\item \textbf{To check if a strategy is (strictly) dominated, it does \underline{not} suffice to only check for dominating pure strategies, it must be compared to mixed strategies also}
+\item \textbf{A Nash equilibrium will never contain a \underline{strictly} dominated strategy}, but all players playing a weakly dominated strategy can be a Nash equilibrium
+\item \textbf{Lemma: Let \boldmath$A$ be the payoff matrix for player 1 and $B$ be the payoff matrix for player 2. Assume without loss of generality that all entries in $A$ and $B$ are strictly positive (add a sufficiently large constant). Then, $(x_1^\ast, x_2^\ast)$ is a Nash equilibrium iff $\exists y, w_1: Ax_2^\ast + y = w_1 \land y^Tx_1 = 0 \land y \geq 0$ and $\exists z, w_2: Bx_1^\ast + z = w_2 \land z^Tx_2 = 0 \land z \geq 0$}\\
+\textbf{Proof sketch: \boldmath$w_1, w_2$ are the payoffs to player 1 and player 2 at the Nash equilibrium}. Every pure strategy played with non-zero probability has payoff exactly $w$ and every pure strategy played with zero probability has payoff at most $w$. \textbf{\boldmath$y, z$ are the vectors of the slacks between the $w$ and each pure strategy}, these are constrained to be non-negative everywhere and zero when the probability of the pure strategy is non-zero
+\clearpage
+\item By normalizing away $w_1, w_2$ \textbf{we can write computing a 2-player Nash equilibrium as solving a so called linear complementarity problem: \boldmath$Mu + v = 1$ s.t. $u^Tv = 0 \land u > 0 \land v \geq 0$ where $M$ is the given block matrix $\begin{bmatrix}
+0 & A\\
+B & 0
+\end{bmatrix}$ and $u,v$ are the vectors $\begin{bmatrix}
+x_1'\\
+x_2'
+\end{bmatrix}$ and $\begin{bmatrix}
+y'\\
+z'
+\end{bmatrix}$ to be solved for}
+\item \textbf{Call a basis \boldmath$\beta$ a complementary basis iff $\forall k; u_k \notin \beta \lor v_k \notin \beta$} (then $u^Tv = 0$ as required)
+\item \textbf{Call a basis \boldmath$\beta$ an $i$-almost complementary basis iff $\forall k \neq i; u_k \notin \beta \lor v_k \notin \beta$} (then $u^Tv = u_iv_i$)
+\clearpage
+\item \textbf{Lemke-Howson Algorithm:}
+\begin{lstlisting}[basicstyle=\ttfamily\bfseries,
+    columns=fixed,
+    numbers=left,
+    breaklines=true,
+    breakatwhitespace=true,
+    breakindent=0pt]
+Start at the basis $\beta = \{\vec{v}\}$. This is a fully complementary basis but does not obey $u \neq 0$
+Pick arbitrary $i$ and pivot $\beta$ to a $i$-almost complementary basis
+while $\beta$ is not fully complementary
+    There exists exactly one $j$ such that $u_j, v_j$ are both not in the basis. Moreover, exactly one of $u_j, v_j$ only just left the basis. Pivot $\beta$ so that the other one enters the basis.
+    $\beta$ is still an almost complementary basis, and it is one we have not yet considered
+// We have found a fully complementary basis in which $u > 0$ and $v \geq 0$
+\end{lstlisting}
+\end{itemize}
+\clearpage
+\section{Extensive Games}
+\subsection{Extensive games}
+\begin{itemize}
+\item Extensive-form games are typically represented by a game tree
+\item \textbf{Information set = a set of nodes for which a player must chose the same strategy of all nodes within as the player cannot distinguish between them} (due to the presence of hidden information)
+\item Information not available to a player may be known to another player, or may not be known by any player (chance node)
+\item \textbf{A game is a perfect-information game iff all information sets are singletons}
+\item A pure strategy for a player in an extensive-form game is a labelling of that player's \underline{information sets} with actions
+\item Every player playing a pure strategy only necessarily corresponds to a pure \textbf{play (root-to-leaf path in the game tree)} if there are no chance nodes. If there are chance nodes then every player playing a pure strategy corresponds to a probability distribution over plays. Thus, we have to consider expected payoff even if we aren't considering mixed strategies
+\item Proposition: Every (finite) game can be written in both strategic-form and extensive-form\\
+Proof:\\
+\textbf{A strategic-form game can be rewritten as an extensive-form game by using information sets to hide the moves of ``previous'' players from ``subsequent'' players (i.e. the only role that ``time'' has in an extensive-form game is that more information is revealed, and it is permitted for information to not be revealed)\clearpage
+An extensive-form game can be rewritten as a strategic-form game by having players commit to a function from nodes to actions rather than committing to actions themselves (note there are exponentially more strategies in the strategic-form rewrite than in the extensive-form)}
+\item \textbf{A subgame is a subtree of the game tree \underline{such that} every information set is either entirely in or entirely not in the subtree}
+\item \textbf{A Nash equilibrium of a game is called a subgame perfect Nash equilibrium iff it is also a Nash equilibrium in every subgame}
+\item Lemma: If a game is a perfect-information, then every subgame is also perfect-information\\
+Proof: Obvious
+\item \textbf{Theorem (Kuhn, 1953): Every finite perfect-information extensive-form game has a \underline{pure strategy} (subgame-perfect) Nash equilibrium}. A mixed strategy Nash equilibrium is already guaranteed by Nash's theorem, but the perfect-information allows us to strengthen to pure strategy and subgame perfect\\
+\textbf{Proof (backwards induction algorithm):}
+\begin{lstlisting}[basicstyle=\ttfamily\bfseries,
+    columns=fixed,
+    numbers=left,
+    breaklines=true,
+    breakatwhitespace=true,
+    breakindent=0pt]
+for $i$ := 1, ..., n
+    for each node $w$ which is $i$ edges away from its nearest leaf
+        if $w$ is a chance node then calculate the expected payoff using the payoffs labelled onto the children and label $w$ with this
+        Otherwise the player that controls $w$ has in their strategy choosing at $w$ the action which leads to the child labelled with the highest payoff for. Label $w$ with the payoffs of that child for each player
+\end{lstlisting}
+\item Kuhn's backwards induction algorithm can be adapted to compute a (not necessarily perfect) subgame perfect Nash equilibrium in a finite extensive-form game with imperfect information (but still perfect recall): Somehow (e.g. convert to strategic-form) solve the bottommost subgame (as now not every subtree is a subgame) then replace it with a leaf labelled with the expected payoff for each player at the subgame Nash equilibrium. Repeat for the next bottommost subgame
+\end{itemize}
+\clearpage
+\subsection{Infinite games}
+\begin{itemize}
+\item A game tree can be formalised as a prefix-closed set of words over the alphabet of actions. Then, nodes are strings and the children of a node are those that it is a prefix of. A path is a sequence of nodes where each is the previous one with a single action appended. A complete play is a path that starts at the empty string (root) and for which every non-leaf node (i.e. node for which the set of children is non-empty) in the the path has a child in the path
+\item \textit{A finite alphabet but unbounded string length allows for infinite horizon games but not infinitely branching games. We will not consider infinitely branching games}
+\item For an infinite game, payoffs are assigned to complete plays instead of leaves
+\item It can be more intuitive to represent infinite zero-sum perfect information games as finite graphs rather than infinite trees
+\item Reachability graph game: Given a finite \underline{directed} graph. If a designated ``goal'' vertex is reached, player 1 gets utility $+1$ and player 2 gets utility $-1$. If any vertex is reached from which the goal vertex is not reachable (a ``deadend''), player 1 gets utility $-1$ and player 2 gets utility $+1$.
+\item Algorithm for reachability game:
+\begin{lstlisting}[basicstyle=\ttfamily,
+    columns=fixed,
+    numbers=left,
+    breaklines=true,
+    breakatwhitespace=true,
+    breakindent=0pt]
+$win_i$ := the set of nodes at which player $i$ wins
+$V_i$ := the set of nodes which player $i$ controls
+$win_1'$ := $win_1$
+$s_1$ := $\emptyset$
+repeat
+    for $v \in V \setminus (win_1' \cup win_2)$
+    if $v \in V_1 \land \exists (v, v') \in E: v' \in win_1'$ then
+        $win_1'$ $\cup$= $\{v\}$
+        $s_1$ $\cup$= $\{v \to v'\}$
+    if $v \in V_2 \land \forall (v, v') \in E: v' \in win_1'$ then
+        $win_1'$ $\cup$= $\{v\}$
+until $win_1'$ has not changed
+Player 1 can win (using strategy $s_1$) iff $v_0 \in win_1'$
+\end{lstlisting}
+\end{itemize}
+\clearpage
+\section{Inefficiency of equilibria}
+\subsection{Congestion games}
+\begin{itemize}
+\item In a congestion game, players' strategies are subsets of a set of resources and the (dis-)utility of a strategy is the sum of cost functions for each chosen resource which are functions of how many other players chose it
+\item In a network congestion game, resources are edges in a directed graph and strategies are source-to-sink paths
+\item \textbf{Best response dynamics:} Recall that in any game if every player's strategy is a best response then the strategies are a Nash equilibrium. Consequently, \textbf{repeatedly switching the strategy of a player whose current strategy is not a best response to a best response will find a Nash equilibrium if it terminates}. In general, this approach may get stuck in a cycle.
+\item \textbf{We call a game a potential game iff \boldmath$\exists \Phi: \forall i \in N; \forall s_{-i} \in S_{-i}; \forall s_i, s_i' \in S_i; cost_i(s_i, s_{-i}) - cost_i(s_i', s_{-i}) = \Phi(s_i, s_{-i}) - \Phi(s_i', s_{-i})$} i.e. a single potential function $\Phi$ captures the differences in costs of every player
+\item \textbf{Theorem (Rosenthal, 1973): In any potential game game, best response dynamics with pure strategies will always terminate}\\
+Proof sketch: Each step of the best respond dynamics strictly increases the player's utility and so the potential function. At some finite value, the potential function attains a maximum (and this coincides with a pure Nash equilibrium)\\
+Corollary: Every potential game has a pure Nash equilibrium (and it can be computed)
+\clearpage
+\item Proposition: \textbf{Every congestion game is a potential game}\\
+Proof:
+We will show that \textbf{\boldmath$\Phi(s) = \sum_{r \in R}\sum_{j = 1}^{\#(r, s)} c_r(j)$ is a potential function where $c_r(j)$ is the cost of resource $r$ when being used by $j$ players and $\#(r, s)$ is the number of players using resource $r$ in strategy $s$}\\
+Pick arbitrary $i, s_i', s_i, s_{-i}$. Let $s = (s_i, s_{-i})$ and $s' = (s_i', s_{-i})$. Then, $\Phi(s) - \Phi(s') = \sum_{r \in R} \left(\sum_{j = 1}^{\#(r, s)} c_r(j) - \sum_{j = 1}^{\#(r, s')} c_r(j)\right)$\\
+Partition $R$ into: $R_1$ resources used in neither $s$ nor $s'$, $R_2$ resources used in both $s$ and $s'$, $R_3$ resources used in $s$ but not in $s'$, $R_4$ resources not used in $s$ but used in $s'$. Then, $\Phi(s) - \Phi(s') = \sum_{i=1}^4\sum_{r \in R_i} \left(\sum_{j = 1}^{\#(r, s)} c_r(j) - \sum_{j = 1}^{\#(r, s')} c_r(j)\right)$\\
+Deduce that $\forall r \in (R_1 \cup R_2); \#(r, s) = \#(r, s')$ and that $\forall r \in R_3; \#(r, s) = \#(r, s') + 1$ and that $\forall r \in R_4; \#(r, s) = \#(r, s') - 1$. Thus, $\Phi(s) - \Phi(s') = \sum_{r \in R_3}c_r(\#(r, s)) - \sum_{r \in R_4}c_r(\#(r, s'))$.\\
+\clearpage
+Finally an algebraic trick, $\Phi(s) - \Phi(s') = \sum_{r \in R_3}c_r(\#(r, s)) + \sum_{r \in R_2}c_r(\#(r, s)) - \sum_{r \in R_4}c_r(\#(r, s')) - \sum_{r \in R_2}c_r(\#(r, s'))$ [as $\forall r \in R_2; \#(r, s) = \#(r, s')$]. Thus, $\Phi(s) - \Phi(s') = cost_i(s) - cost_i(s')$ as required\\
+Corollary: In any congestion game, best response dynamics with pure strategies will always terminate\\
+Corollary: Every congestion game has a pure Nash equilibrium (and it can be computed)
+\end{itemize}
+\clearpage
+\subsection{Inefficiency of equilibria}
+\begin{itemize}
+\item \textbf{(Pure) Price of Anarchy = approximation ratio between maximum achievable social welfare (total (expected) utility across all players) and social welfare at the (pure) Nash equilibrium which is \underline{worst} (i.e. minimum) for social welfare} --- deduce that Price of Anarchy $\geq$ 1
+\item \textbf{(Pure) Price of Stability = approximation ratio between maximum achievable social welfare (total (expected) utility across all players) and social welfare at the (pure) Nash equilibrium which is \underline{best} (i.e. maximum) for social welfare}
+\item \textbf{Price of Anarchy/Stability for a class of games = that for the worst game in the class (i.e. for the game which maximizes it)}
+\item Theorem (Christodoulou and Koutsoupias 2005): The Price of Anarchy of any
+congestion game with linear cost functions is at most $\frac{5}{2}$\\
+Proof: Omitted due to time
+\item \textbf{Lemma (the potential method): Let $G$ be a potential game with potential function \boldmath$\Phi$. Let $SC$ be the social cost function and $PoS$ be the price of stability. If $\exists c, d > 0: \forall s; c \cdot SC(s) \leq \Phi(s) \leq d \cdot SC(s)$, then $PoS(G) \leq \frac{d}{c}$}
+Proof: As this is an upper bound on a price of stability we only need to demonstrate a sufficient Nash equilibrium rather than argue about all possible Nash equilibria. Let $s^\ast$ be the strategy profile which minimizes social cost. The strategy profile $\tilde{s}$ which minimizes the potential function must be a (pure) Nash equilibrium. By the hypothesis of the lemma, we have that $c \cdot SC(\tilde{s}) \leq \Phi(\tilde{s})$ and that $\Phi(s^\ast) \leq d \cdot SC(s^\ast)$. By the construction of $\tilde{s}$, $\Phi(\tilde{s}) \leq \Phi(s^\ast)$, and so by transitivity $c \cdot SC(\tilde{s}) \leq d \cdot SC(s^\ast)$ as required
+\item Theorem: The price of stability of any congestion game with linear cost functions is at most 2 (this bound is not tight)\\
+Proof sketch: For Rosenthal's potential function $\Phi(s) = \sum_{r \in R}\sum_{j = 1}^{\#(r, s)} c_r(j)$, $\forall s; \frac{1}{2}SC(s) \leq \Phi(s) \leq SC(s)$. Thus, by the potential method $PoS \leq \frac{1}{\frac{1}{2}} = 2$
+\end{itemize}
+\clearpage
+\section{Social Choice Mechanisms}
+\subsection{Social choice}
+\begin{itemize}
+\item \textbf{A mechanism $f$ is called truthful iff supplying true preferences is a dominant strategy iff \boldmath$\forall i \in N; \forall >_i; \forall >_i'; \forall >_{-i}; f(>_i, >_{-i}) >_i f(>_i', >_{-i})$}
+\item \textbf{An ordinal social choice function is a function that takes in a vector of preference profiles (ordering relations) and outputs a candidate. A cardinal social choice function is a function that takes in a vector of utility profiles (utility functions) and outputs a candidate}
+\item Cardinal social choice functions are a superset of ordinal social choice functions as an ordinal social choice function corresponds to a cardinal one that only looks at the ordering of utilities rather than their magnitudes also --- we will only consider ordinal ones though
+\item Proposition: If a social choice function is a surjective function, then every candidate has a chance to win (if the preference profile is favourable for it)\\
+Proof: Obvious
+\item \textbf{A social choice function is called Pareto optimal iff \boldmath$\forall \alpha; \left(\exists \beta: \forall i; \beta >_i \alpha\right) \Rightarrow f(>) \neq \alpha$}
+\item Lemma: \textbf{If a social choice function is truthful and surjective, then it is Pareto optimal}\\
+Proof: Omitted due to time
+\item Proposition: Dictatorship is surjective and truthful\\
+Proof: Each candidate will be elected iff they are the top choice of the dictator voter
+\clearpage
+\item \textbf{Theorem (Gibbard-Satterthwaite, 1975): In the unrestricted domain, when there are $m \geq 3$ candidates, a deterministic social choice function is truthful and surjective (if and) only if it is dictatorial}\\
+Proof: Out of scope\\
+Corollary: In the unrestricted domain, when there are $m \geq 3$ candidates, a deterministic social choice function is truthful and Pareto optimal (if and) only if it is dictatorial\\
+\item Gibbard-Satterthwaite applies to cardinal rules as well as ordinal rules (because it turns out that every truthful cardinal rule is an encoding of an ordinal rule). However, it does not apply to randomized voting rules (which can be truthful in expectation without encoding a deterministic voting rule)
+\end{itemize}
+\clearpage
+\subsection{Social choice in restricted domains}
+Omitted due to time (see CS359 for median voting)
+\clearpage
+\section{Auction Mechanisms}
+\subsection{Auctions}
+\begin{itemize}
+\item A mechanism with money consists of an allocation function which takes in the valuations given to each item by each agent and gives an allocation of an agent to each item (basically a social choice function) \underline{and} a payment function which takes in the valuations given to each item by each agent and gives a payment for each agent to make (hopefully related to the allocation, but not necessarily)
+\item We typically assume that the utility of an agent is their (true) valuation of the allocation minus their payment --- this is called quasilinear
+\clearpage
+\item \textbf{A mechanism is called a Groves mechanism iff the allocation function is to chose an allocation which maximizes social welfare and the payment function for each agent is (a constant determined by the valuations of all the other agents (but not the allocation)) minus the social welfare of the allocation to all other agents}
+\item \textbf{Proposition: Every Groves mechanism is truthful}\\
+Proof: Omitted due to time
+\item \textbf{A mechanism satisfies voluntary participation iff it is impossible for an agent to receive negative utility}
+\item \textbf{A mechanism satisfies budget balance iff it is impossible for an agent to be assigned a negative payment to make}
+\clearpage
+\item \textbf{The Vickrey-Clarke-Groves (VCG) Mechanism is the Groves mechanism where the constant for each participant is the maximum social welfare if they had abstained but everyone else still participated}. Thus the payment they have to make is the difference between the social welfare that would have been achieved by the mechanism had they had not participated and the social welfare (to everyone else) that was achieved by them participating.
+\item \textbf{The VCG mechanism is truthful and satisfies voluntary participation and satisfies budget balance}\\
+Proof: Exercise
+\item Proposition: A sealed-bid second-price auction is the VCG mechanism with a single item to allocate\\
+Proof: Exercise
+\end{itemize}
+\subsection{Auctions in restricted domains}
+\begin{itemize}
+\item \textbf{A domain is called a single-parameter domain iff the valuations of an agent \boldmath$i$ over all outcomes is encoded by a single value $v_i$ which is the valuation by $i$ of each item that they assign non-zero valuation to} --- this is horrific abuse of notation using $v_i$ both for the valuation function and for the scalar parameter that controls the behaviour of the function but it is the standard notation
+\item \textbf{An allocation function \boldmath$f$ in the single-parameter domain is called monotone iff $\forall i; \forall v_i, v_{-i}: v_i(f(v_i, v_{-i})) \neq 0; \allowbreak\forall v_i' \geq v_i; u_i(f(v_i', v_{-i})) \geq v_i(f(v_i, v_{-i})))$}
+\item \textbf{The critical value of an allocation function in the single-parameter domain  for a given agent $i$ and a given counter profile $v_{-i}$  is the largest $v_i$ for which they get 0 value from the outcome} (i.e. infinitesimally higher $v_i$ they would get value)
+\item \textbf{Theorem (Myerson's characterisation, 1981): A mechanism in which losers pay 0 is truthful on a single-parameter domain iff the allocation function is monotone and the payment of every winner is its critical value}\\
+Proof: Omitted due to time
+\end{itemize}
+\subsection{Revenue maximizing auctions}
+Omitted due to time
+\end{flushleft}
+\end{document}
